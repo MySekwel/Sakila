@@ -41,14 +41,12 @@ SQL_Result = SQL_Cursor.fetchall()
 # SQL_Count - For iterators, returns the number of rows
 SQL_Count = SQL_Cursor.rowcount
 # Store all the data in a temporary iterator (Just for debugging)
-
-
+# Don't mind this block of code
 for i in range(SQL_Count):
     SQL_UID = SQL_Result[i][0]
     SQL_UserID = SQL_Result[i][1]
     SLQ_UserName = SQL_Result[i][2]
     SQL_UserTag = SQL_Result[i][3]
-    SQL_NextUIDIndex = SQL_Result[0][0]
 
 
 # Just a simple command for testing
