@@ -135,6 +135,22 @@ async def stats(ctx):
     await ctx.send(embed=embed)
 
 
+@bot.command()
+async def work(ctx):
+    await ctx.send("**You have worked and earned $100 and 10exp**")
+    query = f"""
+        UPDATE
+        accounts
+        SET
+        cash=cash + 100,
+        exp=exp + 10
+        WHERE
+        userid={ctx.author.id}
+    """
+    SQL_Cursor.execute(query)
+    SQL_Handle.commit()
+
+
 @bot.event
 async def on_message(message):
     # Check if the user who sent the message is not the bot itself
