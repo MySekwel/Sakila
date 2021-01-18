@@ -1,4 +1,5 @@
 import mysql.connector
+import discord
 from discord.ext import commands
 import settings
 
@@ -26,6 +27,9 @@ SQL_Query = """
         userid varchar(20),
         username varchar(24),
         usertag int(4),
+        cash int,
+        diamonds int,
+        exp int,
         PRIMARY KEY (uid),
         UNIQUE KEY (userid)
     )
@@ -55,6 +59,7 @@ async def debug(ctx):
     await ctx.send('Debugging complete!')
 
 
+# Register to the database command
 @bot.command()
 async def register(ctx):
     query = """
@@ -67,21 +72,9 @@ async def register(ctx):
     result = SQL_Cursor.fetchone()
     lastid = result[0] + 1
     try:
-        query = """
-            INSERT
-            INTO
-            accounts(
-                userid,
-                username,
-                usertag
-            )
-            VALUES(
-                %s,
-                %s,
-                %d
-            )
-        """
-        SQL_Cursor.execute(query, (ctx.author.id, ctx.author.name, ctx.author.discriminator))
+        query = 'INSERT INTO accounts(userid, username, usertag, cash, diamonds, exp) VALUES (%s, %s, %s, %s, %s, %s)'
+        values = (ctx.author.id, ctx.author.name, ctx.author.discriminator, 100, 0, 0)
+        SQL_Cursor.execute(query, values)
         SQL_Handle.commit()
     except mysql.connector.Error as err:
         print("Something went wrong: {}".format(err))
@@ -89,17 +82,65 @@ async def register(ctx):
         return
 
     message = f"""
-        You are now registered to the database with the following information:
-        **UID:** `{lastid}`
-        **UserID:** `{ctx.author.id}`,
-        **UserName:** `{ctx.author.name}`,
+        You are now registered to the database with the following information:\n
+        **UID:** `{lastid}`\n
+        **UserID:** `{ctx.author.id}`\n
+        **UserName:** `{ctx.author.name}`\n
         **UserTag:** `{ctx.author.discriminator}`
     """
     await ctx.send(message)
 
 
+# Show user statistics command
+@bot.command()
+async def stats(ctx):
+    await ctx.send(f"**{ctx.author.name}'s stats.**")
+    query = f"""
+        SELECT
+        cash,
+        diamonds,
+        exp
+        FROM
+        accounts
+        WHERE
+        userid={ctx.author.id}
+    """
+    SQL_Cursor.execute(query)
+    result = SQL_Cursor.fetchone()
+    cash = result[0]
+    diamonds = result[1]
+    exp = result[2]
+
+    embed = discord.Embed(
+        title='User Stats',
+        description=f"**{ctx.author.name}'s Stats**",
+        colour=discord.Colour.green()
+    )
+    embed.set_thumbnail(url='https://webstockreview.net/images/statistics-clipart-transparent-2.png')
+    embed.add_field(
+        name='Balance',
+        value=f':moneybag: `{cash}`',
+        inline=True
+    )
+    embed.add_field(
+        name='Diamonds',
+        value=f':large_blue_diamond: `{diamonds}`',
+        inline=True
+    )
+    embed.add_field(
+        name='Exp',
+        value=f':military_medal: `{exp}`',
+        inline=False
+    )
+    await ctx.send(embed=embed)
+
+
 @bot.event
 async def on_message(message):
+    # Check if the user who sent the message is not the bot itself
+    if message.author == bot.user:
+        return
+
     if message.content == 'hi':
         await message.channel.send('Hello!')
     await bot.process_commands(message)
