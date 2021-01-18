@@ -70,9 +70,13 @@ async def register(ctx):
     """
     SQL_Cursor.execute(query)
     result = SQL_Cursor.fetchone()
-    lastid = result[0] + 1
+    SQL_Handle.commit()
+    lastid = result[0]
+    if lastid:
+        lastid = lastid + 1
+
     try:
-        query = 'INSERT INTO accounts(userid, username, usertag, cash, diamonds, exp) VALUES (%s, %s, %s, %s, %s, %s)'
+        query = "INSERT INTO accounts(userid, username, usertag, cash, diamonds, exp) VALUES (%s, %s, %s, %s, %s, %s)"
         values = (ctx.author.id, ctx.author.name, ctx.author.discriminator, 100, 0, 0)
         SQL_Cursor.execute(query, values)
         SQL_Handle.commit()
@@ -81,20 +85,20 @@ async def register(ctx):
         await ctx.send("**You are already registered to the database!**")
         return
 
-    message = f"""
-        You are now registered to the database with the following information:\n
-        **UID:** `{lastid}`\n
-        **UserID:** `{ctx.author.id}`\n
-        **UserName:** `{ctx.author.name}`\n
+    await ctx.send(
+        f"""
+        You are now registered to the database with the following information:
+        **UID:** `{lastid}`
+        **UserID:** `{ctx.author.id}`
+        **UserName:** `{ctx.author.name}`
         **UserTag:** `{ctx.author.discriminator}`
     """
-    await ctx.send(message)
+    )
 
 
 # Show user statistics command
 @bot.command()
 async def stats(ctx):
-    await ctx.send(f"**{ctx.author.name}'s stats.**")
     query = f"""
         SELECT
         cash,
@@ -107,6 +111,13 @@ async def stats(ctx):
     """
     SQL_Cursor.execute(query)
     result = SQL_Cursor.fetchone()
+    SQL_Handle.commit()
+    if not result:
+        await ctx.send("**You are not registered to the database!**")
+        await ctx.send("TIP: `!register`")
+        return
+
+    await ctx.send(f"**{ctx.author.name}'s stats.**")
     cash = result[0]
     diamonds = result[1]
     exp = result[2]
@@ -136,6 +147,7 @@ async def stats(ctx):
 
 
 @bot.command()
+@commands.cooldown(1, 60.0, commands.BucketType.guild)
 async def work(ctx):
     await ctx.send("**You have worked and earned $100 and 10exp**")
     query = f"""
