@@ -11,3 +11,6 @@ SQL_HOST = os.getenv('HOST')
 SQL_DATABASE = os.getenv('DATABASE')
 SQL_USER = os.getenv('USER')
 SQL_PASSWORD = os.getenv('PASSWORD')
+
+WORK_SALARY = 100
+WORK_BONUS = 50

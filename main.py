@@ -1,6 +1,7 @@
 import mysql.connector
 import discord
 from discord.ext import commands
+from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 import settings
 
 # Discord Bot Token variable
@@ -17,6 +18,7 @@ SQL_Handle = mysql.connector.connect(
 )
 # Setup the connection cursor
 SQL_Cursor = SQL_Handle.cursor()
+SQL_Prepared_Cursor = SQL_Handle.cursor(prepared=True)
 
 # Setup the tables
 SQL_Query = """
@@ -24,12 +26,14 @@ SQL_Query = """
     IF NOT EXISTS
     accounts(
         uid int NOT NULL AUTO_INCREMENT,
-        userid varchar(20),
-        username varchar(24),
-        usertag int(4),
-        cash int,
-        diamonds int,
-        exp int,
+        user_id varchar(20),
+        user_name varchar(24),
+        user_tag int(4),
+        user_cash int,
+        user_diamonds int,
+        user_exp int,
+        user_reputation int,
+        user_vip varchar(16),
         PRIMARY KEY (uid),
         UNIQUE KEY (userid)
     )
@@ -76,9 +80,31 @@ async def register(ctx):
         lastid = lastid + 1
 
     try:
-        query = "INSERT INTO accounts(userid, username, usertag, cash, diamonds, exp) VALUES (%s, %s, %s, %s, %s, %s)"
-        values = (ctx.author.id, ctx.author.name, ctx.author.discriminator, 100, 0, 0)
-        SQL_Cursor.execute(query, values)
+        query = """
+            INSERT INTO
+            accounts(
+                user_id,
+                user_name,
+                user_tag,
+                user_cash,
+                user_diamonds,
+                user_exp,
+                user_reputation,
+                user_vip
+            )
+            VALUES (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )
+        """
+        values = (ctx.author.id, ctx.author.name, ctx.author.discriminator, 100, 0, 0, 0, 'None')
+        SQL_Prepared_Cursor.execute(query, values)
         SQL_Handle.commit()
     except mysql.connector.Error as err:
         print("Something went wrong: {}".format(err))
@@ -101,13 +127,15 @@ async def register(ctx):
 async def stats(ctx):
     query = f"""
         SELECT
-        cash,
-        diamonds,
-        exp
+        user_cash,
+        user_diamonds,
+        user_exp,
+        user_reputation,
+        user_vip
         FROM
         accounts
         WHERE
-        userid={ctx.author.id}
+        user_id={ctx.author.id}
     """
     SQL_Cursor.execute(query)
     result = SQL_Cursor.fetchone()
@@ -121,6 +149,8 @@ async def stats(ctx):
     cash = result[0]
     diamonds = result[1]
     exp = result[2]
+    reputation = result[3]
+    vip = result[4]
 
     embed = discord.Embed(
         title='User Stats',
@@ -141,26 +171,117 @@ async def stats(ctx):
     embed.add_field(
         name='Exp',
         value=f':military_medal: `{exp}`',
-        inline=False
+        inline=True
+    )
+    embed.add_field(
+        name='Reputation',
+        value=f':rosette: `{reputation}`',
+        inline=True
+    )
+    embed.add_field(
+        name='VIP Package',
+        value=f':crown: `{vip}`',
+        inline=True
     )
     await ctx.send(embed=embed)
 
 
 @bot.command()
-@commands.cooldown(1, 60.0, commands.BucketType.guild)
+@cooldown(1, 5, BucketType.user)
 async def work(ctx):
-    await ctx.send("**You have worked and earned $100 and 10exp**")
+    await ctx.send(f"**You have worked and earned ${settings.WORK_SALARY} and {settings.WORK_BONUS}exp**")
     query = f"""
         UPDATE
         accounts
         SET
-        cash=cash + 100,
-        exp=exp + 10
+        user_cash=user_cash+?,
+        user_exp=user_exp+?
         WHERE
-        userid={ctx.author.id}
+        user_id={ctx.author.id}
+    """
+    values = (settings.WORK_SALARY, settings.WORK_BONUS)
+    SQL_Prepared_Cursor.execute(query, values)
+
+    query = f"""
+        SELECT
+        *
+        FROM
+        accounts
+        WHERE
+        user_id={ctx.author.id}
     """
     SQL_Cursor.execute(query)
+    result = SQL_Cursor.fetchone()
     SQL_Handle.commit()
+    if not result:
+        await ctx.send("**You are not registered to the database!**")
+        await ctx.send("TIP: `!register`")
+        return
+    SQL_Handle.commit()
+
+
+@bot.command()
+async def shop(ctx):
+    await ctx.send(f"**{ctx.author.name}'s shop.**")
+    embed = discord.Embed(
+        title='User Shop',
+        description='Buy useful items and boosters!',
+        colour=discord.Colour.dark_gold()
+    )
+    embed.set_thumbnail(url='https://i.pinimg.com/originals/77/c3/66/77c366436d8bd35fe8b3ce5b8c66992e.png')
+    embed.add_field(
+        name='1. Pickaxe :pick:',
+        value='`Price: $100.0` | `Bonus: 5% Work Salary`',
+        inline=True
+    )
+    drill = discord.utils.get(bot.emojis, name='drill')
+    embed.add_field(
+        name=f'2. Drill {str(drill)}',
+        value='`Price: $500.0` | `Bonus: 10% Work Salary`',
+        inline=True
+    )
+    jackhammer = discord.utils.get(bot.emojis, name='jackhammer')
+    embed.add_field(
+        name=f'3. Jackhammer {str(jackhammer)}',
+        value='`Price: $2500.0` | `Bonus: 25% Work Salary`',
+        inline=True
+    )
+    metal_detector = discord.utils.get(bot.emojis, name='metal_detector')
+    embed.add_field(
+        name=f'4. Metal Detector {str(metal_detector)}',
+        value='`Price: $3500.0` | `Bonus: 35% Work Salary`',
+        inline=True
+    )
+    gold_detector = discord.utils.get(bot.emojis, name='metal_detector')
+    embed.add_field(
+        name=f'5. Gold Detector {str(gold_detector)}',
+        value='`Price: $7500.0` | `Bonus: 50% Work Salary`',
+        inline=True
+    )
+    diamond_detector = discord.utils.get(bot.emojis, name='metal_detector')
+    embed.add_field(
+        name=f'6. Diamond Detector {str(diamond_detector)}',
+        value='`Price: $15000.0` | `Bonus: 75% Work Salary`',
+        inline=True
+    )
+    minecart = discord.utils.get(bot.emojis, name='minecart')
+    embed.add_field(
+        name=f'7. Minecart {str(minecart)}',
+        value='`Price: $15000.0` | `Bonus: -10% Work Cooldown`',
+        inline=True
+    )
+    minetransport = discord.utils.get(bot.emojis, name='minetransport')
+    embed.add_field(
+        name=f'8. Mine Transport {str(minetransport)}',
+        value='`Price: $25000.0` | `Bonus: -25% Work Cooldown`',
+        inline=True
+    )
+    embed.add_field(
+        name='9. Transport Plane :airplane:',
+        value='\t`Price: $50000.0` | `Bonus: -50% Work Cooldown`',
+        inline=True
+    )
+    await ctx.send(embed=embed)
 
 
 @bot.event
@@ -172,6 +293,12 @@ async def on_message(message):
     if message.content == 'hi':
         await message.channel.send('Hello!')
     await bot.process_commands(message)
+
+
+@bot.event
+async def on_command_error(ctx, exc):
+    if isinstance(exc, CommandOnCooldown):
+        await ctx.send(f"Hey {ctx.author.name} why don't you take a rest for about {exc.retry_after:,.2f} seconds?")
 
 
 @bot.event
