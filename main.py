@@ -1,6 +1,7 @@
 import asyncio
 import mysql.connector
 import discord
+from discord import utils, Colour
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 import settings
@@ -27,7 +28,7 @@ SQL_Query = """
 """
 SQL_Cursor.execute(SQL_Query)
 SQL_Handle.commit()
-
+# Connect with new database
 SQL_Handle = mysql.connector.connect(
     host=settings.SQL_HOST,
     database=settings.SQL_DATABASE,
@@ -36,7 +37,7 @@ SQL_Handle = mysql.connector.connect(
 )
 SQL_Cursor = SQL_Handle.cursor()
 SQL_Prepared_Cursor = SQL_Handle.cursor(prepared=True)
-
+# Setup users table
 SQL_Query = """
     CREATE TABLE
     IF NOT EXISTS
@@ -57,7 +58,7 @@ SQL_Query = """
 """
 SQL_Cursor.execute(SQL_Query)
 SQL_Handle.commit()
-
+# Setup inventory table
 SQL_Query = """
     CREATE TABLE
     IF NOT EXISTS
@@ -214,9 +215,11 @@ async def register(ctx):
     )
 
 
-# Show user statistics command
+# Command: Work
+# Description: Mine to earn money
+# Cooldown: 15 seconds
 @bot.command()
-@cooldown(1, 5, BucketType.user)
+@cooldown(1, 15, BucketType.user)
 async def work(ctx):
     query = f"""
         SELECT
@@ -234,19 +237,19 @@ async def work(ctx):
         await ctx.send("TIP: `!register`")
         return
 
-    mining = discord.utils.get(bot.emojis, name='mining')
+    mining = utils.get(bot.emojis, name='mining')
     embed = discord.Embed(
         title=f'{str(mining)}Mining in Progress...',
         description='**Current Tool**: Pickaxe',
-        colour=discord.Colour.random()
+        colour=Colour.random()
     )
     progress = await ctx.send(embed=embed)
-    await asyncio.sleep(5)
+    await asyncio.sleep(15)
     embed = discord.Embed(
         title='Mining Finished!',
         description=f'**You have worked in the mines and earned \
-        ${settings.WORK_SALARY} and {settings.WORK_BONUS} exp**',
-        colour=discord.Colour.green()
+         ${settings.WORK_SALARY} and {settings.WORK_BONUS} exp**',
+        colour=Colour.green()
     )
     await progress.edit(
         embed=embed
@@ -265,7 +268,11 @@ async def work(ctx):
     SQL_Handle.commit()
 
 
+# Command: Stats
+# Description: Show user stats
+# Cooldown: 2 Seconds
 @bot.command()
+@cooldown(1, 2, BucketType.user)
 async def stats(ctx):
     query = f"""
         SELECT
@@ -299,7 +306,7 @@ async def stats(ctx):
     embed = discord.Embed(
         title='User Stats',
         description=f"**{ctx.author.name}'s Stats**",
-        colour=discord.Colour.green()
+        colour=Colour.green()
     )
     embed.set_thumbnail(
         url='https://webstockreview.net/images/statistics-clipart-transparent-2.png'
@@ -337,7 +344,11 @@ async def stats(ctx):
     await ctx.send(embed=embed)
 
 
+# Command: Inventory
+# Description: Show user inventory
+# Cooldown: 2 Seconds
 @bot.command()
+@cooldown(1, 2, BucketType.user)
 async def inventory(ctx):
     query = f"""
         SELECT
@@ -351,6 +362,11 @@ async def inventory(ctx):
     result = SQL_Cursor.fetchone()
     SQL_Handle.commit()
     userid = result[0]
+
+    if not result:
+        await ctx.send("**You are not registered to the database!**")
+        await ctx.send("TIP: `!register`")
+        return
     query = f"""
         SELECT
         item_pickaxe,
@@ -388,7 +404,7 @@ async def inventory(ctx):
     embed = discord.Embed(
         title='User Stats',
         description=f"**{ctx.author.name}'s Stats**",
-        colour=discord.Colour.green()
+        colour=Colour.green()
     )
     embed.set_thumbnail(
         url='https://images.emojiterra.com/mozilla/512px/1f392.png'
@@ -448,7 +464,11 @@ async def inventory(ctx):
     await ctx.send(embed=embed)
 
 
+# Command: Shop
+# Description: Show user shop
+# Cooldown: 2 Seconds
 @bot.command()
+@cooldown(1, 2, BucketType.user)
 async def shop(ctx):
     query = f"""
         SELECT
@@ -466,11 +486,10 @@ async def shop(ctx):
         await ctx.send("TIP: `!register`")
         return
 
-    await ctx.send(f"**{ctx.author.name}'s shop.**")
     embed = discord.Embed(
         title='User Shop',
         description='Buy useful items and boosters!',
-        colour=discord.Colour.dark_gold()
+        colour=Colour.dark_gold()
     )
     embed.set_thumbnail(url='https://i.pinimg.com/originals/77/c3/66/77c366436d8bd35fe8b3ce5b8c66992e.png')
     embed.add_field(
@@ -533,7 +552,11 @@ async def shop(ctx):
     await ctx.send(embed=embed)
 
 
+# Command: Buy
+# Description: Buy command for user shop
+# Cooldown: 2 Seconds
 @bot.command()
+@cooldown(1, 2, BucketType.user)
 async def buy(ctx, item):
     query = f"""
         SELECT
@@ -614,22 +637,22 @@ async def buy(ctx, item):
             UPDATE
             inventory
             SET
-            item_pickaxe=1
+            item_pickaxe=?
             WHERE
             uid={userid}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (1,))
         SQL_Handle.commit()
 
         query = f"""
             UPDATE
             users
             SET
-            user_cash=user_cash-{settings.PRICE_PICKAXE}
+            user_cash=user_cash-?
             WHERE
             user_id={ctx.author.id}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (settings.PRICE_PICKAXE,))
         SQL_Handle.commit()
 
         await ctx.send(f"You have bought a `pickaxe` for ${settings.PRICE_PICKAXE}!")
@@ -647,22 +670,22 @@ async def buy(ctx, item):
             UPDATE
             inventory
             SET
-            item_drill=1
+            item_drill=?
             WHERE
             uid={userid}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (1,))
         SQL_Handle.commit()
 
         query = f"""
             UPDATE
             users
             SET
-            user_cash=user_cash-{settings.PRICE_DRILL}
+            user_cash=user_cash-?
             WHERE
             user_id={ctx.author.id}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (settings.PRICE_DRILL,))
         SQL_Handle.commit()
 
         await ctx.send(f"You have bought a `drill` for ${settings.PRICE_DRILL}!")
@@ -680,22 +703,22 @@ async def buy(ctx, item):
             UPDATE
             inventory
             SET
-            item_jackhammer=1
+            item_jackhammer=?
             WHERE
             uid={userid}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (1,))
         SQL_Handle.commit()
 
         query = f"""
             UPDATE
             users
             SET
-            user_cash=user_cash-{settings.PRICE_JACKHAMMER}
+            user_cash=user_cash-?
             WHERE
             user_id={ctx.author.id}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (settings.PRICE_JACKHAMMER,))
         SQL_Handle.commit()
 
         await ctx.send(f"You have bought a `jackhammer` for ${settings.PRICE_JACKHAMMER}!")
@@ -713,22 +736,22 @@ async def buy(ctx, item):
             UPDATE
             inventory
             SET
-            item_metal_detector=1
+            item_metal_detector=?
             WHERE
             uid={userid}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (1,))
         SQL_Handle.commit()
 
         query = f"""
             UPDATE
             users
             SET
-            user_cash=user_cash-{settings.PRICE_METALDETECTOR}
+            user_cash=user_cash-?
             WHERE
             user_id={ctx.author.id}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (settings.PRICE_METALDETECTOR,))
         SQL_Handle.commit()
 
         await ctx.send(f"You have bought a `metal detector` for ${settings.PRICE_METALDETECTOR}!")
@@ -746,22 +769,22 @@ async def buy(ctx, item):
             UPDATE
             inventory
             SET
-            item_gold_detector=1
+            item_gold_detector=?
             WHERE
             uid={userid}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (1,))
         SQL_Handle.commit()
 
         query = f"""
             UPDATE
             users
             SET
-            user_cash=user_cash-{settings.PRICE_GOLDDETECTOR}
+            user_cash=user_cash-?
             WHERE
             user_id={ctx.author.id}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (settings.PRICE_GOLDDETECTOR,))
         SQL_Handle.commit()
 
         await ctx.send(f"You have bought a `gold detector` for ${settings.PRICE_GOLDDETECTOR}!")
@@ -779,22 +802,22 @@ async def buy(ctx, item):
             UPDATE
             inventory
             SET
-            item_diamond_detector=1
+            item_diamond_detector=?
             WHERE
             uid={userid}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (1,))
         SQL_Handle.commit()
 
         query = f"""
             UPDATE
             users
             SET
-            user_cash=user_cash-{settings.PRICE_DIAMONDDETECTOR}
+            user_cash=user_cash-?
             WHERE
             user_id={ctx.author.id}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (settings.PRICE_DIAMONDDETECTOR,))
         SQL_Handle.commit()
 
         await ctx.send(f"You have bought a `diamond detector` for ${settings.PRICE_DIAMONDDETECTOR}!")
@@ -812,22 +835,22 @@ async def buy(ctx, item):
             UPDATE
             inventory
             SET
-            item_minecart=1
+            item_minecart=?
             WHERE
             uid={userid}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (1,))
         SQL_Handle.commit()
 
         query = f"""
             UPDATE
             users
             SET
-            user_cash=user_cash-{settings.PRICE_MINECART}
+            user_cash=user_cash-?
             WHERE
             user_id={ctx.author.id}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINECART,))
         SQL_Handle.commit()
 
         await ctx.send(f"You have bought a `minecart` for ${settings.PRICE_MINECART}!")
@@ -845,22 +868,22 @@ async def buy(ctx, item):
             UPDATE
             inventory
             SET
-            item_minetransport=1
+            item_minetransport=?
             WHERE
             uid={userid}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (1,))
         SQL_Handle.commit()
 
         query = f"""
             UPDATE
             users
             SET
-            user_cash=user_cash-{settings.PRICE_MINETRANSPORT}
+            user_cash=user_cash-?
             WHERE
             user_id={ctx.author.id}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINETRANSPORT,))
         SQL_Handle.commit()
 
         await ctx.send(f"You have bought a `mine transport` for ${settings.PRICE_MINETRANSPORT}!")
@@ -878,22 +901,22 @@ async def buy(ctx, item):
             UPDATE
             inventory
             SET
-            item_transportplane=1
+            item_transportplane=?
             WHERE
             uid={userid}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (1,))
         SQL_Handle.commit()
 
         query = f"""
             UPDATE
             users
             SET
-            user_cash=user_cash-{settings.PRICE_TRANSPORTPLANE}
+            user_cash=user_cash-?
             WHERE
             user_id={ctx.author.id}
         """
-        SQL_Cursor.execute(query)
+        SQL_Prepared_Cursor.execute(query, (settings.PRICE_TRANSPORTPLANE,))
         SQL_Handle.commit()
 
         await ctx.send(f"You have bought a `transport plane` for ${settings.PRICE_TRANSPORTPLANE}!")
@@ -912,10 +935,39 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-@bot.event
-async def on_command_error(ctx, exc):
+@work.error
+async def work_error(ctx, exc):
     if isinstance(exc, CommandOnCooldown):
-        await ctx.send(f"Hey {ctx.author.name} why don't you take a rest for about {exc.retry_after:,.1f} seconds?")
+        await ctx.send(
+            f"Hey <@!{ctx.author.id}> you still have a work in progress," +
+            f" why don't you wait for `{exc.retry_after:,.1f}` seconds?"
+        )
+
+
+@buy.error
+async def buy_error(ctx, exc):
+    if isinstance(exc, CommandOnCooldown):
+        await ctx.send(
+            f"Hey <@!{ctx.author.id}> be chill on buying stuffs bro," +
+            f" why don't you wait for `{exc.retry_after:,.1f}` seconds?"
+        )
+
+
+@stats.error
+async def stats_error(ctx, exc):
+    if isinstance(exc, CommandOnCooldown):
+        await ctx.send(
+            f"Hey <@!{ctx.author.id}> you've already seen your stats," +
+            f"why don't you wait for `{exc.retry_after:,.1f}` seconds?"
+        )
+
+
+@inventory.error
+async def inventory_error(ctx, exc):
+    if isinstance(exc, CommandOnCooldown):
+        await ctx.send(
+            f"Hey <@!{ctx.author.id}> you've already seen your inventory no one will rob you," +
+            f"why don't you wait for `{exc.retry_after:,.1f}` seconds?")
 
 
 @bot.event
@@ -923,6 +975,7 @@ async def on_ready():
     for guild in bot.guilds:
         if guild.name == settings.GUILD:
             break
-        print(f'{bot.user} is connected to the following guild: {guild.name}')
+        print(f"{bot.user} is connected to the following guild: {guild.name}")
+
 
 bot.run(TOKEN)
