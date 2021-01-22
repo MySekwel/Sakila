@@ -13,15 +13,30 @@ bot = commands.Bot(command_prefix='!')
 # Connect us to the database with the following information
 SQL_Handle = mysql.connector.connect(
     host=settings.SQL_HOST,
-    database=settings.SQL_DATABASE,
     user=settings.SQL_USER,
     password=settings.SQL_PASSWORD
 )
 # Setup the connection cursor
 SQL_Cursor = SQL_Handle.cursor()
+
+# Setup the database and tables
+SQL_Query = """
+    CREATE DATABASE
+    IF NOT EXISTS
+    mysekwel
+"""
+SQL_Cursor.execute(SQL_Query)
+SQL_Handle.commit()
+
+SQL_Handle = mysql.connector.connect(
+    host=settings.SQL_HOST,
+    database=settings.SQL_DATABASE,
+    user=settings.SQL_USER,
+    password=settings.SQL_PASSWORD
+)
+SQL_Cursor = SQL_Handle.cursor()
 SQL_Prepared_Cursor = SQL_Handle.cursor(prepared=True)
 
-# Setup the tables
 SQL_Query = """
     CREATE TABLE
     IF NOT EXISTS
