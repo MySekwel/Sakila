@@ -1,7 +1,7 @@
 import asyncio
 import mysql.connector
 import discord
-from discord import utils, Colour
+from discord import utils, Colour, Embed
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 import settings
@@ -9,7 +9,7 @@ import settings
 # Discord Bot Token variable
 TOKEN = settings.TOKEN
 # Setting up the bot and it's prefix for commands
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='!', help_command=None)
 
 # Connect us to the database with the following information
 SQL_Handle = mysql.connector.connect(
@@ -215,6 +215,56 @@ async def register(ctx):
     )
 
 
+# Command: Help
+# Description: Shows the list of available commands.
+# Cooldown: 5 seconds
+@bot.command()
+@cooldown(1, 5, BucketType.user)
+async def help(ctx):
+    embed = Embed(
+        title='Help',
+        description='List of commands:',
+        colour=Colour.dark_orange()
+    )
+    embed.set_thumbnail(url='https://i.imgur.com/bObV3r5.png')
+    embed.add_field(
+        name='Command: !Help',
+        value='**Description:** Shows the list of available commands.',
+        inline=True
+    )
+    embed.add_field(
+        name='Command: !Register',
+        value='**Description:** Register to the database to use the other commands.',
+        inline=True
+    )
+    embed.add_field(
+        name='Command: !Ping',
+        value='**Description:** Shows user latency.',
+        inline=True
+    )
+    embed.add_field(
+        name='Command: !Work',
+        value='**Description:** Mine to earn money.',
+        inline=True
+    )
+    embed.add_field(
+        name='Command: !Stats',
+        value='**Description:** Show user stats.',
+        inline=True
+    )
+    embed.add_field(
+        name='Command: !Shop',
+        value='**Description:** Show user shop.',
+        inline=True
+    )
+    embed.add_field(
+        name='Command: !Buy',
+        value='**Description:** Buy command for user shop.',
+        inline=True
+    )
+    await ctx.send(embed=embed)
+
+
 # Command: Work
 # Description: Mine to earn money
 # Cooldown: 15 seconds
@@ -238,14 +288,14 @@ async def work(ctx):
         return
 
     mining = utils.get(bot.emojis, name='mining')
-    embed = discord.Embed(
+    embed = Embed(
         title=f'{str(mining)}Mining in Progress...',
         description='**Current Tool**: Pickaxe',
         colour=Colour.random()
     )
     progress = await ctx.send(embed=embed)
     await asyncio.sleep(15)
-    embed = discord.Embed(
+    embed = Embed(
         title='Mining Finished!',
         description=f'**You have worked in the mines and earned \
          ${settings.WORK_SALARY} and {settings.WORK_BONUS} exp**',
@@ -270,9 +320,9 @@ async def work(ctx):
 
 # Command: Stats
 # Description: Show user stats
-# Cooldown: 2 Seconds
+# Cooldown: 5 Seconds
 @bot.command()
-@cooldown(1, 2, BucketType.user)
+@cooldown(1, 5, BucketType.user)
 async def stats(ctx):
     query = f"""
         SELECT
@@ -303,7 +353,7 @@ async def stats(ctx):
     love = result[4]
     vip = result[5]
 
-    embed = discord.Embed(
+    embed = Embed(
         title='User Stats',
         description=f"**{ctx.author.name}'s Stats**",
         colour=Colour.green()
@@ -346,9 +396,9 @@ async def stats(ctx):
 
 # Command: Inventory
 # Description: Show user inventory
-# Cooldown: 2 Seconds
+# Cooldown: 5 Seconds
 @bot.command()
-@cooldown(1, 2, BucketType.user)
+@cooldown(1, 5, BucketType.user)
 async def inventory(ctx):
     query = f"""
         SELECT
@@ -401,7 +451,7 @@ async def inventory(ctx):
     minetransport = result[7]
     transportplane = result[8]
 
-    embed = discord.Embed(
+    embed = Embed(
         title='User Stats',
         description=f"**{ctx.author.name}'s Stats**",
         colour=Colour.green()
@@ -466,9 +516,9 @@ async def inventory(ctx):
 
 # Command: Shop
 # Description: Show user shop
-# Cooldown: 2 Seconds
+# Cooldown: 5 Seconds
 @bot.command()
-@cooldown(1, 2, BucketType.user)
+@cooldown(1, 5, BucketType.user)
 async def shop(ctx):
     query = f"""
         SELECT
@@ -486,7 +536,7 @@ async def shop(ctx):
         await ctx.send("TIP: `!register`")
         return
 
-    embed = discord.Embed(
+    embed = Embed(
         title='User Shop',
         description='Buy useful items and boosters!',
         colour=Colour.dark_gold()
@@ -554,9 +604,9 @@ async def shop(ctx):
 
 # Command: Buy
 # Description: Buy command for user shop
-# Cooldown: 2 Seconds
+# Cooldown: 5 Seconds
 @bot.command()
-@cooldown(1, 2, BucketType.user)
+@cooldown(1, 5, BucketType.user)
 async def buy(ctx, item):
     query = f"""
         SELECT
@@ -933,6 +983,15 @@ async def on_message(message):
     if message.content == 'hi':
         await message.channel.send('Hello!')
     await bot.process_commands(message)
+
+
+@help.error
+async def help_error(ctx, exc):
+    if isinstance(exc, CommandOnCooldown):
+        await ctx.send(
+            f"Hey <@!{ctx.author.id}> you really need help huh?" +
+            f" Why don't you wait for `{exc.retry_after:,.1f}` seconds?"
+        )
 
 
 @work.error
