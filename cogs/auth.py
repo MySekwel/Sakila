@@ -10,7 +10,6 @@ class Authentication(commands.Cog):
 
     # Command: Register
     # Description: Register to the database command to use other commands
-    # Cooldown: 5 Seconds
     @commands.command()
     async def register(self, ctx):
         query = """

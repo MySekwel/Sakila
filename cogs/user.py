@@ -31,8 +31,13 @@ class User(commands.Cog):
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
         if not result:
-            await ctx.send("**You are not registered to the database!**")
-            await ctx.send("TIP: `!register`")
+            embed = Embed(
+                title='ERROR',
+                description='You are not registered to the database!\n**TIP:** `!register`',
+                colour=Colour.red()
+            )
+            
+            await ctx.send(embed=embed)
             return
 
         await ctx.send(f"**{ctx.author.name}'s stats.**")
@@ -103,42 +108,55 @@ class User(commands.Cog):
         userid = result[0]
 
         if not result:
-            await ctx.send("**You are not registered to the database!**")
-            await ctx.send("TIP: `!register`")
+            embed = Embed(
+                title='ERROR',
+                description='You are not registered to the database!\n**TIP:** `!register`',
+                colour=Colour.red()
+            )
+            
+            await ctx.send(embed=embed)
             return
         query = f"""
-                SELECT
-                item_pickaxe,
-                item_drill,
-                item_jackhammer,
-                item_metal_detector,
-                item_gold_detector,
-                item_diamond_detector,
-                item_minecart,
-                item_minetransport,
-                item_transportplane
-                FROM
-                inventory
-                WHERE
-                uid={userid}
-            """
+            SELECT
+            item_pickaxe,
+            item_drill,
+            item_jackhammer,
+            item_metal_detector,
+            item_gold_detector,
+            item_diamond_detector,
+            item_minecart,
+            item_minetransport,
+            item_transportplane
+            FROM
+            inventory
+            WHERE
+            uid={userid}
+        """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
         if not result:
-            await ctx.send("**You are not registered to the database!**")
-            await ctx.send("TIP: `!register`")
+            embed = Embed(
+                title='ERROR',
+                description='You are not registered to the database!\n**TIP:** `!register`',
+                colour=Colour.red()
+            )
+            
+            await ctx.send(embed=embed)
             return
         await ctx.send(f"**{ctx.author.name}'s stats.**")
-        pickaxe = result[0]
-        drill = result[1]
-        jackhammer = result[2]
-        metal_detector = result[3]
-        gold_detector = result[4]
-        diamond_detector = result[5]
-        minecart = result[6]
-        minetransport = result[7]
-        transportplane = result[8]
+
+        item_name = {
+            'pickaxe': result[0],
+            'drill': result[1],
+            'jackhammer': result[2],
+            'metal_detector': result[3],
+            'gold_detector': result[4],
+            'diamond_detector': result[5],
+            'minecart': result[6],
+            'minetransport': result[7],
+            'transportplane': result[8],
+        }
 
         embed = Embed(
             title='User Stats',
@@ -148,58 +166,68 @@ class User(commands.Cog):
         embed.set_thumbnail(
             url='https://images.emojiterra.com/mozilla/512px/1f392.png'
         )
-        embed.add_field(
-            name='Pickaxe',
-            value=f':pick: `{pickaxe}`',
-            inline=True
-        )
-        emoji_drill = utils.get(self.bot.emojis, name='drill')
-        embed.add_field(
-            name='Drill',
-            value=f'{str(emoji_drill)} `{drill}`',
-            inline=True
-        )
-        emoji_jackhammer = utils.get(self.bot.emojis, name='jackhammer')
-        embed.add_field(
-            name='Jackhammer',
-            value=f'{str(emoji_jackhammer)} `{jackhammer}`',
-            inline=True
-        )
-        emoji_metal_detector = utils.get(self.bot.emojis, name='metal_detector')
-        embed.add_field(
-            name='Metal Detector',
-            value=f'{str(emoji_metal_detector)} `{metal_detector}`',
-            inline=True
-        )
-        emoji_gold_detector = utils.get(self.bot.emojis, name='metal_detector')
-        embed.add_field(
-            name='Gold Detector',
-            value=f'{str(emoji_gold_detector)} `{gold_detector}`',
-            inline=True
-        )
-        emoji_diamond_detector = utils.get(self.bot.emojis, name='metal_detector')
-        embed.add_field(
-            name='Diamond Detector',
-            value=f'{str(emoji_diamond_detector)} `{diamond_detector}`',
-            inline=True
-        )
-        emoji_minecart = utils.get(self.bot.emojis, name='minecart')
-        embed.add_field(
-            name='Mine Cart',
-            value=f'{str(emoji_minecart)} `{minecart}`',
-            inline=True
-        )
-        emoji_minetransport = utils.get(self.bot.emojis, name='minetransport')
-        embed.add_field(
-            name='Mine Transport',
-            value=f'{str(emoji_minetransport)} `{minetransport}`',
-            inline=True
-        )
-        embed.add_field(
-            name='Transport Plane',
-            value=f':airplane: `{transportplane}`',
-            inline=True
-        )
+        if item_name['pickaxe']:
+            embed.add_field(
+                name='Pickaxe',
+                value=f":pick: `{item_name['pickaxe']}`",
+                inline=True
+            )
+        if item_name['drill']:
+            emoji_drill = utils.get(self.bot.emojis, name='drill')
+            embed.add_field(
+                name='Drill',
+                value=f"{str(emoji_drill)} `{item_name['drill']}`",
+                inline=True
+            )
+        if item_name['jackhammer']:
+            emoji_jackhammer = utils.get(self.bot.emojis, name='jackhammer')
+            embed.add_field(
+                name='Jackhammer',
+                value=f"{str(emoji_jackhammer)} `{item_name['jackhammer']}`",
+                inline=True
+            )
+        if item_name['metal_detector']:
+            emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
+            embed.add_field(
+                name='Jackhammer',
+                value=f"{str(emoji_jackhammer)} `{item_name['metal_detector']}`",
+                inline=True
+            )
+        if item_name['gold_detector']:
+            emoji_jackhammer = utils.get(self.bot.emojis, name='gold_detector')
+            embed.add_field(
+                name='Jackhammer',
+                value=f"{str(emoji_jackhammer)} `{item_name['gold_detector']}`",
+                inline=True
+            )
+        if item_name['diamond_detector']:
+            emoji_jackhammer = utils.get(self.bot.emojis, name='diamond_detector')
+            embed.add_field(
+                name='Jackhammer',
+                value=f"{str(emoji_jackhammer)} `{item_name['diamond_detector']}`",
+                inline=True
+            )
+        if item_name['minecart']:
+            emoji_jackhammer = utils.get(self.bot.emojis, name='minecart')
+            embed.add_field(
+                name='Jackhammer',
+                value=f"{str(emoji_jackhammer)} `{item_name['minecart']}`",
+                inline=True
+            )
+        if item_name['minetransport']:
+            emoji_jackhammer = utils.get(self.bot.emojis, name='minetransport')
+            embed.add_field(
+                name='Jackhammer',
+                value=f"{str(emoji_jackhammer)} `{item_name['minetransport']}`",
+                inline=True
+            )
+        if item_name['transportplane']:
+            emoji_jackhammer = utils.get(self.bot.emojis, name='transportplane')
+            embed.add_field(
+                name='Jackhammer',
+                value=f"{str(emoji_jackhammer)} `{item_name['transportplane']}`",
+                inline=True
+            )
         await ctx.send(embed=embed)
 
     @stats.error

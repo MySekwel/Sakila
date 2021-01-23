@@ -93,7 +93,7 @@ for file in os.listdir('cogs'):
 # Just a simple command for testing
 @bot.command()
 async def debug(ctx):
-    await ctx.send('Debugging complete!')
+    await ctx.send('Debugging successful!')
 
 
 @bot.event

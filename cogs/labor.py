@@ -31,8 +31,13 @@ class Labor(commands.Cog):
         Connection.SQL_Handle.commit()
         uid = result[0]
         if not result:
-            await ctx.send("**You are not registered to the database!**")
-            await ctx.send("TIP: `!register`")
+            embed = Embed(
+                title='ERROR',
+                description='You are not registered to the database!\n**TIP:** `!register`',
+                colour=Colour.red()
+            )
+            
+            await ctx.send(embed=embed)
             return
 
         query = f"""
@@ -55,33 +60,37 @@ class Labor(commands.Cog):
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
 
-        pickaxe = result[0]
-        drill = result[1]
-        jackhammer = result[2]
-        metal_detector = result[3]
-        gold_detector = result[4]
-        diamond_detector = result[5]
+        tool_name = {
+            'pickaxe': result[0],
+            'drill': result[1],
+            'jackhammer': result[2],
+            'metal_detector': result[3],
+            'gold_detector': result[4],
+            'diamond_detector': result[5]
+        }
 
-        work_salary = 0
-        tool = 'Pickaxe'
+        work_salary = 100
+        default_salary = 100
+        tool = 'Shovel'
 
-        if pickaxe >= 1:
-            work_salary = settings.WORK_SALARY + settings.WORK_SALARY * 0.05
-        if drill >= 1:
+        if tool_name['pickaxe']:
+            tool = 'Pickaxe'
+            work_salary = default_salary + settings.WORK_SALARY * 0.05
+        if tool_name['drill']:
             tool = 'Drill'
-            work_salary = settings.WORK_SALARY + settings.WORK_SALARY * 0.10
-        if jackhammer >= 1:
+            work_salary = default_salary + settings.WORK_SALARY * 0.10
+        if tool_name['jackhammer']:
             tool = 'Jackhammer'
-            work_salary = settings.WORK_SALARY + settings.WORK_SALARY * 0.25
-        if metal_detector >= 1:
+            work_salary = default_salary + settings.WORK_SALARY * 0.25
+        if tool_name['metal_detector']:
             tool = 'Metal Detector'
-            work_salary = settings.WORK_SALARY + settings.WORK_SALARY_BONUS + 10
-        if gold_detector >= 1:
+            work_salary = default_salary + settings.WORK_SALARY * 0.35
+        if tool_name['gold_detector']:
             tool = 'Gold Detector'
-            work_salary = settings.WORK_SALARY + settings.WORK_SALARY * 0.50
-        if diamond_detector >= 1:
+            work_salary = default_salary + settings.WORK_SALARY * 0.50
+        if tool_name['diamond_detector']:
             tool = 'Diamond Detector'
-            work_salary = settings.WORK_SALARY + settings.WORK_SALARY * 0.75
+            work_salary = default_salary + settings.WORK_SALARY * 0.75
 
         mining = utils.get(self.bot.emojis, name='mining')
         embed = Embed(

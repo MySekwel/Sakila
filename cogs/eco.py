@@ -28,8 +28,13 @@ class Economy(commands.Cog):
         Connection.SQL_Handle.commit()
         cash = result[4]
         if not result:
-            await ctx.send("**You are not registered to the database!**")
-            await ctx.send("TIP: `!register`")
+            embed = Embed(
+                title='ERROR',
+                description='You are not registered to the database!\n**TIP:** `!register`',
+                colour=Colour.red()
+            )
+
+            await ctx.send(embed=embed)
             return
         query = f"""
             SELECT
@@ -64,24 +69,23 @@ class Economy(commands.Cog):
         Connection.SQL_Handle.commit()
         # - Item Variable Declaration
         # Store fetched data from the query
-        item_pickaxe = result[0]
-        item_drill = result[1]
-        item_jackhammer = result[2]
-        item_metal_detector = result[3]
-        item_gold_detector = result[4]
-        item_diamond_detector = result[5]
-        item_minecart = result[6]
-        item_minetransport = result[7]
-        item_transportplane = result[8]
-        # - Item checks
-        # No input
-        if int(item) == 0:
-            await ctx.send("USAGE: !buy [item id]")
+        item_name = {
+            'pickaxe': result[0],
+            'drill': result[1],
+            'jackhammer': result[2],
+            'metal_detector': result[3],
+            'gold_detector': result[4],
+            'diamond_detector': result[5],
+            'minecart': result[6],
+            'minetransport': result[7],
+            'transportplane': result[8]
+        }
+
         # Item: Pickaxe
         # Price: 500
         # Description: %5 Work Salary Bonus
         if int(item) == 1:
-            if item_pickaxe >= 1:
+            if item_name['pickaxe'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_PICKAXE:
@@ -114,7 +118,7 @@ class Economy(commands.Cog):
         # Price: 2500
         # Description: %10 Work Salary Bonus
         elif int(item) == 2:
-            if item_drill >= 1:
+            if item_name['drill'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_DRILL:
@@ -147,7 +151,7 @@ class Economy(commands.Cog):
         # Price: 5000
         # Description: %25 Work Salary Bonus
         elif int(item) == 3:
-            if item_jackhammer >= 1:
+            if item_name['jackhammer'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_JACKHAMMER:
@@ -180,7 +184,7 @@ class Economy(commands.Cog):
         # Price: 7500
         # Description: %35 Work Salary Bonus
         elif int(item) == 4:
-            if item_metal_detector >= 1:
+            if item_name['metal_detector'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_METALDETECTOR:
@@ -213,7 +217,7 @@ class Economy(commands.Cog):
         # Price: 15000
         # Description: %50 Work Salary Bonus
         elif int(item) == 5:
-            if item_gold_detector >= 1:
+            if item_name['gold_detector'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_GOLDDETECTOR:
@@ -246,7 +250,7 @@ class Economy(commands.Cog):
         # Price: 25000
         # Description: %75 Work Salary Bonus
         elif int(item) == 6:
-            if item_diamond_detector >= 1:
+            if item_name['diamond_detector'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_DIAMONDDETECTOR:
@@ -279,7 +283,7 @@ class Economy(commands.Cog):
         # Price: 35000
         # Description: -%10 Work Cooldown
         elif int(item) == 7:
-            if item_minecart >= 1:
+            if item_name['minecart'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_MINECART:
@@ -312,7 +316,7 @@ class Economy(commands.Cog):
         # Price: 55000
         # Description: -%25 Work Cooldown
         elif int(item) == 8:
-            if item_minetransport >= 1:
+            if item_name['minetransport'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_MINETRANSPORT:
@@ -345,7 +349,7 @@ class Economy(commands.Cog):
         # Price: 150000
         # Description: -%50 Work Cooldown
         elif int(item) == 9:
-            if item_transportplane >= 1:
+            if item_name['transportplane'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_TRANSPORTPLANE:
@@ -374,6 +378,349 @@ class Economy(commands.Cog):
             Connection.SQL_Handle.commit()
 
             await ctx.send(f"You have bought a `transport plane` for ${settings.PRICE_TRANSPORTPLANE}!")
+        else:
+            await ctx.send("USAGE: !buy [item id]")
+
+    @commands.command()
+    @cooldown(1, 5, BucketType.user)
+    async def sell(self, ctx, item=0):
+        query = f"""
+            SELECT
+            *
+            FROM
+            users
+            WHERE
+            user_id={ctx.author.id}
+        """
+        Connection.SQL_Cursor.execute(query)
+        result = Connection.SQL_Cursor.fetchone()
+        Connection.SQL_Handle.commit()
+        userid = result[0]
+        if not result:
+            embed = Embed(
+                title='ERROR',
+                description='You are not registered to the database!\n**TIP:** `!register`',
+                colour=Colour.red()
+            )
+            await ctx.send(embed=embed)
+        query = f"""
+            SELECT
+            item_pickaxe,
+            item_drill,
+            item_jackhammer,
+            item_metal_detector,
+            item_gold_detector,
+            item_diamond_detector,
+            item_minecart,
+            item_minetransport,
+            item_transportplane
+            FROM
+            inventory
+            WHERE
+            uid={userid}
+        """
+        Connection.SQL_Cursor.execute(query)
+        result = Connection.SQL_Cursor.fetchone()
+        Connection.SQL_Handle.commit()
+
+        item_name = {
+            'pickaxe': result[0],
+            'drill': result[1],
+            'jackhammer': result[2],
+            'metal_detector': result[3],
+            'gold_detector': result[4],
+            'diamond_detector': result[5],
+            'minecart': result[6],
+            'minetransport': result[7],
+            'transportplane': result[8]
+        }
+        if int(item) == 1:
+            if item_name['pickaxe']:
+                query = f"""
+                    UPDATE
+                    users
+                    SET
+                    user_cash=user_cash+?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_PICKAXE * 0.5,))
+                Connection.SQL_Handle.commit()
+                query = f"""
+                    UPDATE
+                    inventory
+                    SET
+                    item_pickaxe=item_pickaxe-?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (1,))
+                Connection.SQL_Handle.commit()
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold your `Pickaxe` for `${settings.PRICE_PICKAXE * 0.5}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send("You do not have a Pickaxe!")
+
+        if int(item) == 2:
+            if item_name['drill']:
+                query = f"""
+                    UPDATE
+                    users
+                    SET
+                    user_cash=user_cash+?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DRILL * 0.5,))
+                Connection.SQL_Handle.commit()
+                query = f"""
+                    UPDATE
+                    inventory
+                    SET
+                    item_drill=item_drill-?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (1,))
+                Connection.SQL_Handle.commit()
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold your `Drill` for `${settings.PRICE_DRILL * 0.5}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send("You do not have a Drill!")
+
+        if int(item) == 3:
+            if item_name['jackhammer']:
+                query = f"""
+                    UPDATE
+                    users
+                    SET
+                    user_cash=user_cash+?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_JACKHAMMER * 0.5,))
+                Connection.SQL_Handle.commit()
+                query = f"""
+                    UPDATE
+                    inventory
+                    SET
+                    item_jackhammer=item_jackhammer-?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (1,))
+                Connection.SQL_Handle.commit()
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold your `Jackhammer` for `${settings.PRICE_JACKHAMMER * 0.5}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send("You do not have a Jackhammer!")
+
+        if int(item) == 4:
+            if item_name['metal_detector']:
+                query = f"""
+                    UPDATE
+                    users
+                    SET
+                    user_cash=user_cash+?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_METALDETECTOR * 0.5,))
+                Connection.SQL_Handle.commit()
+                query = f"""
+                    UPDATE
+                    inventory
+                    SET
+                    item_metal_detector=item_metal_detector-?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (1,))
+                Connection.SQL_Handle.commit()
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold your `Metal Detector` for `${settings.PRICE_METALDETECTOR * 0.5}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send("You do not have a Metal Detector!")
+
+        if int(item) == 5:
+            if item_name['gold_detector']:
+                query = f"""
+                    UPDATE
+                    users
+                    SET
+                    user_cash=user_cash+?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_GOLDDETECTOR * 0.5,))
+                Connection.SQL_Handle.commit()
+                query = f"""
+                    UPDATE
+                    inventory
+                    SET
+                    item_gold_detector=item_gold_detector-?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (1,))
+                Connection.SQL_Handle.commit()
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold your `Gold Detector` for `${settings.PRICE_GOLDDETECTOR * 0.5}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send("You do not have a Gold Detector!")
+
+        if int(item) == 6:
+            if item_name['diamond_detector']:
+                query = f"""
+                    UPDATE
+                    users
+                    SET
+                    user_cash=user_cash+?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DIAMONDDETECTOR * 0.5,))
+                Connection.SQL_Handle.commit()
+                query = f"""
+                    UPDATE
+                    inventory
+                    SET
+                    item_diamond_detector=item_diamond_detector-?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (1,))
+                Connection.SQL_Handle.commit()
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold your `Diamond Detector` for `${settings.PRICE_DIAMONDDETECTOR * 0.5}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send("You do not have a Diamond Detector!")
+
+        if int(item) == 7:
+            if item_name['minecart']:
+                query = f"""
+                    UPDATE
+                    users
+                    SET
+                    user_cash=user_cash+?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINECART * 0.5,))
+                Connection.SQL_Handle.commit()
+                query = f"""
+                    UPDATE
+                    inventory
+                    SET
+                    item_minecart=item_minecart-?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (1,))
+                Connection.SQL_Handle.commit()
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold your `Mine Cart` for `${settings.PRICE_MINECART * 0.5}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send("You do not have a Mine Cart!")
+
+        if int(item) == 8:
+            if item_name['minetransport']:
+                query = f"""
+                    UPDATE
+                    users
+                    SET
+                    user_cash=user_cash+?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINETRANSPORT * 0.5,))
+                Connection.SQL_Handle.commit()
+                query = f"""
+                    UPDATE
+                    inventory
+                    SET
+                    item_mine_transport=item_mine_transport-?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (1,))
+                Connection.SQL_Handle.commit()
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold your `Mine Transport` for `${settings.PRICE_MINETRANSPORT * 0.5}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send("You do not have a Mine Transport!")
+
+        if int(item) == 9:
+            if item_name['transportplane']:
+                query = f"""
+                    UPDATE
+                    users
+                    SET
+                    user_cash=user_cash+?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_TRANSPORTPLANE * 0.5,))
+                Connection.SQL_Handle.commit()
+                query = f"""
+                    UPDATE
+                    inventory
+                    SET
+                    item_transportplane=item_transportplane-?
+                    WHERE
+                    uid={userid}
+                """
+                Connection.SQL_Cursor.execute(query, (1,))
+                Connection.SQL_Handle.commit()
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold your `Transport Plane` for `${settings.PRICE_TRANSPORTPLANE * 0.5}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send("You do not have a Transport Plane!")
 
     # Command: Shop
     # Description: Show user shop
@@ -393,8 +740,12 @@ class Economy(commands.Cog):
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
         if not result:
-            await ctx.send("**You are not registered to the database!**")
-            await ctx.send("TIP: `!register`")
+            embed = Embed(
+                title='ERROR',
+                description='You are not registered to the database!\n**TIP:** `!register`',
+                colour=Colour.red()
+            )
+            await ctx.send(embed=embed)
             return
 
         embed = Embed(
@@ -467,6 +818,14 @@ class Economy(commands.Cog):
         if isinstance(exc, CommandOnCooldown):
             await ctx.send(
                 f"Hey <@!{ctx.author.id}> be chill on buying stuffs bro," +
+                f" why don't you wait for `{exc.retry_after:,.1f}` seconds?"
+            )
+
+    @shop.error
+    async def shop_error(self, ctx, exc):
+        if isinstance(exc, CommandOnCooldown):
+            await ctx.send(
+                f"Whoa whoa <@!{ctx.author.id}> didn't you already see the menu?" +
                 f" why don't you wait for `{exc.retry_after:,.1f}` seconds?"
             )
 
