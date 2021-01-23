@@ -1,7 +1,7 @@
 import mysql.connector
 from discord.ext import commands
 
-import main
+from main import Connection
 
 
 class Authentication(commands.Cog):
@@ -19,9 +19,9 @@ class Authentication(commands.Cog):
             FROM
             users
         """
-        main.SQL_Cursor.execute(query)
-        result = main.SQL_Cursor.fetchone()
-        main.SQL_Handle.commit()
+        Connection.SQL_Cursor.execute(query)
+        result = Connection.SQL_Cursor.fetchone()
+        Connection.SQL_Handle.commit()
         lastid = result[0]
         if lastid:
             lastid = lastid + 1
@@ -63,8 +63,8 @@ class Authentication(commands.Cog):
                 0,
                 'None'
             )
-            main.SQL_Prepared_Cursor.execute(query, stats_values)
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, stats_values)
+            Connection.SQL_Handle.commit()
             query = f"""
                 SELECT
                 uid
@@ -73,9 +73,9 @@ class Authentication(commands.Cog):
                 WHERE
                 user_id={ctx.author.id}
             """
-            main.SQL_Cursor.execute(query)
-            result = main.SQL_Cursor.fetchone()
-            main.SQL_Handle.commit()
+            Connection.SQL_Cursor.execute(query)
+            result = Connection.SQL_Cursor.fetchone()
+            Connection.SQL_Handle.commit()
             uid = result[0]
             query = """
                 INSERT INTO
@@ -116,8 +116,8 @@ class Authentication(commands.Cog):
                 0,
                 0,
             )
-            main.SQL_Prepared_Cursor.execute(query, inventory_values)
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, inventory_values)
+            Connection.SQL_Handle.commit()
         except mysql.connector.Error as err:
             print("Something went wrong: {}".format(err))
             await ctx.send("**You are already registered to the database!**")

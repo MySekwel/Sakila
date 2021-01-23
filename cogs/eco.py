@@ -1,7 +1,7 @@
 from discord import Embed, Colour, utils
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
-import main
+from main import Connection
 import settings
 
 
@@ -23,9 +23,9 @@ class Economy(commands.Cog):
             WHERE
             user_id={ctx.author.id}
         """
-        main.SQL_Cursor.execute(query)
-        result = main.SQL_Cursor.fetchone()
-        main.SQL_Handle.commit()
+        Connection.SQL_Cursor.execute(query)
+        result = Connection.SQL_Cursor.fetchone()
+        Connection.SQL_Handle.commit()
         cash = result[4]
         if not result:
             await ctx.send("**You are not registered to the database!**")
@@ -39,9 +39,9 @@ class Economy(commands.Cog):
             WHERE
             user_id={ctx.author.id}
         """
-        main.SQL_Cursor.execute(query)
-        result = main.SQL_Cursor.fetchone()
-        main.SQL_Handle.commit()
+        Connection.SQL_Cursor.execute(query)
+        result = Connection.SQL_Cursor.fetchone()
+        Connection.SQL_Handle.commit()
         userid = result[0]
         query = f"""
             SELECT
@@ -59,9 +59,9 @@ class Economy(commands.Cog):
             WHERE
             uid={userid}
         """
-        main.SQL_Cursor.execute(query)
-        result = main.SQL_Cursor.fetchone()
-        main.SQL_Handle.commit()
+        Connection.SQL_Cursor.execute(query)
+        result = Connection.SQL_Cursor.fetchone()
+        Connection.SQL_Handle.commit()
         # - Item Variable Declaration
         # Store fetched data from the query
         item_pickaxe = result[0]
@@ -95,8 +95,8 @@ class Economy(commands.Cog):
                 WHERE
                 uid={userid}
             """
-            main.SQL_Prepared_Cursor.execute(query, (1,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Handle.commit()
 
             query = f"""
                 UPDATE
@@ -106,8 +106,8 @@ class Economy(commands.Cog):
                 WHERE
                 user_id={ctx.author.id}
             """
-            main.SQL_Prepared_Cursor.execute(query, (settings.PRICE_PICKAXE,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_PICKAXE,))
+            Connection.SQL_Handle.commit()
 
             await ctx.send(f"You have bought a `pickaxe` for ${settings.PRICE_PICKAXE}!")
         # Item: Drill
@@ -128,8 +128,8 @@ class Economy(commands.Cog):
                 WHERE
                 uid={userid}
             """
-            main.SQL_Prepared_Cursor.execute(query, (1,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Handle.commit()
 
             query = f"""
                 UPDATE
@@ -139,8 +139,8 @@ class Economy(commands.Cog):
                 WHERE
                 user_id={ctx.author.id}
             """
-            main.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DRILL,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DRILL,))
+            Connection.SQL_Handle.commit()
 
             await ctx.send(f"You have bought a `drill` for ${settings.PRICE_DRILL}!")
         # Item: Jackhammer
@@ -161,8 +161,8 @@ class Economy(commands.Cog):
                 WHERE
                 uid={userid}
             """
-            main.SQL_Prepared_Cursor.execute(query, (1,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Handle.commit()
 
             query = f"""
                 UPDATE
@@ -172,8 +172,8 @@ class Economy(commands.Cog):
                 WHERE
                 user_id={ctx.author.id}
             """
-            main.SQL_Prepared_Cursor.execute(query, (settings.PRICE_JACKHAMMER,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_JACKHAMMER,))
+            Connection.SQL_Handle.commit()
 
             await ctx.send(f"You have bought a `jackhammer` for ${settings.PRICE_JACKHAMMER}!")
         # Item: Metal Detector
@@ -194,8 +194,8 @@ class Economy(commands.Cog):
                 WHERE
                 uid={userid}
             """
-            main.SQL_Prepared_Cursor.execute(query, (1,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Handle.commit()
 
             query = f"""
                 UPDATE
@@ -205,8 +205,8 @@ class Economy(commands.Cog):
                 WHERE
                 user_id={ctx.author.id}
             """
-            main.SQL_Prepared_Cursor.execute(query, (settings.PRICE_METALDETECTOR,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_METALDETECTOR,))
+            Connection.SQL_Handle.commit()
 
             await ctx.send(f"You have bought a `metal detector` for ${settings.PRICE_METALDETECTOR}!")
         # Item: Gold Detector
@@ -227,8 +227,8 @@ class Economy(commands.Cog):
                 WHERE
                 uid={userid}
             """
-            main.SQL_Prepared_Cursor.execute(query, (1,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Handle.commit()
 
             query = f"""
                 UPDATE
@@ -238,8 +238,8 @@ class Economy(commands.Cog):
                 WHERE
                 user_id={ctx.author.id}
             """
-            main.SQL_Prepared_Cursor.execute(query, (settings.PRICE_GOLDDETECTOR,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_GOLDDETECTOR,))
+            Connection.SQL_Handle.commit()
 
             await ctx.send(f"You have bought a `gold detector` for ${settings.PRICE_GOLDDETECTOR}!")
         # Item: Diamond Detector
@@ -260,8 +260,8 @@ class Economy(commands.Cog):
                 WHERE
                 uid={userid}
             """
-            main.SQL_Prepared_Cursor.execute(query, (1,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Handle.commit()
 
             query = f"""
                 UPDATE
@@ -271,8 +271,8 @@ class Economy(commands.Cog):
                 WHERE
                 user_id={ctx.author.id}
             """
-            main.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DIAMONDDETECTOR,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DIAMONDDETECTOR,))
+            Connection.SQL_Handle.commit()
 
             await ctx.send(f"You have bought a `diamond detector` for ${settings.PRICE_DIAMONDDETECTOR}!")
         # Item: Mine Cart
@@ -293,8 +293,8 @@ class Economy(commands.Cog):
                 WHERE
                 uid={userid}
             """
-            main.SQL_Prepared_Cursor.execute(query, (1,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Handle.commit()
 
             query = f"""
                 UPDATE
@@ -304,8 +304,8 @@ class Economy(commands.Cog):
                 WHERE
                 user_id={ctx.author.id}
             """
-            main.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINECART,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINECART,))
+            Connection.SQL_Handle.commit()
 
             await ctx.send(f"You have bought a `minecart` for ${settings.PRICE_MINECART}!")
         # Item: Mine Transport
@@ -326,8 +326,8 @@ class Economy(commands.Cog):
                 WHERE
                 uid={userid}
             """
-            main.SQL_Prepared_Cursor.execute(query, (1,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Handle.commit()
 
             query = f"""
                 UPDATE
@@ -337,8 +337,8 @@ class Economy(commands.Cog):
                 WHERE
                 user_id={ctx.author.id}
             """
-            main.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINETRANSPORT,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINETRANSPORT,))
+            Connection.SQL_Handle.commit()
 
             await ctx.send(f"You have bought a `mine transport` for ${settings.PRICE_MINETRANSPORT}!")
         # Item: Transport Plane
@@ -359,8 +359,8 @@ class Economy(commands.Cog):
                 WHERE
                 uid={userid}
             """
-            main.SQL_Prepared_Cursor.execute(query, (1,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Handle.commit()
 
             query = f"""
                 UPDATE
@@ -370,8 +370,8 @@ class Economy(commands.Cog):
                 WHERE
                 user_id={ctx.author.id}
             """
-            main.SQL_Prepared_Cursor.execute(query, (settings.PRICE_TRANSPORTPLANE,))
-            main.SQL_Handle.commit()
+            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_TRANSPORTPLANE,))
+            Connection.SQL_Handle.commit()
 
             await ctx.send(f"You have bought a `transport plane` for ${settings.PRICE_TRANSPORTPLANE}!")
 
@@ -389,9 +389,9 @@ class Economy(commands.Cog):
             WHERE
             user_id={ctx.author.id}
         """
-        main.SQL_Cursor.execute(query)
-        result = main.SQL_Cursor.fetchone()
-        main.SQL_Handle.commit()
+        Connection.SQL_Cursor.execute(query)
+        result = Connection.SQL_Cursor.fetchone()
+        Connection.SQL_Handle.commit()
         if not result:
             await ctx.send("**You are not registered to the database!**")
             await ctx.send("TIP: `!register`")
