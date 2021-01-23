@@ -1,8 +1,6 @@
 import os
 import mysql.connector
-from discord import Colour, Embed
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 import settings
 
 # Discord Bot Token variable
@@ -98,82 +96,11 @@ async def debug(ctx):
     await ctx.send('Debugging complete!')
 
 
-# Command: Help
-# Description: Shows the list of available commands.
-# Cooldown: 5 seconds
-@bot.command()
-@cooldown(1, 5, BucketType.user)
-async def help(ctx):
-    embed = Embed(
-        title='Help',
-        description='List of commands:',
-        colour=Colour.dark_orange()
-    )
-    embed.set_thumbnail(url='https://i.imgur.com/bObV3r5.png')
-    embed.add_field(
-        name='Command: !Help',
-        value='**Description:** Shows the list of available commands.',
-        inline=False
-    )
-    embed.add_field(
-        name='Command: !Register',
-        value='**Description:** Register to the database to use the other commands.',
-        inline=False
-    )
-    embed.add_field(
-        name='Command: !Ping',
-        value='**Description:** Shows user latency.',
-        inline=False
-    )
-    embed.add_field(
-        name='Command: !Work',
-        value='**Description:** Mine to earn money.',
-        inline=False
-    )
-    embed.add_field(
-        name='Command: !Stats',
-        value='**Description:** Show user stats.',
-        inline=False
-    )
-    embed.add_field(
-        name='Command: !Shop',
-        value='**Description:** Show user shop.',
-        inline=False
-    )
-    embed.add_field(
-        name='Command: !Buy',
-        value='**Description:** Buy command for user shop.',
-        inline=False
-    )
-    await ctx.send(embed=embed)
-
-
-@bot.event
-async def on_message(message):
-    # Check if the user who sent the message is not the bot itself
-    if message.author.id == bot.user.id:
-        return
-
-    if message.content == 'hi':
-        await message.channel.send('Hello!')
-    await bot.process_commands(message)
-
-
-@help.error
-async def help_error(ctx, exc):
-    if isinstance(exc, CommandOnCooldown):
-        await ctx.send(
-            f"Hey <@!{ctx.author.id}> you really need help huh?" +
-            f" Why don't you wait for `{exc.retry_after:,.1f}` seconds?"
-        )
-
-
 @bot.event
 async def on_ready():
     for guild in bot.guilds:
         if guild.name == settings.GUILD:
             break
         print(f"{bot.user} is connected to the following guild: {guild.name}")
-
 
 bot.run(TOKEN)
