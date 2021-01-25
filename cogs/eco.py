@@ -466,7 +466,7 @@ class Economy(commands.Cog):
             else:
                 await ctx.send("You do not have a Pickaxe!")
 
-        if int(item) == 2:
+        elif int(item) == 2:
             if item_name['drill']:
                 query = f"""
                     UPDATE
@@ -498,7 +498,7 @@ class Economy(commands.Cog):
             else:
                 await ctx.send("You do not have a Drill!")
 
-        if int(item) == 3:
+        elif int(item) == 3:
             if item_name['jackhammer']:
                 query = f"""
                     UPDATE
@@ -530,7 +530,7 @@ class Economy(commands.Cog):
             else:
                 await ctx.send("You do not have a Jackhammer!")
 
-        if int(item) == 4:
+        elif int(item) == 4:
             if item_name['metal_detector']:
                 query = f"""
                     UPDATE
@@ -562,7 +562,7 @@ class Economy(commands.Cog):
             else:
                 await ctx.send("You do not have a Metal Detector!")
 
-        if int(item) == 5:
+        elif int(item) == 5:
             if item_name['gold_detector']:
                 query = f"""
                     UPDATE
@@ -594,7 +594,7 @@ class Economy(commands.Cog):
             else:
                 await ctx.send("You do not have a Gold Detector!")
 
-        if int(item) == 6:
+        elif int(item) == 6:
             if item_name['diamond_detector']:
                 query = f"""
                     UPDATE
@@ -626,7 +626,7 @@ class Economy(commands.Cog):
             else:
                 await ctx.send("You do not have a Diamond Detector!")
 
-        if int(item) == 7:
+        elif int(item) == 7:
             if item_name['minecart']:
                 query = f"""
                     UPDATE
@@ -658,7 +658,7 @@ class Economy(commands.Cog):
             else:
                 await ctx.send("You do not have a Mine Cart!")
 
-        if int(item) == 8:
+        elif int(item) == 8:
             if item_name['minetransport']:
                 query = f"""
                     UPDATE
@@ -690,7 +690,7 @@ class Economy(commands.Cog):
             else:
                 await ctx.send("You do not have a Mine Transport!")
 
-        if int(item) == 9:
+        elif int(item) == 9:
             if item_name['transportplane']:
                 query = f"""
                     UPDATE
@@ -721,6 +721,13 @@ class Economy(commands.Cog):
                 await ctx.send(embed=embed)
             else:
                 await ctx.send("You do not have a Transport Plane!")
+        else:
+            embed = Embed(
+                title='USAGE:',
+                description='!sell [item id]',
+                colour=Colour.dark_gold()
+            )
+            await ctx.send(embed=embed)
 
     # Command: Shop
     # Description: Show user shop

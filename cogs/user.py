@@ -15,18 +15,18 @@ class User(commands.Cog):
     @cooldown(1, 5, BucketType.user)
     async def stats(self, ctx):
         query = f"""
-                SELECT
-                user_cash,
-                user_diamonds,
-                user_exp,
-                user_reputation,
-                user_love,
-                user_vip
-                FROM
-                users
-                WHERE
-                user_id={ctx.author.id}
-            """
+            SELECT
+            user_cash,
+            user_diamonds,
+            user_exp,
+            user_reputation,
+            user_love,
+            user_vip
+            FROM
+            users
+            WHERE
+            user_id={ctx.author.id}
+        """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
@@ -95,13 +95,13 @@ class User(commands.Cog):
     @cooldown(1, 5, BucketType.user)
     async def inventory(self, ctx):
         query = f"""
-                SELECT
-                uid
-                FROM
-                users
-                WHERE
-                user_id={ctx.author.id}
-            """
+            SELECT
+            uid
+            FROM
+            users
+            WHERE
+            user_id={ctx.author.id}
+        """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
@@ -144,7 +144,7 @@ class User(commands.Cog):
             
             await ctx.send(embed=embed)
             return
-        await ctx.send(f"**{ctx.author.name}'s stats.**")
+        await ctx.send(f"**{ctx.author.name}'s inventory.**")
 
         item_name = {
             'pickaxe': result[0],
@@ -155,12 +155,12 @@ class User(commands.Cog):
             'diamond_detector': result[5],
             'minecart': result[6],
             'minetransport': result[7],
-            'transportplane': result[8],
+            'transportplane': result[8]
         }
 
         embed = Embed(
             title='User Stats',
-            description=f"**{ctx.author.name}'s Stats**",
+            description=f"**{ctx.author.name}'s Inventory**",
             colour=Colour.green()
         )
         embed.set_thumbnail(
@@ -168,63 +168,63 @@ class User(commands.Cog):
         )
         if item_name['pickaxe']:
             embed.add_field(
-                name='Pickaxe',
+                name='1. Pickaxe',
                 value=f":pick: `{item_name['pickaxe']}`",
                 inline=True
             )
         if item_name['drill']:
             emoji_drill = utils.get(self.bot.emojis, name='drill')
             embed.add_field(
-                name='Drill',
+                name='2. Drill',
                 value=f"{str(emoji_drill)} `{item_name['drill']}`",
                 inline=True
             )
         if item_name['jackhammer']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='jackhammer')
             embed.add_field(
-                name='Jackhammer',
+                name='3. Jackhammer',
                 value=f"{str(emoji_jackhammer)} `{item_name['jackhammer']}`",
                 inline=True
             )
         if item_name['metal_detector']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
             embed.add_field(
-                name='Jackhammer',
+                name='4. Metal Detector',
                 value=f"{str(emoji_jackhammer)} `{item_name['metal_detector']}`",
                 inline=True
             )
         if item_name['gold_detector']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='gold_detector')
             embed.add_field(
-                name='Jackhammer',
+                name='5. Gold Detector',
                 value=f"{str(emoji_jackhammer)} `{item_name['gold_detector']}`",
                 inline=True
             )
         if item_name['diamond_detector']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='diamond_detector')
             embed.add_field(
-                name='Jackhammer',
+                name='6. Diamond Detector',
                 value=f"{str(emoji_jackhammer)} `{item_name['diamond_detector']}`",
                 inline=True
             )
         if item_name['minecart']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='minecart')
             embed.add_field(
-                name='Jackhammer',
+                name='7. Mine Cart',
                 value=f"{str(emoji_jackhammer)} `{item_name['minecart']}`",
                 inline=True
             )
         if item_name['minetransport']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='minetransport')
             embed.add_field(
-                name='Jackhammer',
+                name='8. Mine Transport',
                 value=f"{str(emoji_jackhammer)} `{item_name['minetransport']}`",
                 inline=True
             )
         if item_name['transportplane']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='transportplane')
             embed.add_field(
-                name='Jackhammer',
+                name='9. Transport Plane',
                 value=f"{str(emoji_jackhammer)} `{item_name['transportplane']}`",
                 inline=True
             )

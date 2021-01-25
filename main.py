@@ -103,4 +103,5 @@ async def on_ready():
             break
         print(f"{bot.user} is connected to the following guild: {guild.name}")
 
+
 bot.run(TOKEN)
