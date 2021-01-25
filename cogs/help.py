@@ -2,7 +2,7 @@ from discord import Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 from disputils import BotEmbedPaginator
-import emoji_dictionary as emojii
+from utils import emoji_dictionary as emojii
 
 
 def empty_field(embed):
