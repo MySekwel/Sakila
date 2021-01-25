@@ -15,8 +15,32 @@ from discord import Embed, Colour, utils
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 
+from cogs.user import slot_item
 from main import Connection
 from utils import settings
+
+
+def slot(itemname, price, userid, amount=1):
+    query = f"""
+        UPDATE
+        users
+        SET
+        user_cash=user_cash+?
+        WHERE
+        uid={userid}
+    """
+    Connection.SQL_Prepared_Cursor.execute(query, (price,))
+    Connection.SQL_Handle.commit()
+    query = f"""
+        UPDATE
+        inventory
+        SET
+        {itemname}={itemname}-?
+        WHERE
+        uid={userid}
+    """
+    Connection.SQL_Prepared_Cursor.execute(query, (amount,))
+    Connection.SQL_Handle.commit()
 
 
 class Economy(commands.Cog):
@@ -397,7 +421,7 @@ class Economy(commands.Cog):
 
     @commands.command()
     @cooldown(1, 10, BucketType.user)
-    async def sell(self, ctx, item=0):
+    async def sell(self, ctx, item=0, amount=0):
         query = f"""
             SELECT
             *
@@ -427,7 +451,10 @@ class Economy(commands.Cog):
             item_diamond_detector,
             item_minecart,
             item_minetransport,
-            item_transportplane
+            item_transportplane,
+            metal_metal,
+            metal_gold,
+            metal_diamond
             FROM
             inventory
             WHERE
@@ -446,295 +473,220 @@ class Economy(commands.Cog):
             'diamond_detector': result[5],
             'minecart': result[6],
             'minetransport': result[7],
-            'transportplane': result[8]
+            'transportplane': result[8],
+            'metal': result[9],
+            'gold': result[10],
+            'diamond': result[11],
         }
-        if int(item) == 1:
+        slot_num = 0
+        if item_name['pickaxe']:
+            slot_num += 1
+            slot_item['pickaxe'] = slot_num
+        if item_name['drill']:
+            slot_num += 1
+            slot_item['drill'] = slot_num
+        if item_name['jackhammer']:
+            slot_num += 1
+            slot_item['jackhammer'] = slot_num
+        if item_name['metal_detector']:
+            slot_num += 1
+            slot_item['metal_detector'] = slot_num
+        if item_name['gold_detector']:
+            slot_num += 1
+            slot_item['gold_detector'] = slot_num
+        if item_name['diamond_detector']:
+            slot_num += 1
+            slot_item['diamond_detector'] = slot_num
+        if item_name['minecart']:
+            slot_num += 1
+            slot_item['minecart'] = slot_num
+        if item_name['minetransport']:
+            slot_num += 1
+            slot_item['minetransport'] = slot_num
+        if item_name['transportplane']:
+            slot_num += 1
+            slot_item['transportplane'] = slot_num
+        if item_name['metal']:
+            slot_num += 1
+            slot_item['metal'] = slot_num
+        if item_name['gold']:
+            slot_num += 1
+            slot_item['gold'] = slot_num
+        if item_name['diamond']:
+            slot_num += 1
+            slot_item['diamond'] = slot_num
+        if not int(item):
+            embed = Embed(
+                title='USAGE:',
+                description='!sell [item id]',
+                colour=Colour.dark_gold()
+            )
+            await ctx.send(embed=embed)
+            return
+
+        if int(item) == slot_item['pickaxe']:
             if item_name['pickaxe']:
-                query = f"""
-                    UPDATE
-                    users
-                    SET
-                    user_cash=user_cash+?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_PICKAXE * 0.5,))
-                Connection.SQL_Handle.commit()
-                query = f"""
-                    UPDATE
-                    inventory
-                    SET
-                    item_pickaxe=item_pickaxe-?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (1,))
-                Connection.SQL_Handle.commit()
+                slot('item_pickaxe', settings.PRICE_PICKAXE * 0.5, userid)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold your `Pickaxe` for `${settings.PRICE_PICKAXE * 0.5}`\
+                    description=f'You have sold your pickaxe for `${settings.PRICE_PICKAXE * 0.5}`\
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
                 await ctx.send(embed=embed)
-            else:
-                await ctx.send("You do not have a Pickaxe!")
 
-        elif int(item) == 2:
+        elif int(item) == slot_item['drill']:
             if item_name['drill']:
-                query = f"""
-                    UPDATE
-                    users
-                    SET
-                    user_cash=user_cash+?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DRILL * 0.5,))
-                Connection.SQL_Handle.commit()
-                query = f"""
-                    UPDATE
-                    inventory
-                    SET
-                    item_drill=item_drill-?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (1,))
-                Connection.SQL_Handle.commit()
+                slot('item_drill', settings.PRICE_DRILL * 0.5, userid)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold your `Drill` for `${settings.PRICE_DRILL * 0.5}`\
+                    description=f'You have sold your drill for `${settings.PRICE_DRILL * 0.5}`\
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
                 await ctx.send(embed=embed)
-            else:
-                await ctx.send("You do not have a Drill!")
 
-        elif int(item) == 3:
+        elif int(item) == slot_item['jackhammer']:
             if item_name['jackhammer']:
-                query = f"""
-                    UPDATE
-                    users
-                    SET
-                    user_cash=user_cash+?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_JACKHAMMER * 0.5,))
-                Connection.SQL_Handle.commit()
-                query = f"""
-                    UPDATE
-                    inventory
-                    SET
-                    item_jackhammer=item_jackhammer-?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (1,))
-                Connection.SQL_Handle.commit()
+                slot('item_jackhammer', settings.PRICE_JACKHAMMER * 0.5, userid)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold your `Jackhammer` for `${settings.PRICE_JACKHAMMER * 0.5}`\
+                    description=f'You have sold your jackhammer for `${settings.PRICE_JACKHAMMER * 0.5}`\
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
                 await ctx.send(embed=embed)
-            else:
-                await ctx.send("You do not have a Jackhammer!")
 
-        elif int(item) == 4:
+        elif int(item) == slot_item['metal_detector']:
             if item_name['metal_detector']:
-                query = f"""
-                    UPDATE
-                    users
-                    SET
-                    user_cash=user_cash+?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_METALDETECTOR * 0.5,))
-                Connection.SQL_Handle.commit()
-                query = f"""
-                    UPDATE
-                    inventory
-                    SET
-                    item_metal_detector=item_metal_detector-?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (1,))
-                Connection.SQL_Handle.commit()
+                slot('item_metal_detector', settings.PRICE_METALDETECTOR * 0.5, userid)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold your `Metal Detector` for `${settings.PRICE_METALDETECTOR * 0.5}`\
+                    description=f'You have sold your metal detector for `${settings.PRICE_METALDETECTOR * 0.5}`\
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
                 await ctx.send(embed=embed)
-            else:
-                await ctx.send("You do not have a Metal Detector!")
 
-        elif int(item) == 5:
+        elif int(item) == slot_item['gold_detector']:
             if item_name['gold_detector']:
-                query = f"""
-                    UPDATE
-                    users
-                    SET
-                    user_cash=user_cash+?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_GOLDDETECTOR * 0.5,))
-                Connection.SQL_Handle.commit()
-                query = f"""
-                    UPDATE
-                    inventory
-                    SET
-                    item_gold_detector=item_gold_detector-?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (1,))
-                Connection.SQL_Handle.commit()
+                slot('item_gold_detector', settings.PRICE_GOLDDETECTOR * 0.5, userid)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold your `Gold Detector` for `${settings.PRICE_GOLDDETECTOR * 0.5}`\
+                    description=f'You have sold your gold detector for `${settings.PRICE_GOLDDETECTOR * 0.5}`\
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
                 await ctx.send(embed=embed)
-            else:
-                await ctx.send("You do not have a Gold Detector!")
 
-        elif int(item) == 6:
+        elif int(item) == slot_item['diamond_detector']:
             if item_name['diamond_detector']:
-                query = f"""
-                    UPDATE
-                    users
-                    SET
-                    user_cash=user_cash+?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DIAMONDDETECTOR * 0.5,))
-                Connection.SQL_Handle.commit()
-                query = f"""
-                    UPDATE
-                    inventory
-                    SET
-                    item_diamond_detector=item_diamond_detector-?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (1,))
-                Connection.SQL_Handle.commit()
+                slot('item_diamond_detector', settings.PRICE_DIAMONDDETECTOR * 0.5, userid)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold your `Diamond Detector` for `${settings.PRICE_DIAMONDDETECTOR * 0.5}`\
+                    description=f'You have sold your diamond detector for `${settings.PRICE_DIAMONDDETECTOR * 0.5}`\
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
                 await ctx.send(embed=embed)
-            else:
-                await ctx.send("You do not have a Diamond Detector!")
 
-        elif int(item) == 7:
+        elif int(item) == slot_item['minecart']:
             if item_name['minecart']:
-                query = f"""
-                    UPDATE
-                    users
-                    SET
-                    user_cash=user_cash+?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINECART * 0.5,))
-                Connection.SQL_Handle.commit()
-                query = f"""
-                    UPDATE
-                    inventory
-                    SET
-                    item_minecart=item_minecart-?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (1,))
-                Connection.SQL_Handle.commit()
+                slot('item_minecart', settings.PRICE_MINECART * 0.5, userid)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold your `Mine Cart` for `${settings.PRICE_MINECART * 0.5}`\
+                    description=f'You have sold your mine cart for `${settings.PRICE_MINECART * 0.5}`\
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
                 await ctx.send(embed=embed)
-            else:
-                await ctx.send("You do not have a Mine Cart!")
 
-        elif int(item) == 8:
+        elif int(item) == slot_item['minetransport']:
             if item_name['minetransport']:
-                query = f"""
-                    UPDATE
-                    users
-                    SET
-                    user_cash=user_cash+?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINETRANSPORT * 0.5,))
-                Connection.SQL_Handle.commit()
-                query = f"""
-                    UPDATE
-                    inventory
-                    SET
-                    item_mine_transport=item_mine_transport-?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (1,))
-                Connection.SQL_Handle.commit()
+                slot('item_minetransport', settings.PRICE_MINETRANSPORT * 0.5, userid)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold your `Mine Transport` for `${settings.PRICE_MINETRANSPORT * 0.5}`\
+                    description=f'You have sold your mine transport for `${settings.PRICE_MINETRANSPORT * 0.5}`\
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
                 await ctx.send(embed=embed)
-            else:
-                await ctx.send("You do not have a Mine Transport!")
 
-        elif int(item) == 9:
+        elif int(item) == slot_item['transportplane']:
             if item_name['transportplane']:
-                query = f"""
-                    UPDATE
-                    users
-                    SET
-                    user_cash=user_cash+?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_TRANSPORTPLANE * 0.5,))
-                Connection.SQL_Handle.commit()
-                query = f"""
-                    UPDATE
-                    inventory
-                    SET
-                    item_transportplane=item_transportplane-?
-                    WHERE
-                    uid={userid}
-                """
-                Connection.SQL_Cursor.execute(query, (1,))
-                Connection.SQL_Handle.commit()
+                slot('item_transportplane', settings.PRICE_TRANSPORTPLANE * 0.5, userid)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold your `Transport Plane` for `${settings.PRICE_TRANSPORTPLANE * 0.5}`\
+                    description=f'You have sold your transport plane for `${settings.PRICE_TRANSPORTPLANE * 0.5}`\
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
                 await ctx.send(embed=embed)
+
+        elif int(item) == slot_item['metal']:
+            if item_name['metal']:
+                if not amount:
+                    embed = Embed(
+                        title='USAGE:',
+                        description='!sell metal [amount]',
+                        colour=Colour.dark_gold()
+                    )
+                    await ctx.send(embed=embed)
+                    return
+                slot('metal_metal', (settings.PRICE_METAL * 0.5) * amount, userid, amount)
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold {amount} metal/s for `${(settings.PRICE_METAL * 0.5) * amount}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+
+        elif int(item) == slot_item['gold']:
+            if not amount:
+                embed = Embed(
+                    title='USAGE:',
+                    description='!sell gold [amount]',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+                return
+            if item_name['gold']:
+                slot('metal_gold', (settings.PRICE_GOLD * 0.5) * amount, userid, amount)
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold {amount} gold/s for `${(settings.PRICE_GOLD * 0.5) * amount}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+
+        elif int(item) == slot_item['diamond']:
+            if not amount:
+                embed = Embed(
+                    title='USAGE:',
+                    description='!sell diamond [amount]',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+                return
+            if item_name['diamond']:
+                slot('metal_diamond', (settings.PRICE_DIAMOND * 0.5) * amount, userid, amount)
+                embed = Embed(
+                    title='Item Sold!',
+                    description=f'You have sold {amount} diamond/s for `${(settings.PRICE_DIAMOND * 0.5) * amount}`\
+                     50% of the original price.',
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
+
             else:
-                await ctx.send("You do not have a Transport Plane!")
+                embed = Embed(
+                    title='ERROR:',
+                    description="You don't have that item!",
+                    colour=Colour.dark_gold()
+                )
+                await ctx.send(embed=embed)
         else:
             embed = Embed(
                 title='USAGE:',
@@ -839,6 +791,14 @@ class Economy(commands.Cog):
         if isinstance(exc, CommandOnCooldown):
             await ctx.reply(
                 f"Hey be chill on buying stuffs bro," +
+                f" why don't you wait for `{exc.retry_after:,.1f}` seconds?"
+            )
+
+    @sell.error
+    async def sell_error(self, ctx, exc):
+        if isinstance(exc, CommandOnCooldown):
+            await ctx.reply(
+                f"Hey you're desperate to get money huh?" +
                 f" why don't you wait for `{exc.retry_after:,.1f}` seconds?"
             )
 

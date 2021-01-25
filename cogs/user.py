@@ -16,6 +16,21 @@ from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 
 from main import Connection
 
+slot_item = {
+    'pickaxe': 0,
+    'drill': 0,
+    'jackhammer': 0,
+    'metal_detector': 0,
+    'gold_detector': 0,
+    'diamond_detector': 0,
+    'minecart': 0,
+    'minetransport': 0,
+    'transportplane': 0,
+    'metal': 0,
+    'gold': 0,
+    'diamond': 0,
+}
+
 
 class User(commands.Cog):
     def __init__(self, bot):
@@ -151,16 +166,6 @@ class User(commands.Cog):
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
-        if not result:
-            embed = Embed(
-                title='ERROR',
-                description='You are not registered to the database!\n**TIP:** `!register`',
-                colour=Colour.red()
-            )
-            
-            await ctx.send(embed=embed)
-            return
-        await ctx.send(f"**{ctx.author.name}'s inventory.**")
 
         item_name = {
             'pickaxe': result[0],
@@ -185,86 +190,112 @@ class User(commands.Cog):
         embed.set_thumbnail(
             url='https://images.emojiterra.com/mozilla/512px/1f392.png'
         )
+        slot = 1
         if item_name['pickaxe']:
             embed.add_field(
-                name='1. Pickaxe',
+                name=f'{slot}. Pickaxe',
                 value=f":pick: `{item_name['pickaxe']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['pickaxe'] = slot
         if item_name['drill']:
             emoji_drill = utils.get(self.bot.emojis, name='drill')
             embed.add_field(
-                name='2. Drill',
+                name=f'{slot}. Drill',
                 value=f"{str(emoji_drill)} `{item_name['drill']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['drill'] = slot
         if item_name['jackhammer']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='jackhammer')
             embed.add_field(
-                name='3. Jackhammer',
+                name=f'{slot}. Jackhammer',
                 value=f"{str(emoji_jackhammer)} `{item_name['jackhammer']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['jackhammer'] = slot
         if item_name['metal_detector']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
             embed.add_field(
-                name='4. Metal Detector',
+                name=f'{slot}. Metal Detector',
                 value=f"{str(emoji_jackhammer)} `{item_name['metal_detector']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['metal_detector'] = slot
         if item_name['gold_detector']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
             embed.add_field(
-                name='5. Gold Detector',
+                name=f'{slot}. Gold Detector',
                 value=f"{str(emoji_jackhammer)} `{item_name['gold_detector']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['gold_detector'] = slot
         if item_name['diamond_detector']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
             embed.add_field(
-                name='6. Diamond Detector',
+                name=f'{slot}. Diamond Detector',
                 value=f"{str(emoji_jackhammer)} `{item_name['diamond_detector']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['diamond_detector'] = slot
         if item_name['minecart']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='minecart')
             embed.add_field(
-                name='7. Mine Cart',
+                name=f'{slot}. Mine Cart',
                 value=f"{str(emoji_jackhammer)} `{item_name['minecart']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['minecart'] = slot
         if item_name['minetransport']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='minetransport')
             embed.add_field(
-                name='8. Mine Transport',
+                name=f'{slot}. Mine Transport',
                 value=f"{str(emoji_jackhammer)} `{item_name['minetransport']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['minetransport'] = slot
         if item_name['transportplane']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='transportplane')
             embed.add_field(
-                name='9. Transport Plane',
+                name=f'{slot}. Transport Plane',
                 value=f"{str(emoji_jackhammer)} `{item_name['transportplane']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['transportplane'] = slot
         if item_name['metal']:
             embed.add_field(
-                name='10. Metal',
+                name=f'{slot}. Metal',
                 value=f":gear: `{item_name['metal']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['metal'] = slot
         if item_name['gold']:
             embed.add_field(
-                name='11. Gold',
+                name=f'{slot}. Gold',
                 value=f":coin: `{item_name['gold']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['gold'] = slot
         if item_name['diamond']:
             embed.add_field(
-                name='12. Diamond',
+                name=f'{slot}. Diamond',
                 value=f":large_blue_diamond: `{item_name['diamond']}`",
-                inline=True
+                inline=False
             )
+            slot += 1
+            slot_item['diamond'] = slot
+        await ctx.send(f"**{ctx.author.name}'s inventory.**")
         await ctx.send(embed=embed)
 
     @stats.error
