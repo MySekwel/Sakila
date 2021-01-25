@@ -1,6 +1,18 @@
+"""
+Module: ./cogs/user.py
+Description: User module, includes everything that has relation to user information.
+Module Dependencies:
+    > discord.Colour
+    > discord.Embed
+    > discord.utils
+    > discord.exit.commands.BucketType
+    > discord.ext.commands.cooldown
+    > discord.ext.commands.CommandOnCooldown
+"""
+
 from discord import Colour, Embed, utils
 from discord.ext import commands
-from discord.ext.commands import cooldown, BucketType, CommandOnCooldown
+from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 from main import Connection
 
 
@@ -233,16 +245,16 @@ class User(commands.Cog):
     @stats.error
     async def stats_error(self, ctx, exc):
         if isinstance(exc, CommandOnCooldown):
-            await ctx.send(
-                f"Hey <@!{ctx.author.id}> you've already seen your stats," +
+            await ctx.reply(
+                f"Hey, you've already seen your stats," +
                 f"why don't you wait for `{exc.retry_after:,.1f}` seconds?"
             )
 
     @inventory.error
     async def inventory_error(self, ctx, exc):
         if isinstance(exc, CommandOnCooldown):
-            await ctx.send(
-                f"Hey <@!{ctx.author.id}> you've already seen your inventory no one will rob you," +
+            await ctx.reply(
+                f"Hey, you've already seen your inventory no one will rob you," +
                 f"why don't you wait for `{exc.retry_after:,.1f}` seconds?")
 
 

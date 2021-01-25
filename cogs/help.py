@@ -1,3 +1,15 @@
+"""
+Module: ./cogs/help.py
+Description: Help module includes everything needed for the !help command.
+Module Dependencies:
+    > discord.Embed
+    > discord.Colour
+    > discord.ext.commands
+    > discord.ext.commands.BucketType
+    > discord.ext.commands.cooldown,
+    > discord.ext.commands.CommandOnCooldown
+    > disputils.BotEmbedPaginator
+"""
 from discord import Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
@@ -23,7 +35,7 @@ class Help(commands.Cog):
     @commands.command()
     @cooldown(1, 5, BucketType.user)
     async def help(self, ctx):
-        # Page 2
+        # Page 1
         page_1 = Embed(
             title='Help',
             description='List of commands:',
@@ -126,7 +138,7 @@ class Help(commands.Cog):
             description='List of commands:',
             colour=Colour.dark_orange()
         )
-
+        page_2.set_thumbnail(url='https://i.imgur.com/bObV3r5.png')
         page_2.add_field(
             name='Command: !Credits',
             value='**Description:** Check the amount of credits you need to pay.',
@@ -156,8 +168,8 @@ class Help(commands.Cog):
     @help.error
     async def help_error(self, ctx, exc):
         if isinstance(exc, CommandOnCooldown):
-            await ctx.send(
-                f"Hey <@!{ctx.author.id}> you really need help huh?" +
+            await ctx.reply(
+                f"You really need help huh?" +
                 f" Why don't you wait for `{exc.retry_after:,.1f}` seconds?"
             )
 

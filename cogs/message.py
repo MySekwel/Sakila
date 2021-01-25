@@ -1,3 +1,10 @@
+"""
+Module: ./cogs/message.py
+Description: Message module, includes everything that has relation to message processing.
+Module Dependencies:
+    > discord.ext.commands
+"""
+
 from discord.ext import commands
 
 

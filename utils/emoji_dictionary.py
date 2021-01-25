@@ -1,3 +1,9 @@
+"""
+Module: ./utils/emoji_dictionary.py
+Description: Emoji Dictionary module, a dictionary for unicode equivalent of discord emojis.
+Module Dependencies: Null
+"""
+
 face = {
     'grinning': '\U0001f600',
     'smiling': '\U0001f603',

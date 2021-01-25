@@ -1,8 +1,21 @@
+"""
+Module: ./cogs/eco.py
+Description: Economy module, includes everything that has relation to the economy system.
+Module Dependencies:
+    > discord.Embed
+    > discord.Colour
+    > discord.utils
+    > discord.ext.commands.BucketType
+    > discord.ext.commands.cooldown
+    > discord.ext.commands.CommandOnCooldown
+    > utils.settings
+"""
+
 from discord import Embed, Colour, utils
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 from main import Connection
-import settings
+from utils import settings
 
 
 class Economy(commands.Cog):
@@ -823,16 +836,16 @@ class Economy(commands.Cog):
     @buy.error
     async def buy_error(self, ctx, exc):
         if isinstance(exc, CommandOnCooldown):
-            await ctx.send(
-                f"Hey <@!{ctx.author.id}> be chill on buying stuffs bro," +
+            await ctx.reply(
+                f"Hey be chill on buying stuffs bro," +
                 f" why don't you wait for `{exc.retry_after:,.1f}` seconds?"
             )
 
     @shop.error
     async def shop_error(self, ctx, exc):
         if isinstance(exc, CommandOnCooldown):
-            await ctx.send(
-                f"Whoa whoa <@!{ctx.author.id}> didn't you already see the menu?" +
+            await ctx.reply(
+                f"Whoa whoa, didn't you already see the menu?" +
                 f" why don't you wait for `{exc.retry_after:,.1f}` seconds?"
             )
 

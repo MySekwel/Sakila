@@ -1,11 +1,22 @@
+"""
+Module: ./cogs/labor.py
+Description: Labor module, includes everything for user work and money earning system.
+Module Dependencies:
+    > asyncio
+    > discord.ext.commands
+    > discord.ext.commands.BucketType
+    > discord.ext.commands.cooldown
+    > discord.ext.commands.CommandOnCooldown
+"""
+
 import asyncio
 
 from discord import utils, Embed, Colour
 from discord.ext import commands
-from discord.ext.commands import cooldown, BucketType, CommandOnCooldown
+from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 
 from main import Connection
-import settings
+from utils import settings
 
 
 class Labor(commands.Cog):
@@ -125,8 +136,8 @@ class Labor(commands.Cog):
     @work.error
     async def work_error(self, ctx, exc):
         if isinstance(exc, CommandOnCooldown):
-            await ctx.send(
-                f"Hey <@!{ctx.author.id}> you still have a work in progress," +
+            await ctx.reply(
+                f"Hey, you still have a work in progress," +
                 f" why don't you wait for `{exc.retry_after:,.1f}` seconds?"
             )
 

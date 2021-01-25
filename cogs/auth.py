@@ -1,3 +1,11 @@
+"""
+Module: ./cogs/auth.py
+Description: Authentication module, includes everything that a user need to authenticate and be added in the database.
+Module Dependencies:
+    > mysql.connector
+    > discord.ext.commands
+"""
+
 import mysql.connector
 from discord.ext import commands
 

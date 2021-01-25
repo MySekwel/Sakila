@@ -1,3 +1,11 @@
+"""
+Module: ./utils/settings.py
+Description: Settings module, holds default settings.
+Module Dependencies:
+    > os
+    > dotenv.load_dotenv
+"""
+
 import os
 # Dotenv for Discord API Token
 from dotenv import load_dotenv
