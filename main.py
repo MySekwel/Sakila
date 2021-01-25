@@ -1,3 +1,13 @@
+"""
+Module: ./main.py
+Description: Main module, the main... module.
+Module Dependencies:
+    > os
+    > mysql.connector
+    > discord.ext.commands
+    > utils.settings
+"""
+
 import os
 import mysql.connector
 from discord.ext import commands

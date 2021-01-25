@@ -246,7 +246,7 @@ class User(commands.Cog):
     async def stats_error(self, ctx, exc):
         if isinstance(exc, CommandOnCooldown):
             await ctx.reply(
-                f"Hey, you've already seen your stats," +
+                f"Hey, you've already seen your stats, " +
                 f"why don't you wait for `{exc.retry_after:,.1f}` seconds?"
             )
 
@@ -254,7 +254,7 @@ class User(commands.Cog):
     async def inventory_error(self, ctx, exc):
         if isinstance(exc, CommandOnCooldown):
             await ctx.reply(
-                f"Hey, you've already seen your inventory no one will rob you," +
+                f"Hey, you've already seen your inventory no one will rob you, " +
                 f"why don't you wait for `{exc.retry_after:,.1f}` seconds?")
 
 
