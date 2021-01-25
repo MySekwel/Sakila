@@ -23,9 +23,9 @@ class User(commands.Cog):
 
     # Command: Stats
     # Description: Show user stats
-    # Cooldown: 5 Seconds
+    # Cooldown: 10 Seconds
     @commands.command()
-    @cooldown(1, 5, BucketType.user)
+    @cooldown(1, 10, BucketType.user)
     async def stats(self, ctx):
         query = f"""
             SELECT
@@ -103,9 +103,9 @@ class User(commands.Cog):
 
     # Command: Inventory
     # Description: Show user inventory
-    # Cooldown: 5 Seconds
+    # Cooldown: 10 Seconds
     @commands.command()
-    @cooldown(1, 5, BucketType.user)
+    @cooldown(1, 10, BucketType.user)
     async def inventory(self, ctx):
         query = f"""
             SELECT

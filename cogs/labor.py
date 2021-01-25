@@ -11,7 +11,7 @@ Module Dependencies:
     > utils.settings
     > random
 """
-
+import asyncio
 import random
 
 from discord import utils, Embed, Colour
@@ -30,7 +30,7 @@ class Labor(commands.Cog):
     # Description: Mine to earn money
     # Cooldown: 15 - Default
     @commands.command()
-    @cooldown(1, 1, BucketType.user)
+    @cooldown(1, 15, BucketType.user)
     async def work(self, ctx):
         query = f"""
             SELECT
@@ -159,7 +159,7 @@ class Labor(commands.Cog):
             colour=Colour.random()
         )
         progress = await ctx.send(embed=embed)
-        # await asyncio.sleep(15)
+        await asyncio.sleep(15)
         embed = Embed(
             title='Mining Finished!',
             description=f'**You have worked in the mines and earned**\n\

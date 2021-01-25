@@ -14,6 +14,7 @@ from discord import Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 from disputils import BotEmbedPaginator
+
 from utils import emoji_dictionary as emojii
 
 
@@ -31,9 +32,9 @@ class Help(commands.Cog):
 
     # Command: Help
     # Description: Shows the list of available commands.
-    # Cooldown: 5 seconds
+    # Cooldown: 10 Seconds
     @commands.command()
-    @cooldown(1, 5, BucketType.user)
+    @cooldown(1, 10, BucketType.user)
     async def help(self, ctx):
         # Page 1
         page_1 = Embed(

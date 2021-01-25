@@ -25,9 +25,9 @@ class Economy(commands.Cog):
 
     # Command: Buy
     # Description: Buy command for user shop
-    # Cooldown: 5 Seconds
+    # Cooldown: 10 Seconds
     @commands.command()
-    @cooldown(1, 5, BucketType.user)
+    @cooldown(1, 10, BucketType.user)
     async def buy(self, ctx, item=0):
         query = f"""
             SELECT
@@ -396,7 +396,7 @@ class Economy(commands.Cog):
             await ctx.send("USAGE: !buy [item id]")
 
     @commands.command()
-    @cooldown(1, 5, BucketType.user)
+    @cooldown(1, 10, BucketType.user)
     async def sell(self, ctx, item=0):
         query = f"""
             SELECT
@@ -745,9 +745,9 @@ class Economy(commands.Cog):
 
     # Command: Shop
     # Description: Show user shop
-    # Cooldown: 5 Seconds
+    # Cooldown: 10 Seconds
     @commands.command()
-    @cooldown(1, 5, BucketType.user)
+    @cooldown(1, 10, BucketType.user)
     async def shop(self, ctx):
         query = f"""
             SELECT
