@@ -41,7 +41,7 @@ class Authentication(commands.Cog):
                     user_name,
                     user_tag,
                     user_cash,
-                    user_diamonds,
+                    user_bank,
                     user_exp,
                     user_reputation,
                     user_love,
@@ -96,33 +96,14 @@ class Authentication(commands.Cog):
                     item_diamond_detector,
                     item_minecart,
                     item_minetransport,
-                    item_transportplane
+                    item_transportplane,
+                    metal_metal,
+                    metal_gold,
+                    metal_diamond
                 )
-                VALUES(
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?
-                )
+                VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
-            inventory_values = (
-                uid,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            )
+            inventory_values = (uid, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
             Connection.SQL_Prepared_Cursor.execute(query, inventory_values)
             Connection.SQL_Handle.commit()
         except mysql.connector.Error as err:

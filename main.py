@@ -9,12 +9,12 @@ Module Dependencies:
 """
 
 import os
+
 import mysql.connector
 from discord.ext import commands
+
 from utils import settings
 
-# Discord Bot Token variable
-TOKEN = settings.TOKEN
 # Setting up the bot and it's prefix for commands
 bot = commands.Bot(command_prefix='!', help_command=None, case_insensitive=True)
 
@@ -57,7 +57,7 @@ class Connection:
             user_name varchar(24),
             user_tag INT(4),
             user_cash INT,
-            user_diamonds INT,
+            user_bank INT,
             user_exp INT,
             user_reputation INT,
             user_love INT,
@@ -83,6 +83,9 @@ class Connection:
             item_minecart INT(1),
             item_minetransport INT(1),
             item_transportplane INT(1),
+            metal_metal INT(11),
+            metal_gold INT(11),
+            metal_diamond INT(11),
             PRIMARY KEY (uid),
             FOREIGN KEY (uid)
             REFERENCES
@@ -114,4 +117,4 @@ async def on_ready():
         print(f"{bot.user} is connected to the following guild: {guild.name}")
 
 
-bot.run(TOKEN)
+bot.run(settings.TOKEN)

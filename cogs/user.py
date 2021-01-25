@@ -13,6 +13,7 @@ Module Dependencies:
 from discord import Colour, Embed, utils
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
+
 from main import Connection
 
 
@@ -29,7 +30,7 @@ class User(commands.Cog):
         query = f"""
             SELECT
             user_cash,
-            user_diamonds,
+            user_bank,
             user_exp,
             user_reputation,
             user_love,
@@ -74,8 +75,8 @@ class User(commands.Cog):
             inline=True
         )
         embed.add_field(
-            name='Diamonds',
-            value=f':large_blue_diamond: `{diamonds}`',
+            name='Bank',
+            value=f':bank: `{diamonds}`',
             inline=True
         )
         embed.add_field(
@@ -89,13 +90,13 @@ class User(commands.Cog):
             inline=True
         )
         embed.add_field(
-            name='VIP Package',
-            value=f':crown: `{vip}`',
+            name='Love',
+            value=f':heart: `{love}`',
             inline=True
         )
         embed.add_field(
-            name='Love',
-            value=f':heart: `{love}`',
+            name='VIP Package',
+            value=f':crown: `{vip}`',
             inline=True
         )
         await ctx.send(embed=embed)
@@ -138,7 +139,10 @@ class User(commands.Cog):
             item_diamond_detector,
             item_minecart,
             item_minetransport,
-            item_transportplane
+            item_transportplane,
+            metal_metal,
+            metal_gold,
+            metal_diamond
             FROM
             inventory
             WHERE
@@ -167,7 +171,10 @@ class User(commands.Cog):
             'diamond_detector': result[5],
             'minecart': result[6],
             'minetransport': result[7],
-            'transportplane': result[8]
+            'transportplane': result[8],
+            'metal': result[9],
+            'gold': result[10],
+            'diamond': result[11]
         }
 
         embed = Embed(
@@ -206,14 +213,14 @@ class User(commands.Cog):
                 inline=True
             )
         if item_name['gold_detector']:
-            emoji_jackhammer = utils.get(self.bot.emojis, name='gold_detector')
+            emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
             embed.add_field(
                 name='5. Gold Detector',
                 value=f"{str(emoji_jackhammer)} `{item_name['gold_detector']}`",
                 inline=True
             )
         if item_name['diamond_detector']:
-            emoji_jackhammer = utils.get(self.bot.emojis, name='diamond_detector')
+            emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
             embed.add_field(
                 name='6. Diamond Detector',
                 value=f"{str(emoji_jackhammer)} `{item_name['diamond_detector']}`",
@@ -238,6 +245,24 @@ class User(commands.Cog):
             embed.add_field(
                 name='9. Transport Plane',
                 value=f"{str(emoji_jackhammer)} `{item_name['transportplane']}`",
+                inline=True
+            )
+        if item_name['metal']:
+            embed.add_field(
+                name='10. Metal',
+                value=f":gear: `{item_name['metal']}`",
+                inline=True
+            )
+        if item_name['gold']:
+            embed.add_field(
+                name='11. Gold',
+                value=f":coin: `{item_name['gold']}`",
+                inline=True
+            )
+        if item_name['diamond']:
+            embed.add_field(
+                name='12. Diamond',
+                value=f":large_blue_diamond: `{item_name['diamond']}`",
                 inline=True
             )
         await ctx.send(embed=embed)

@@ -7,9 +7,12 @@ Module Dependencies:
     > discord.ext.commands.BucketType
     > discord.ext.commands.cooldown
     > discord.ext.commands.CommandOnCooldown
+    > main.Connection
+    > utils.settings
+    > random
 """
 
-import asyncio
+import random
 
 from discord import utils, Embed, Colour
 from discord.ext import commands
@@ -27,11 +30,11 @@ class Labor(commands.Cog):
     # Description: Mine to earn money
     # Cooldown: 15 - Default
     @commands.command()
-    @cooldown(1, 15, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def work(self, ctx):
         query = f"""
             SELECT
-            *
+            uid
             FROM
             users
             WHERE
@@ -47,7 +50,7 @@ class Labor(commands.Cog):
                 description='You are not registered to the database!\n**TIP:** `!register`',
                 colour=Colour.red()
             )
-            
+
             await ctx.send(embed=embed)
             return
 
@@ -83,25 +86,71 @@ class Labor(commands.Cog):
         work_salary = 100
         default_salary = 100
         tool = 'Shovel'
+        metal, gold, diamond = 0, 0, 0
 
-        if tool_name['pickaxe']:
-            tool = 'Pickaxe'
-            work_salary = default_salary + settings.WORK_SALARY * 0.05
-        if tool_name['drill']:
-            tool = 'Drill'
-            work_salary = default_salary + settings.WORK_SALARY * 0.10
         if tool_name['jackhammer']:
             tool = 'Jackhammer'
-            work_salary = default_salary + settings.WORK_SALARY * 0.25
-        if tool_name['metal_detector']:
-            tool = 'Metal Detector'
-            work_salary = default_salary + settings.WORK_SALARY * 0.35
-        if tool_name['gold_detector']:
-            tool = 'Gold Detector'
-            work_salary = default_salary + settings.WORK_SALARY * 0.50
-        if tool_name['diamond_detector']:
-            tool = 'Diamond Detector'
+            work_salary = default_salary + settings.WORK_SALARY * 1.00
+            if tool_name['diamond_detector']:
+                tool += ' & Diamond Detector'
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    gold = random.randint(1, 3)
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    diamond = random.randint(1, 2)
+            elif tool_name['gold_detector']:
+                tool += ' & Gold Detector'
+                if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
+                if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
+                    gold = random.randint(1, 3)
+            elif tool_name['metal_detector']:
+                tool += ' & Metal Detector'
+                if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
+        elif tool_name['drill']:
+            tool = 'Drill'
             work_salary = default_salary + settings.WORK_SALARY * 0.75
+            if tool_name['diamond_detector']:
+                tool += ' & Diamond Detector'
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    gold = random.randint(1, 3)
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    diamond = random.randint(1, 2)
+            elif tool_name['gold_detector']:
+                tool += ' & Gold Detector'
+                if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
+                if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
+                    gold = random.randint(1, 3)
+            elif tool_name['metal_detector']:
+                tool += ' & Metal Detector'
+                if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
+        elif tool_name['pickaxe']:
+            tool = 'Pickaxe'
+            work_salary = default_salary + settings.WORK_SALARY * 0.50
+            if tool_name['diamond_detector']:
+                tool += ' & Diamond Detector'
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    gold = random.randint(1, 3)
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    diamond = random.randint(1, 2)
+            elif tool_name['gold_detector']:
+                tool += ' & Gold Detector'
+                if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
+                if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
+                    gold = random.randint(1, 3)
+            elif tool_name['metal_detector']:
+                tool += ' & Metal Detector'
+                if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
 
         mining = utils.get(self.bot.emojis, name='mining')
         embed = Embed(
@@ -110,16 +159,21 @@ class Labor(commands.Cog):
             colour=Colour.random()
         )
         progress = await ctx.send(embed=embed)
-        await asyncio.sleep(15)
+        # await asyncio.sleep(15)
         embed = Embed(
             title='Mining Finished!',
-            description=f'**You have worked in the mines and earned \
-             ${int(work_salary)} and {settings.WORK_BONUS} exp**',
+            description=f'**You have worked in the mines and earned**\n\
+                **Salary:** `${int(work_salary)}`\n\
+                **EXP:** `{settings.WORK_BONUS}`\n\
+                **Metal:** `{metal}`\n\
+                **Gold:** `{gold}`\n\
+                **Diamond:** `{diamond}`',
             colour=Colour.green()
         )
         await progress.edit(
             embed=embed
         )
+        print(f'iron: {metal}, gold: {gold}, diamond: {diamond}')
         query = f"""
             UPDATE
             users
@@ -130,6 +184,20 @@ class Labor(commands.Cog):
             user_id={ctx.author.id}
         """
         values = (work_salary, settings.WORK_BONUS)
+        Connection.SQL_Prepared_Cursor.execute(query, values)
+        Connection.SQL_Handle.commit()
+
+        query = f"""
+            UPDATE
+            inventory
+            SET
+            metal_metal=metal_metal+?,
+            metal_gold=metal_gold+?,
+            metal_diamond=metal_diamond+?
+            WHERE
+            uid={uid}
+        """
+        values = (metal, gold, diamond)
         Connection.SQL_Prepared_Cursor.execute(query, values)
         Connection.SQL_Handle.commit()
 

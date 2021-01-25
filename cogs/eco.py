@@ -14,6 +14,7 @@ Module Dependencies:
 from discord import Embed, Colour, utils
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
+
 from main import Connection
 from utils import settings
 
@@ -95,8 +96,8 @@ class Economy(commands.Cog):
         }
 
         # Item: Pickaxe
-        # Price: 500
-        # Description: %5 Work Salary Bonus
+        # Price: 2500
+        # Description: %50 Work Salary Bonus
         if int(item) == 1:
             if item_name['pickaxe'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
@@ -128,8 +129,8 @@ class Economy(commands.Cog):
 
             await ctx.send(f"You have bought a `pickaxe` for ${settings.PRICE_PICKAXE}!")
         # Item: Drill
-        # Price: 2500
-        # Description: %10 Work Salary Bonus
+        # Price: 5000
+        # Description: %75 Work Salary Bonus
         elif int(item) == 2:
             if item_name['drill'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
@@ -161,8 +162,8 @@ class Economy(commands.Cog):
 
             await ctx.send(f"You have bought a `drill` for ${settings.PRICE_DRILL}!")
         # Item: Jackhammer
-        # Price: 5000
-        # Description: %25 Work Salary Bonus
+        # Price: 15000
+        # Description: %100 Work Salary Bonus
         elif int(item) == 3:
             if item_name['jackhammer'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
@@ -195,7 +196,7 @@ class Economy(commands.Cog):
             await ctx.send(f"You have bought a `jackhammer` for ${settings.PRICE_JACKHAMMER}!")
         # Item: Metal Detector
         # Price: 7500
-        # Description: %35 Work Salary Bonus
+        # Description: %10 Chance of getting valuable metals
         elif int(item) == 4:
             if item_name['metal_detector'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
@@ -228,7 +229,7 @@ class Economy(commands.Cog):
             await ctx.send(f"You have bought a `metal detector` for ${settings.PRICE_METALDETECTOR}!")
         # Item: Gold Detector
         # Price: 15000
-        # Description: %50 Work Salary Bonus
+        # Description: %20 Chance of getting valuable metals
         elif int(item) == 5:
             if item_name['gold_detector'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
@@ -261,7 +262,7 @@ class Economy(commands.Cog):
             await ctx.send(f"You have bought a `gold detector` for ${settings.PRICE_GOLDDETECTOR}!")
         # Item: Diamond Detector
         # Price: 25000
-        # Description: %75 Work Salary Bonus
+        # Description: %35 Chance of getting valuable metals / diamonds
         elif int(item) == 6:
             if item_name['diamond_detector'] >= 1:
                 await ctx.send("ERROR: You already have this item!")
@@ -776,37 +777,37 @@ class Economy(commands.Cog):
         embed.set_thumbnail(url='https://i.pinimg.com/originals/77/c3/66/77c366436d8bd35fe8b3ce5b8c66992e.png')
         embed.add_field(
             name='1. Pickaxe :pick:',
-            value=f'`Price: ${settings.PRICE_PICKAXE}` | `Bonus: 5% Work Salary`',
+            value=f'`Price: ${settings.PRICE_PICKAXE}` | `Bonus: 50% Work Salary`',
             inline=True
         )
         drill = utils.get(self.bot.emojis, name='drill')
         embed.add_field(
             name=f'2. Drill {str(drill)}',
-            value=f'`Price: ${settings.PRICE_DRILL}` | `Bonus: 10% Work Salary`',
+            value=f'`Price: ${settings.PRICE_DRILL}` | `Bonus: 75% Work Salary`',
             inline=True
         )
         jackhammer = utils.get(self.bot.emojis, name='jackhammer')
         embed.add_field(
             name=f'3. Jackhammer {str(jackhammer)}',
-            value=f'`Price: ${settings.PRICE_JACKHAMMER}` | `Bonus: 25% Work Salary`',
+            value=f'`Price: ${settings.PRICE_JACKHAMMER}` | `Bonus: 100% Work Salary`',
             inline=True
         )
         metal_detector = utils.get(self.bot.emojis, name='metal_detector')
         embed.add_field(
             name=f'4. Metal Detector {str(metal_detector)}',
-            value=f'`Price: ${settings.PRICE_METALDETECTOR}` | `Bonus: 35% Work Salary`',
+            value=f'`Price: ${settings.PRICE_METALDETECTOR}` | `Metal Chance: {settings.MD_VALUABLE_CHANCE}%`',
             inline=True
         )
         gold_detector = utils.get(self.bot.emojis, name='metal_detector')
         embed.add_field(
             name=f'5. Gold Detector {str(gold_detector)}',
-            value=f'`Price: ${settings.PRICE_GOLDDETECTOR}` | `Bonus: 50% Work Salary`',
+            value=f'`Price: ${settings.PRICE_GOLDDETECTOR}` | `Gold Chance: {settings.GD_VALUABLE_CHANCE}%`',
             inline=True
         )
         diamond_detector = utils.get(self.bot.emojis, name='metal_detector')
         embed.add_field(
             name=f'6. Diamond Detector {str(diamond_detector)}',
-            value=f'`Price: ${settings.PRICE_DIAMONDDETECTOR}` | `Bonus: 75% Work Salary`',
+            value=f'`Price: ${settings.PRICE_DIAMONDDETECTOR}` | `Diamond Chance: {settings.DD_VALUABLE_CHANCE}%`',
             inline=True
         )
         minecart = utils.get(self.bot.emojis, name='minecart')

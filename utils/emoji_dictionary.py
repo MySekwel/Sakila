@@ -4,18 +4,16 @@ Description: Emoji Dictionary module, a dictionary for unicode equivalent of dis
 Module Dependencies: Null
 """
 
-face = {
-    'grinning': '\U0001f600',
-    'smiling': '\U0001f603',
-    'grin': '\U0001f601',
-    'smile': '\U0001f604',
+heart = {
+    'red': '\U00002764',
+
 }
 
-arrow = {
-    'right': '\U000027a1',
-    'left': '\U0000fe0f',
+flower = {
+    'rosette': '\U0001f3f5',
 }
 
 special = {
-    'empty': '\u200b'
+    'empty': '\u200b',
+    'variant': '\U0000fe0f',
 }
