@@ -26,45 +26,45 @@ class Message(commands.Cog):
         # Check if the user who sent the message is not the bot itself
         if message.author.id == self.bot.user.id:
             return
-        if message.content.endswith('!!!'):
+        if message.content.endswith("!!!"):
             await message.channel.trigger_typing()
             await asyncio.sleep(2)
-            await message.reply('qiqil?')
-        if message.content in ('hi', 'Hi'):
-            await message.add_reaction(emoji_dictionary.hand['wave'])
+            await message.reply("qiqil?")
+        if message.content.casefold() == "hi":
+            await message.add_reaction(emoji_dictionary.hand["wave"])
             await message.channel.trigger_typing()
             await asyncio.sleep(2)
-            await message.reply(f'Hello there {message.author.mention}')
-        elif message.content in ('hello', 'Hello'):
+            await message.reply(f"Hello there {message.author.mention}")
+        elif message.content.casefold() == "hello":
             await message.channel.trigger_typing()
-            await message.add_reaction(emoji_dictionary.hand['wave'])
+            await message.add_reaction(emoji_dictionary.hand["wave"])
             await asyncio.sleep(2)
-            await message.reply(f'Hi there {message.author.mention}')
-        elif message.content == 'pls snipe':
+            await message.reply(f"Hi there {message.author.mention}")
+        elif message.content == "pls snipe":
             embed = Embed(
-                title='Boom Headshot!',
+                title="Boom Headshot!",
                 description=f"**Message:** `{self.deleter_message}`",
                 colour=Colour.green()
             )
             embed.set_author(icon_url=self.deleter_avatar, name=self.deleter_name + "#" + str(self.deleter_tag))
             embed.set_thumbnail(
-                url='https://cdn.discordapp.com/attachments/799655646722523166/803568246045147156/d9atvs2-6c8bcc70-1cf4-412f-9ac3-f9538e443c7a.png')
+                url="https://cdn.discordapp.com/attachments/799655646722523166/803568246045147156/d9atvs2-6c8bcc70-1cf4-412f-9ac3-f9538e443c7a.png")
             time = datetime.datetime.now()
-            embed.set_footer(text=time.strftime('%B %d, %Y | %I:%M %p'))
+            embed.set_footer(text=time.strftime("%B %d, %Y | %I:%M %p"))
             await message.channel.send(embed=embed)
 
     @commands.command()
     async def snipe(self, ctx):
         embed = Embed(
-            title='Boom Headshot!',
+            title="Boom Headshot!",
             description=f"**Message:** `{self.deleter_message}`",
             colour=Colour.green()
         )
         embed.set_author(icon_url=self.deleter_avatar, name=self.deleter_name + "#" + str(self.deleter_tag))
         embed.set_thumbnail(
-            url='https://cdn.discordapp.com/attachments/799655646722523166/803568246045147156/d9atvs2-6c8bcc70-1cf4-412f-9ac3-f9538e443c7a.png')
+            url="https://cdn.discordapp.com/attachments/799655646722523166/803568246045147156/d9atvs2-6c8bcc70-1cf4-412f-9ac3-f9538e443c7a.png")
         time = datetime.datetime.now()
-        embed.set_footer(text=time.strftime('%B %d, %Y | %I:%M %p'))
+        embed.set_footer(text=time.strftime("%B %d, %Y | %I:%M %p"))
         await ctx.send(embed=embed)
 
     @commands.Cog.listener()

@@ -45,8 +45,8 @@ class User(commands.Cog):
     async def stats(self, ctx):
         if not registered(ctx.author.id):
             embed = Embed(
-                title='ERROR',
-                description='You are not registered to the database!\n**TIP:** `!register`',
+                title="ERROR",
+                description="You are not registered to the database!\n**TIP:** `!register`",
                 colour=Colour.red()
             )
             await ctx.channel.trigger_typing()
@@ -70,16 +70,16 @@ class User(commands.Cog):
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
         stat = {
-            'cash': result[0],
-            'bank': result[1],
-            'exp': result[2],
-            'reputation': result[3],
-            'love': result[4],
-            'vip': result[5],
+            "cash": result[0],
+            "bank": result[1],
+            "exp": result[2],
+            "reputation": result[3],
+            "love": result[4],
+            "vip": result[5],
         }
 
         embed = Embed(
-            title='User Stats',
+            title="User Stats",
             description=f"**{ctx.author.name}'s Stats**",
             colour=Colour.green()
         )
@@ -87,32 +87,32 @@ class User(commands.Cog):
             url=ctx.author.avatar_url
         )
         embed.add_field(
-            name='Balance',
+            name="Balance",
             value=f":moneybag: `{stat['cash']}`",
             inline=True
         )
         embed.add_field(
-            name='Bank',
+            name="Bank",
             value=f":bank: `{stat['bank']}`",
             inline=True
         )
         embed.add_field(
-            name='Exp',
+            name="Exp",
             value=f":military_medal: `{stat['exp']}`",
             inline=True
         )
         embed.add_field(
-            name='Reputation',
+            name="Reputation",
             value=f":rosette: `{stat['reputation']}`",
             inline=True
         )
         embed.add_field(
-            name='Love',
+            name="Love",
             value=f":heart: `{stat['love']}`",
             inline=True
         )
         embed.add_field(
-            name='VIP Package',
+            name="VIP Package",
             value=f":crown: `{stat['vip']}`",
             inline=True
         )
@@ -128,8 +128,8 @@ class User(commands.Cog):
     async def inventory(self, ctx):
         if not registered(ctx.author.id):
             embed = Embed(
-                title='ERROR',
-                description='You are not registered to the database!\n**TIP:** `!register`',
+                title="ERROR",
+                description="You are not registered to the database!\n**TIP:** `!register`",
                 colour=Colour.red()
             )
             await ctx.channel.trigger_typing()
@@ -174,117 +174,117 @@ class User(commands.Cog):
         Connection.SQL_Handle.commit()
 
         item_name = {
-            'pickaxe': result[0],
-            'drill': result[1],
-            'jackhammer': result[2],
-            'metal_detector': result[3],
-            'gold_detector': result[4],
-            'diamond_detector': result[5],
-            'minecart': result[6],
-            'minetransport': result[7],
-            'transportplane': result[8],
-            'metal': result[9],
-            'gold': result[10],
-            'diamond': result[11]
+            "pickaxe": result[0],
+            "drill": result[1],
+            "jackhammer": result[2],
+            "metal_detector": result[3],
+            "gold_detector": result[4],
+            "diamond_detector": result[5],
+            "minecart": result[6],
+            "minetransport": result[7],
+            "transportplane": result[8],
+            "metal": result[9],
+            "gold": result[10],
+            "diamond": result[11]
         }
 
         embed = Embed(
-            title='User Stats',
+            title="User Stats",
             description=f"**{ctx.author.name}'s Inventory**",
             colour=Colour.green()
         )
         embed.set_thumbnail(
-            url='https://images.emojiterra.com/mozilla/512px/1f392.png'
+            url="https://images.emojiterra.com/mozilla/512px/1f392.png"
         )
         slot = 1
-        if item_name['pickaxe']:
+        if item_name["pickaxe"]:
             embed.add_field(
-                name=f'{slot}. Pickaxe',
+                name=f"{slot}. Pickaxe",
                 value=f":pick: `{item_name['pickaxe']}`",
                 inline=False
             )
             slot += 1
-        if item_name['drill']:
-            emoji_drill = utils.get(self.bot.emojis, name='drill')
+        if item_name["drill"]:
+            emoji_drill = utils.get(self.bot.emojis, name="drill")
             embed.add_field(
-                name=f'{slot}. Drill',
+                name=f"{slot}. Drill",
                 value=f"{str(emoji_drill)} `{item_name['drill']}`",
                 inline=False
             )
             slot += 1
-        if item_name['jackhammer']:
-            emoji_jackhammer = utils.get(self.bot.emojis, name='jackhammer')
+        if item_name["jackhammer"]:
+            emoji_jackhammer = utils.get(self.bot.emojis, name="jackhammer")
             embed.add_field(
-                name=f'{slot}. Jackhammer',
+                name=f"{slot}. Jackhammer",
                 value=f"{str(emoji_jackhammer)} `{item_name['jackhammer']}`",
                 inline=False
             )
             slot += 1
-        if item_name['metal_detector']:
-            emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
+        if item_name["metal_detector"]:
+            emoji_jackhammer = utils.get(self.bot.emojis, name="metal_detector")
             embed.add_field(
-                name=f'{slot}. Metal Detector',
+                name=f"{slot}. Metal Detector",
                 value=f"{str(emoji_jackhammer)} `{item_name['metal_detector']}`",
                 inline=False
             )
             slot += 1
-        if item_name['gold_detector']:
-            emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
+        if item_name["gold_detector"]:
+            emoji_jackhammer = utils.get(self.bot.emojis, name="metal_detector")
             embed.add_field(
-                name=f'{slot}. Gold Detector',
+                name=f"{slot}. Gold Detector",
                 value=f"{str(emoji_jackhammer)} `{item_name['gold_detector']}`",
                 inline=False
             )
             slot += 1
-        if item_name['diamond_detector']:
-            emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
+        if item_name["diamond_detector"]:
+            emoji_jackhammer = utils.get(self.bot.emojis, name="metal_detector")
             embed.add_field(
-                name=f'{slot}. Diamond Detector',
+                name=f"{slot}. Diamond Detector",
                 value=f"{str(emoji_jackhammer)} `{item_name['diamond_detector']}`",
                 inline=False
             )
             slot += 1
-        if item_name['minecart']:
-            emoji_jackhammer = utils.get(self.bot.emojis, name='minecart')
+        if item_name["minecart"]:
+            emoji_jackhammer = utils.get(self.bot.emojis, name="minecart")
             embed.add_field(
-                name=f'{slot}. Mine Cart',
+                name=f"{slot}. Mine Cart",
                 value=f"{str(emoji_jackhammer)} `{item_name['minecart']}`",
                 inline=False
             )
             slot += 1
-        if item_name['minetransport']:
-            emoji_jackhammer = utils.get(self.bot.emojis, name='minetransport')
+        if item_name["minetransport"]:
+            emoji_jackhammer = utils.get(self.bot.emojis, name="minetransport")
             embed.add_field(
-                name=f'{slot}. Mine Transport',
+                name=f"{slot}. Mine Transport",
                 value=f"{str(emoji_jackhammer)} `{item_name['minetransport']}`",
                 inline=False
             )
             slot += 1
-        if item_name['transportplane']:
-            emoji_jackhammer = utils.get(self.bot.emojis, name='transportplane')
+        if item_name["transportplane"]:
+            emoji_jackhammer = utils.get(self.bot.emojis, name="transportplane")
             embed.add_field(
-                name=f'{slot}. Transport Plane',
+                name=f"{slot}. Transport Plane",
                 value=f"{str(emoji_jackhammer)} `{item_name['transportplane']}`",
                 inline=False
             )
             slot += 1
-        if item_name['metal']:
+        if item_name["metal"]:
             embed.add_field(
-                name=f'{slot}. Metal',
+                name=f"{slot}. Metal",
                 value=f":gear: `{item_name['metal']}`",
                 inline=False
             )
             slot += 1
-        if item_name['gold']:
+        if item_name["gold"]:
             embed.add_field(
-                name=f'{slot}. Gold',
+                name=f"{slot}. Gold",
                 value=f":coin: `{item_name['gold']}`",
                 inline=False
             )
             slot += 1
-        if item_name['diamond']:
+        if item_name["diamond"]:
             embed.add_field(
-                name=f'{slot}. Diamond',
+                name=f"{slot}. Diamond",
                 value=f":large_blue_diamond: `{item_name['diamond']}`",
                 inline=False
             )

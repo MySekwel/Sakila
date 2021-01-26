@@ -22,7 +22,7 @@ intents = Intents.default()
 intents.members = True
 
 # Setting up the bot and it's prefix for commands
-bot = commands.Bot(command_prefix='!', help_command=None, case_insensitive=True, intents=intents)
+bot = commands.Bot(command_prefix="!", help_command=None, case_insensitive=True, intents=intents)
 
 
 class Connection:
@@ -104,9 +104,9 @@ class Connection:
     SQL_Handle.commit()
 
 
-for file in os.listdir('cogs'):
-    if file.endswith('.py'):
-        bot.load_extension(f'cogs.{file[:-3]}')
+for file in os.listdir("cogs"):
+    if file.endswith(".py"):
+        bot.load_extension(f"cogs.{file[:-3]}")
 
 
 # Just a simple command for testing
@@ -114,7 +114,7 @@ for file in os.listdir('cogs'):
 async def debug(ctx):
     await ctx.channel.trigger_typing()
     await asyncio.sleep(2)
-    await ctx.send('Debugging successful!')
+    await ctx.send("Debugging successful!")
 
 
 @bot.event
@@ -124,7 +124,7 @@ async def on_connect():
 
     await bot.change_presence(
         activity=Game(
-            name='Console Adventures',
+            name="Console Adventures",
             start=datetime.datetime.now()
         ),
         status=state.Status.online
@@ -137,7 +137,7 @@ async def on_command_error(ctx, error):
         if ctx.channel.id == 768814110447108096:
             return
         embed = Embed(
-            title='Error',
+            title="Error",
             description="That command doesn't exist, type `!help` to see the list of available commands.",
             colour=Color.red()
         )

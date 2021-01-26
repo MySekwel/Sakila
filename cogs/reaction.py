@@ -18,7 +18,7 @@ class React(commands.Cog):
 
         if user in (self.bot.user.id, author_id) or self.bot.user.id == author_id:
             return
-        if str(emoji) == emoji_dictionary.heart['red'] + emoji_dictionary.special['variant']:
+        if str(emoji) == emoji_dictionary.heart["red"] + emoji_dictionary.special["variant"]:
             query = f"""
                 SELECT
                 uid
@@ -42,7 +42,7 @@ class React(commands.Cog):
                 Connection.SQL_Prepared_Cursor.execute(query, (1,))
                 Connection.SQL_Handle.commit()
 
-        if str(emoji) == emoji_dictionary.flower['rosette'] + emoji_dictionary.special['variant']:
+        if str(emoji) == emoji_dictionary.flower["rosette"] + emoji_dictionary.special["variant"]:
             query = f"""
                 SELECT
                 uid

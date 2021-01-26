@@ -30,13 +30,13 @@ class Labor(commands.Cog):
     # Command: Work
     # Description: Mine to earn money
     # Cooldown: 15 - Default
-    @commands.command(aliases=['mine'])
+    @commands.command(aliases=["mine"])
     @cooldown(1, 15, BucketType.user)
     async def work(self, ctx):
         if not registered(ctx.author.id):
             embed = Embed(
-                title='ERROR',
-                description='You are not registered to the database!\n**TIP:** `!register`',
+                title="ERROR",
+                description="You are not registered to the database!\n**TIP:** `!register`",
                 colour=Colour.red()
             )
             await ctx.channel.trigger_typing()
@@ -78,118 +78,118 @@ class Labor(commands.Cog):
         Connection.SQL_Handle.commit()
 
         tool_name = {
-            'pickaxe': result[0],
-            'drill': result[1],
-            'jackhammer': result[2],
-            'metal_detector': result[3],
-            'gold_detector': result[4],
-            'diamond_detector': result[5]
+            "pickaxe": result[0],
+            "drill": result[1],
+            "jackhammer": result[2],
+            "metal_detector": result[3],
+            "gold_detector": result[4],
+            "diamond_detector": result[5]
         }
 
         work_salary = 100
         default_salary = 100
-        tool = 'Shovel'
+        tool = "Shovel"
         metal, gold, diamond = 0, 0, 0
 
-        if tool_name['jackhammer']:
-            tool = 'Jackhammer'
+        if tool_name["jackhammer"]:
+            tool = "Jackhammer"
             work_salary = default_salary + settings.WORK_SALARY * 1.00
-            if tool_name['diamond_detector']:
-                tool += ' & Diamond Detector'
+            if tool_name["diamond_detector"]:
+                tool += " & Diamond Detector"
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     diamond = random.randint(1, 2)
-            elif tool_name['gold_detector']:
-                tool += ' & Gold Detector'
+            elif tool_name["gold_detector"]:
+                tool += " & Gold Detector"
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
-            elif tool_name['metal_detector']:
-                tool += ' & Metal Detector'
+            elif tool_name["metal_detector"]:
+                tool += " & Metal Detector"
                 if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
-        elif tool_name['drill']:
-            tool = 'Drill'
+        elif tool_name["drill"]:
+            tool = "Drill"
             work_salary = default_salary + settings.WORK_SALARY * 0.75
-            if tool_name['diamond_detector']:
-                tool += ' & Diamond Detector'
+            if tool_name["diamond_detector"]:
+                tool += " & Diamond Detector"
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     diamond = random.randint(1, 2)
-            elif tool_name['gold_detector']:
-                tool += ' & Gold Detector'
+            elif tool_name["gold_detector"]:
+                tool += " & Gold Detector"
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
-            elif tool_name['metal_detector']:
-                tool += ' & Metal Detector'
+            elif tool_name["metal_detector"]:
+                tool += " & Metal Detector"
                 if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
-        elif tool_name['pickaxe']:
-            tool = 'Pickaxe'
+        elif tool_name["pickaxe"]:
+            tool = "Pickaxe"
             work_salary = default_salary + settings.WORK_SALARY * 0.50
-            if tool_name['diamond_detector']:
-                tool += ' & Diamond Detector'
+            if tool_name["diamond_detector"]:
+                tool += " & Diamond Detector"
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     diamond = random.randint(1, 2)
-            elif tool_name['gold_detector']:
-                tool += ' & Gold Detector'
+            elif tool_name["gold_detector"]:
+                tool += " & Gold Detector"
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
-            elif tool_name['metal_detector']:
-                tool += ' & Metal Detector'
+            elif tool_name["metal_detector"]:
+                tool += " & Metal Detector"
                 if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
         else:
-            if tool_name['diamond_detector']:
-                tool += ' & Diamond Detector'
+            if tool_name["diamond_detector"]:
+                tool += " & Diamond Detector"
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     diamond = random.randint(1, 2)
-            elif tool_name['gold_detector']:
-                tool += ' & Gold Detector'
+            elif tool_name["gold_detector"]:
+                tool += " & Gold Detector"
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
-            elif tool_name['metal_detector']:
-                tool += ' & Metal Detector'
+            elif tool_name["metal_detector"]:
+                tool += " & Metal Detector"
                 if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
 
-        mining = utils.get(self.bot.emojis, name='mining')
+        mining = utils.get(self.bot.emojis, name="mining")
         embed = Embed(
-            title=f'{str(mining)}Mining in Progress...',
-            description=f'**Current Tool**: {tool}',
+            title=f"{str(mining)}Mining in Progress...",
+            description=f"**Current Tool**: {tool}",
             colour=Colour.random()
         )
         progress = await ctx.send(embed=embed)
         await asyncio.sleep(15)
         embed = Embed(
-            title='Mining Finished!',
-            description=f'**You have worked in the mines and earned**\n\
+            title="Mining Finished!",
+            description=f"**You have worked in the mines and earned**\n\
                 **Salary:** `${int(work_salary)}`\n\
                 **EXP:** `{settings.WORK_BONUS}`\n\
                 **Metal:** `{metal}`\n\
                 **Gold:** `{gold}`\n\
-                **Diamond:** `{diamond}`',
+                **Diamond:** `{diamond}`",
             colour=Colour.green()
         )
         await progress.edit(

@@ -70,7 +70,7 @@ class Authentication(commands.Cog):
                 0,
                 0,
                 0,
-                'None'
+                "None"
             )
             Connection.SQL_Prepared_Cursor.execute(query, stats_values)
             Connection.SQL_Handle.commit()
@@ -117,28 +117,28 @@ class Authentication(commands.Cog):
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
         embed = Embed(
-            title='SUCCESS',
-            description='You are now registered to the database with the following information:',
+            title="SUCCESS",
+            description="You are now registered to the database with the following information:",
             colour=Colour.green()
         )
         embed.add_field(
-            name='User:',
-            value=f'>`{lastid}`',
+            name="User:",
+            value=f">`{lastid}`",
             inline=True
         )
         embed.add_field(
-            name='User ID:',
-            value=f'`{ctx.author.id}`',
+            name="User ID:",
+            value=f"`{ctx.author.id}`",
             inline=True
         )
         embed.add_field(
-            name='User Name:',
-            value=f'`{ctx.author.name}`',
+            name="User Name:",
+            value=f"`{ctx.author.name}`",
             inline=True
         )
         embed.add_field(
-            name='User Tag:',
-            value=f'`{ctx.author.discriminator}`',
+            name="User Tag:",
+            value=f"`{ctx.author.discriminator}`",
             inline=True
         )
         await ctx.channel.trigger_typing()
