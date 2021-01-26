@@ -8,11 +8,13 @@ Module Dependencies:
     > utils.settings
 """
 import asyncio
+import datetime
 import os
 
 import mysql.connector
-from discord import state, Game, Intents
+from discord import state, Game, Intents, Embed, Color
 from discord.ext import commands
+from discord.ext.commands import CommandNotFound
 
 from utils import settings
 
@@ -120,7 +122,28 @@ async def on_connect():
     for guild in bot.guilds:
         print(f"{bot.user} is connected to the following guild: {guild.name}")
 
-    await bot.change_presence(activity=Game(name='Console Adventures'), status=state.Status.online)
+    await bot.change_presence(
+        activity=Game(
+            name='Console Adventures',
+            start=datetime.datetime.now()
+        ),
+        status=state.Status.online
+    )
+
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, CommandNotFound):
+        if ctx.channel.id == 768814110447108096:
+            return
+        embed = Embed(
+            title='Error',
+            description="That command doesn't exist, type `!help` to see the list of available commands.",
+            colour=Color.red()
+        )
+        await ctx.channel.trigger_typing()
+        await asyncio.sleep(2)
+        await ctx.reply(embed=embed)
 
 
 bot.run(settings.TOKEN)

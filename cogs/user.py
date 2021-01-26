@@ -84,7 +84,7 @@ class User(commands.Cog):
             colour=Colour.green()
         )
         embed.set_thumbnail(
-            url='https://webstockreview.net/images/statistics-clipart-transparent-2.png'
+            url=ctx.author.avatar_url
         )
         embed.add_field(
             name='Balance',

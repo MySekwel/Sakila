@@ -117,29 +117,29 @@ class Authentication(commands.Cog):
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
         embed = Embed(
-            title='ERROR',
+            title='SUCCESS',
             description='You are now registered to the database with the following information:',
-            colour=Colour.red()
+            colour=Colour.green()
         )
         embed.add_field(
             name='User:',
-            value=f'{lastid}',
-            inline=False
+            value=f'>`{lastid}`',
+            inline=True
         )
         embed.add_field(
             name='User ID:',
-            value=f'{lastid}',
-            inline=False
+            value=f'`{ctx.author.id}`',
+            inline=True
         )
         embed.add_field(
             name='User Name:',
-            value=f'{lastid}',
-            inline=False
+            value=f'`{ctx.author.name}`',
+            inline=True
         )
         embed.add_field(
             name='User Tag:',
-            value=f'{lastid}',
-            inline=False
+            value=f'`{ctx.author.discriminator}`',
+            inline=True
         )
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
