@@ -30,7 +30,7 @@ class Labor(commands.Cog):
     # Command: Work
     # Description: Mine to earn money
     # Cooldown: 15 - Default
-    @commands.command()
+    @commands.command(aliases=['mine'])
     @cooldown(1, 15, BucketType.user)
     async def work(self, ctx):
         if not registered(ctx.author.id):
@@ -153,6 +153,25 @@ class Labor(commands.Cog):
                 tool += ' & Metal Detector'
                 if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
+        else:
+            if tool_name['diamond_detector']:
+                tool += ' & Diamond Detector'
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    gold = random.randint(1, 3)
+                if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
+                    diamond = random.randint(1, 2)
+            elif tool_name['gold_detector']:
+                tool += ' & Gold Detector'
+                if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
+                if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
+                    gold = random.randint(1, 3)
+            elif tool_name['metal_detector']:
+                tool += ' & Metal Detector'
+                if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
+                    metal = random.randint(1, 5)
 
         mining = utils.get(self.bot.emojis, name='mining')
         embed = Embed(
@@ -175,7 +194,6 @@ class Labor(commands.Cog):
         await progress.edit(
             embed=embed
         )
-        print(f'iron: {metal}, gold: {gold}, diamond: {diamond}')
         query = f"""
             UPDATE
             users

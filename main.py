@@ -33,7 +33,7 @@ class Connection:
     SQL_Query = """
         CREATE DATABASE
         IF NOT EXISTS
-        mysekwel
+        sakila
     """
     SQL_Cursor.execute(SQL_Query)
     SQL_Handle.commit()
