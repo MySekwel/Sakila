@@ -16,20 +16,20 @@ from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 
 from main import Connection
 
-slot_item = {
-    'pickaxe': 0,
-    'drill': 0,
-    'jackhammer': 0,
-    'metal_detector': 0,
-    'gold_detector': 0,
-    'diamond_detector': 0,
-    'minecart': 0,
-    'minetransport': 0,
-    'transportplane': 0,
-    'metal': 0,
-    'gold': 0,
-    'diamond': 0,
-}
+
+def registered(userid):
+    query = f"""
+        SELECT
+        *
+        FROM
+        users
+        WHERE
+        user_id={userid}
+    """
+    Connection.SQL_Cursor.execute(query)
+    result = Connection.SQL_Cursor.fetchone()
+    Connection.SQL_Handle.commit()
+    return result
 
 
 class User(commands.Cog):
@@ -42,6 +42,15 @@ class User(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def stats(self, ctx):
+        if not registered(ctx.author.id):
+            embed = Embed(
+                title='ERROR',
+                description='You are not registered to the database!\n**TIP:** `!register`',
+                colour=Colour.red()
+            )
+
+            await ctx.send(embed=embed)
+            return
         query = f"""
             SELECT
             user_cash,
@@ -58,23 +67,16 @@ class User(commands.Cog):
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
-        if not result:
-            embed = Embed(
-                title='ERROR',
-                description='You are not registered to the database!\n**TIP:** `!register`',
-                colour=Colour.red()
-            )
-            
-            await ctx.send(embed=embed)
-            return
 
         await ctx.send(f"**{ctx.author.name}'s stats.**")
-        cash = result[0]
-        diamonds = result[1]
-        exp = result[2]
-        reputation = result[3]
-        love = result[4]
-        vip = result[5]
+        stat = {
+            'cash': result[0],
+            'bank': result[1],
+            'exp': result[2],
+            'reputation': result[3],
+            'love': result[4],
+            'vip': result[5],
+        }
 
         embed = Embed(
             title='User Stats',
@@ -86,32 +88,32 @@ class User(commands.Cog):
         )
         embed.add_field(
             name='Balance',
-            value=f':moneybag: `{cash}`',
+            value=f":moneybag: `{stat['cash']}`",
             inline=True
         )
         embed.add_field(
             name='Bank',
-            value=f':bank: `{diamonds}`',
+            value=f":bank: `{stat['bank']}`",
             inline=True
         )
         embed.add_field(
             name='Exp',
-            value=f':military_medal: `{exp}`',
+            value=f":military_medal: `{stat['exp']}`",
             inline=True
         )
         embed.add_field(
             name='Reputation',
-            value=f':rosette: `{reputation}`',
+            value=f":rosette: `{stat['reputation']}`",
             inline=True
         )
         embed.add_field(
             name='Love',
-            value=f':heart: `{love}`',
+            value=f":heart: `{stat['love']}`",
             inline=True
         )
         embed.add_field(
             name='VIP Package',
-            value=f':crown: `{vip}`',
+            value=f":crown: `{stat['vip']}`",
             inline=True
         )
         await ctx.send(embed=embed)
@@ -122,6 +124,16 @@ class User(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def inventory(self, ctx):
+        if not registered(ctx.author.id):
+            embed = Embed(
+                title='ERROR',
+                description='You are not registered to the database!\n**TIP:** `!register`',
+                colour=Colour.red()
+            )
+
+            await ctx.send(embed=embed)
+            return
+
         query = f"""
             SELECT
             uid
@@ -135,15 +147,6 @@ class User(commands.Cog):
         Connection.SQL_Handle.commit()
         userid = result[0]
 
-        if not result:
-            embed = Embed(
-                title='ERROR',
-                description='You are not registered to the database!\n**TIP:** `!register`',
-                colour=Colour.red()
-            )
-            
-            await ctx.send(embed=embed)
-            return
         query = f"""
             SELECT
             item_pickaxe,
@@ -198,7 +201,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['pickaxe'] = slot
         if item_name['drill']:
             emoji_drill = utils.get(self.bot.emojis, name='drill')
             embed.add_field(
@@ -207,7 +209,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['drill'] = slot
         if item_name['jackhammer']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='jackhammer')
             embed.add_field(
@@ -216,7 +217,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['jackhammer'] = slot
         if item_name['metal_detector']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
             embed.add_field(
@@ -225,7 +225,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['metal_detector'] = slot
         if item_name['gold_detector']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
             embed.add_field(
@@ -234,7 +233,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['gold_detector'] = slot
         if item_name['diamond_detector']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='metal_detector')
             embed.add_field(
@@ -243,7 +241,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['diamond_detector'] = slot
         if item_name['minecart']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='minecart')
             embed.add_field(
@@ -252,7 +249,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['minecart'] = slot
         if item_name['minetransport']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='minetransport')
             embed.add_field(
@@ -261,7 +257,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['minetransport'] = slot
         if item_name['transportplane']:
             emoji_jackhammer = utils.get(self.bot.emojis, name='transportplane')
             embed.add_field(
@@ -270,7 +265,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['transportplane'] = slot
         if item_name['metal']:
             embed.add_field(
                 name=f'{slot}. Metal',
@@ -278,7 +272,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['metal'] = slot
         if item_name['gold']:
             embed.add_field(
                 name=f'{slot}. Gold',
@@ -286,7 +279,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['gold'] = slot
         if item_name['diamond']:
             embed.add_field(
                 name=f'{slot}. Diamond',
@@ -294,7 +286,6 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
-            slot_item['diamond'] = slot
         await ctx.send(f"**{ctx.author.name}'s inventory.**")
         await ctx.send(embed=embed)
 

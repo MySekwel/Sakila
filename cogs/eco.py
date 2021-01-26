@@ -15,9 +15,24 @@ from discord import Embed, Colour, utils
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 
-from cogs.user import slot_item
+from cogs.user import registered
 from main import Connection
 from utils import settings
+
+slot_item = {
+    'pickaxe': 0,
+    'drill': 0,
+    'jackhammer': 0,
+    'metal_detector': 0,
+    'gold_detector': 0,
+    'diamond_detector': 0,
+    'minecart': 0,
+    'minetransport': 0,
+    'transportplane': 0,
+    'metal': 0,
+    'gold': 0,
+    'diamond': 0,
+}
 
 
 def slot(itemname, price, userid, amount=1):
@@ -53,19 +68,8 @@ class Economy(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def buy(self, ctx, item=0):
-        query = f"""
-            SELECT
-            *
-            FROM
-            users
-            WHERE
-            user_id={ctx.author.id}
-        """
-        Connection.SQL_Cursor.execute(query)
-        result = Connection.SQL_Cursor.fetchone()
-        Connection.SQL_Handle.commit()
-        cash = result[4]
-        if not result:
+
+        if not registered(ctx.author.id):
             embed = Embed(
                 title='ERROR',
                 description='You are not registered to the database!\n**TIP:** `!register`',
@@ -76,7 +80,8 @@ class Economy(commands.Cog):
             return
         query = f"""
             SELECT
-            uid
+            uid,
+            cash
             FROM
             users
             WHERE
@@ -86,6 +91,7 @@ class Economy(commands.Cog):
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
         userid = result[0]
+        cash = result[1]
         query = f"""
             SELECT
             item_pickaxe,
@@ -422,6 +428,13 @@ class Economy(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def sell(self, ctx, item=0, amount=0):
+        if not registered(ctx.author.id):
+            embed = Embed(
+                title='ERROR',
+                description='You are not registered to the database!\n**TIP:** `!register`',
+                colour=Colour.red()
+            )
+            await ctx.send(embed=embed)
         query = f"""
             SELECT
             *
@@ -434,13 +447,7 @@ class Economy(commands.Cog):
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
         userid = result[0]
-        if not result:
-            embed = Embed(
-                title='ERROR',
-                description='You are not registered to the database!\n**TIP:** `!register`',
-                colour=Colour.red()
-            )
-            await ctx.send(embed=embed)
+
         query = f"""
             SELECT
             item_pickaxe,
@@ -701,18 +708,7 @@ class Economy(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def shop(self, ctx):
-        query = f"""
-            SELECT
-            *
-            FROM
-            users
-            WHERE
-            user_id={ctx.author.id}
-        """
-        Connection.SQL_Cursor.execute(query)
-        result = Connection.SQL_Cursor.fetchone()
-        Connection.SQL_Handle.commit()
-        if not result:
+        if not registered(ctx.author.id):
             embed = Embed(
                 title='ERROR',
                 description='You are not registered to the database!\n**TIP:** `!register`',

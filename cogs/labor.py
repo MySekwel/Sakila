@@ -18,6 +18,7 @@ from discord import utils, Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 
+from cogs.user import registered
 from main import Connection
 from utils import settings
 
@@ -32,6 +33,16 @@ class Labor(commands.Cog):
     @commands.command()
     @cooldown(1, 15, BucketType.user)
     async def work(self, ctx):
+        if not registered(ctx.author.id):
+            embed = Embed(
+                title='ERROR',
+                description='You are not registered to the database!\n**TIP:** `!register`',
+                colour=Colour.red()
+            )
+
+            await ctx.send(embed=embed)
+            return
+
         query = f"""
             SELECT
             uid
@@ -44,15 +55,6 @@ class Labor(commands.Cog):
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
         uid = result[0]
-        if not result:
-            embed = Embed(
-                title='ERROR',
-                description='You are not registered to the database!\n**TIP:** `!register`',
-                colour=Colour.red()
-            )
-
-            await ctx.send(embed=embed)
-            return
 
         query = f"""
             SELECT
