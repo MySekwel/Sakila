@@ -9,6 +9,7 @@ Module Dependencies:
     > discord.ext.commands.cooldown
     > discord.ext.commands.CommandOnCooldown
 """
+import asyncio
 
 from discord import Colour, Embed, utils
 from discord.ext import commands
@@ -48,7 +49,8 @@ class User(commands.Cog):
                 description='You are not registered to the database!\n**TIP:** `!register`',
                 colour=Colour.red()
             )
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(embed=embed)
             return
         query = f"""
@@ -67,8 +69,6 @@ class User(commands.Cog):
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
-
-        await ctx.send(f"**{ctx.author.name}'s stats.**")
         stat = {
             'cash': result[0],
             'bank': result[1],
@@ -116,6 +116,8 @@ class User(commands.Cog):
             value=f":crown: `{stat['vip']}`",
             inline=True
         )
+        await ctx.channel.trigger_typing()
+        await asyncio.sleep(2)
         await ctx.send(embed=embed)
 
     # Command: Inventory
@@ -130,7 +132,8 @@ class User(commands.Cog):
                 description='You are not registered to the database!\n**TIP:** `!register`',
                 colour=Colour.red()
             )
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(embed=embed)
             return
 
@@ -286,6 +289,8 @@ class User(commands.Cog):
                 inline=False
             )
             slot += 1
+        await ctx.channel.trigger_typing()
+        await asyncio.sleep(2)
         await ctx.send(f"**{ctx.author.name}'s inventory.**")
         await ctx.send(embed=embed)
 

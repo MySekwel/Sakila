@@ -10,6 +10,7 @@ Module Dependencies:
     > discord.ext.commands.CommandOnCooldown
     > utils.settings
 """
+import asyncio
 
 from discord import Embed, Colour, utils
 from discord.ext import commands
@@ -53,20 +54,20 @@ class Economy(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def buy(self, ctx, item=0):
-
         if not registered(ctx.author.id):
             embed = Embed(
                 title='ERROR',
                 description='You are not registered to the database!\n**TIP:** `!register`',
                 colour=Colour.red()
             )
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(embed=embed)
             return
         query = f"""
             SELECT
             uid,
-            cash
+            user_cash
             FROM
             users
             WHERE
@@ -91,7 +92,7 @@ class Economy(commands.Cog):
             FROM
             inventory
             WHERE
-            uid={userid}
+            uid={str(userid)}
         """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
@@ -115,9 +116,13 @@ class Economy(commands.Cog):
         # Description: %50 Work Salary Bonus
         if int(item) == 1:
             if item_name['pickaxe'] >= 1:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_PICKAXE:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
             query = f"""
@@ -141,16 +146,21 @@ class Economy(commands.Cog):
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_PICKAXE,))
             Connection.SQL_Handle.commit()
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(f"You have bought a `pickaxe` for ${settings.PRICE_PICKAXE}!")
         # Item: Drill
         # Price: 5000
         # Description: %75 Work Salary Bonus
         elif int(item) == 2:
             if item_name['drill'] >= 1:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_DRILL:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
             query = f"""
@@ -174,16 +184,21 @@ class Economy(commands.Cog):
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DRILL,))
             Connection.SQL_Handle.commit()
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(f"You have bought a `drill` for ${settings.PRICE_DRILL}!")
         # Item: Jackhammer
         # Price: 15000
         # Description: %100 Work Salary Bonus
         elif int(item) == 3:
             if item_name['jackhammer'] >= 1:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_JACKHAMMER:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
             query = f"""
@@ -207,16 +222,21 @@ class Economy(commands.Cog):
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_JACKHAMMER,))
             Connection.SQL_Handle.commit()
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(f"You have bought a `jackhammer` for ${settings.PRICE_JACKHAMMER}!")
         # Item: Metal Detector
         # Price: 7500
         # Description: %10 Chance of getting valuable metals
         elif int(item) == 4:
             if item_name['metal_detector'] >= 1:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_METALDETECTOR:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
             query = f"""
@@ -240,16 +260,21 @@ class Economy(commands.Cog):
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_METALDETECTOR,))
             Connection.SQL_Handle.commit()
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(f"You have bought a `metal detector` for ${settings.PRICE_METALDETECTOR}!")
         # Item: Gold Detector
         # Price: 15000
         # Description: %20 Chance of getting valuable metals
         elif int(item) == 5:
             if item_name['gold_detector'] >= 1:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_GOLDDETECTOR:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
             query = f"""
@@ -273,16 +298,21 @@ class Economy(commands.Cog):
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_GOLDDETECTOR,))
             Connection.SQL_Handle.commit()
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(f"You have bought a `gold detector` for ${settings.PRICE_GOLDDETECTOR}!")
         # Item: Diamond Detector
         # Price: 25000
         # Description: %35 Chance of getting valuable metals / diamonds
         elif int(item) == 6:
             if item_name['diamond_detector'] >= 1:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_DIAMONDDETECTOR:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
             query = f"""
@@ -306,16 +336,21 @@ class Economy(commands.Cog):
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DIAMONDDETECTOR,))
             Connection.SQL_Handle.commit()
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(f"You have bought a `diamond detector` for ${settings.PRICE_DIAMONDDETECTOR}!")
         # Item: Mine Cart
         # Price: 35000
         # Description: -%10 Work Cooldown
         elif int(item) == 7:
             if item_name['minecart'] >= 1:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_MINECART:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
             query = f"""
@@ -339,16 +374,21 @@ class Economy(commands.Cog):
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINECART,))
             Connection.SQL_Handle.commit()
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(f"You have bought a `minecart` for ${settings.PRICE_MINECART}!")
         # Item: Mine Transport
         # Price: 55000
         # Description: -%25 Work Cooldown
         elif int(item) == 8:
             if item_name['minetransport'] >= 1:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_MINETRANSPORT:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
             query = f"""
@@ -372,16 +412,21 @@ class Economy(commands.Cog):
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINETRANSPORT,))
             Connection.SQL_Handle.commit()
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(f"You have bought a `mine transport` for ${settings.PRICE_MINETRANSPORT}!")
         # Item: Transport Plane
         # Price: 150000
         # Description: -%50 Work Cooldown
         elif int(item) == 9:
             if item_name['transportplane'] >= 1:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
             if int(cash) < settings.PRICE_TRANSPORTPLANE:
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
             query = f"""
@@ -405,10 +450,18 @@ class Economy(commands.Cog):
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_TRANSPORTPLANE,))
             Connection.SQL_Handle.commit()
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(f"You have bought a `transport plane` for ${settings.PRICE_TRANSPORTPLANE}!")
         else:
-            await ctx.send("USAGE: !buy [item id]")
+            embed = Embed(
+                title='USAGE:',
+                description='!buy [item id]',
+                colour=Colour.dark_gold()
+            )
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
+            await ctx.send(embed=embed)
 
     @commands.command()
     @cooldown(1, 10, BucketType.user)
@@ -419,6 +472,8 @@ class Economy(commands.Cog):
                 description='You are not registered to the database!\n**TIP:** `!register`',
                 colour=Colour.red()
             )
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(embed=embed)
         query = f"""
             SELECT
@@ -432,7 +487,6 @@ class Economy(commands.Cog):
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
         userid = result[0]
-        print(userid)
 
         query = f"""
             SELECT
@@ -529,6 +583,8 @@ class Economy(commands.Cog):
                 description='!sell [item id]',
                 colour=Colour.dark_gold()
             )
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(embed=embed)
             return
 
@@ -541,6 +597,8 @@ class Economy(commands.Cog):
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
         elif int(item) == slot_item['drill']:
@@ -552,6 +610,8 @@ class Economy(commands.Cog):
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
         elif int(item) == slot_item['jackhammer']:
@@ -563,6 +623,8 @@ class Economy(commands.Cog):
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
         elif int(item) == slot_item['metal_detector']:
@@ -574,6 +636,8 @@ class Economy(commands.Cog):
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
         elif int(item) == slot_item['gold_detector']:
@@ -585,6 +649,8 @@ class Economy(commands.Cog):
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
         elif int(item) == slot_item['diamond_detector']:
@@ -596,6 +662,8 @@ class Economy(commands.Cog):
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
         elif int(item) == slot_item['minecart']:
@@ -607,6 +675,8 @@ class Economy(commands.Cog):
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
         elif int(item) == slot_item['minetransport']:
@@ -618,6 +688,8 @@ class Economy(commands.Cog):
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
         elif int(item) == slot_item['transportplane']:
@@ -629,6 +701,8 @@ class Economy(commands.Cog):
                      50% of the original price.',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
         elif int(item) == slot_item['metal']:
@@ -639,15 +713,18 @@ class Economy(commands.Cog):
                         description='!sell metal [amount]',
                         colour=Colour.dark_gold()
                     )
+                    await ctx.channel.trigger_typing()
+                    await asyncio.sleep(2)
                     await ctx.send(embed=embed)
                     return
                 slot('metal_metal', (settings.PRICE_METAL * 0.5) * amount, userid, amount)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold {amount} metal/s for `${(settings.PRICE_METAL * 0.5) * amount}`\
-                     50% of the original price.',
+                    description=f'You have sold {amount} metal/s for `${settings.PRICE_METAL * amount}`',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
         elif int(item) == slot_item['gold']:
@@ -657,16 +734,19 @@ class Economy(commands.Cog):
                     description='!sell gold [amount]',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
                 return
             if item_name['gold']:
                 slot('metal_gold', (settings.PRICE_GOLD * 0.5) * amount, userid, amount)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold {amount} gold/s for `${(settings.PRICE_GOLD * 0.5) * amount}`\
-                     50% of the original price.',
+                    description=f'You have sold {amount} gold/s for `${settings.PRICE_GOLD * amount}`',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
         elif int(item) == slot_item['diamond']:
@@ -676,16 +756,19 @@ class Economy(commands.Cog):
                     description='!sell diamond [amount]',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
                 return
             if item_name['diamond']:
                 slot('metal_diamond', (settings.PRICE_DIAMOND * 0.5) * amount, userid, amount)
                 embed = Embed(
                     title='Item Sold!',
-                    description=f'You have sold {amount} diamond/s for `${(settings.PRICE_DIAMOND * 0.5) * amount}`\
-                     50% of the original price.',
+                    description=f'You have sold {amount} diamond/s for `${settings.PRICE_DIAMOND * amount}`',
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
             else:
@@ -694,6 +777,8 @@ class Economy(commands.Cog):
                     description="You don't have that item!",
                     colour=Colour.dark_gold()
                 )
+                await ctx.channel.trigger_typing()
+                await asyncio.sleep(2)
                 await ctx.send(embed=embed)
         else:
             embed = Embed(
@@ -701,6 +786,8 @@ class Economy(commands.Cog):
                 description='!sell [item id]',
                 colour=Colour.dark_gold()
             )
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(embed=embed)
 
     # Command: Shop
@@ -715,6 +802,8 @@ class Economy(commands.Cog):
                 description='You are not registered to the database!\n**TIP:** `!register`',
                 colour=Colour.red()
             )
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(embed=embed)
             return
 
@@ -781,6 +870,8 @@ class Economy(commands.Cog):
             value='To buy, use the command `!buy [item number]`.',
             inline=False
         )
+        await ctx.channel.trigger_typing()
+        await asyncio.sleep(2)
         await ctx.send(embed=embed)
 
     @buy.error

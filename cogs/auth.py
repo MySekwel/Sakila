@@ -5,8 +5,10 @@ Module Dependencies:
     > mysql.connector
     > discord.ext.commands
 """
+import asyncio
 
 import mysql.connector
+from discord import Embed, Colour
 from discord.ext import commands
 
 from main import Connection
@@ -108,18 +110,40 @@ class Authentication(commands.Cog):
             Connection.SQL_Handle.commit()
         except mysql.connector.Error as err:
             print("Something went wrong: {}".format(err))
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send("**You are already registered to the database!**")
             return
-
-        await ctx.send(
-            f"""
-            You are now registered to the database with the following information:
-            **UID:** `{lastid}`
-            **UserID:** `{ctx.author.id}`
-            **UserName:** `{ctx.author.name}`
-            **UserTag:** `{ctx.author.discriminator}`
-        """
+        await ctx.channel.trigger_typing()
+        await asyncio.sleep(2)
+        embed = Embed(
+            title='ERROR',
+            description='You are now registered to the database with the following information:',
+            colour=Colour.red()
         )
+        embed.add_field(
+            name='User:',
+            value=f'{lastid}',
+            inline=False
+        )
+        embed.add_field(
+            name='User ID:',
+            value=f'{lastid}',
+            inline=False
+        )
+        embed.add_field(
+            name='User Name:',
+            value=f'{lastid}',
+            inline=False
+        )
+        embed.add_field(
+            name='User Tag:',
+            value=f'{lastid}',
+            inline=False
+        )
+        await ctx.channel.trigger_typing()
+        await asyncio.sleep(2)
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

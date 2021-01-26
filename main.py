@@ -7,7 +7,7 @@ Module Dependencies:
     > discord.ext.commands
     > utils.settings
 """
-
+import asyncio
 import os
 
 import mysql.connector
@@ -106,14 +106,14 @@ for file in os.listdir('cogs'):
 # Just a simple command for testing
 @bot.command()
 async def debug(ctx):
+    await ctx.channel.trigger_typing()
+    await asyncio.sleep(2)
     await ctx.send('Debugging successful!')
 
 
 @bot.event
 async def on_ready():
     for guild in bot.guilds:
-        if guild.name == settings.GUILD:
-            break
         print(f"{bot.user} is connected to the following guild: {guild.name}")
 
 

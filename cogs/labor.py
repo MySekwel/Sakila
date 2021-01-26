@@ -39,7 +39,8 @@ class Labor(commands.Cog):
                 description='You are not registered to the database!\n**TIP:** `!register`',
                 colour=Colour.red()
             )
-
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
             await ctx.send(embed=embed)
             return
 

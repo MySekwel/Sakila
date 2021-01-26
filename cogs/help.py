@@ -15,13 +15,13 @@ from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 from disputils import BotEmbedPaginator
 
-from utils import emoji_dictionary as emojii
+from utils import emoji_dictionary as emoji_dictionary
 
 
 def empty_field(embed):
     embed.add_field(
-        name=emojii.special['empty'],
-        value=emojii.special['empty'],
+        name=emoji_dictionary.special['empty'],
+        value=emoji_dictionary.special['empty'],
         inline=True
     )
 
@@ -129,7 +129,7 @@ class Help(commands.Cog):
 
         page_1.add_field(
             name='Page:',
-            value=emojii.special['empty'],
+            value=emoji_dictionary.special['empty'],
             inline=False
         )
 
@@ -154,7 +154,7 @@ class Help(commands.Cog):
 
         page_2.add_field(
             name='Page:',
-            value=emojii.special['empty'],
+            value=emoji_dictionary.special['empty'],
             inline=False
         )
 

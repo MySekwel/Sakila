@@ -13,6 +13,10 @@ flower = {
     'rosette': '\U0001f3f5',
 }
 
+hand = {
+    'wave': '\U0001f44b',
+}
+
 special = {
     'empty': '\u200b',
     'variant': '\U0000fe0f',
