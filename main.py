@@ -11,12 +11,16 @@ import asyncio
 import os
 
 import mysql.connector
+from discord import state, Game, Intents
 from discord.ext import commands
 
 from utils import settings
 
+intents = Intents.default()
+intents.members = True
+
 # Setting up the bot and it's prefix for commands
-bot = commands.Bot(command_prefix='!', help_command=None, case_insensitive=True)
+bot = commands.Bot(command_prefix='!', help_command=None, case_insensitive=True, intents=intents)
 
 
 class Connection:
@@ -112,9 +116,11 @@ async def debug(ctx):
 
 
 @bot.event
-async def on_ready():
+async def on_connect():
     for guild in bot.guilds:
         print(f"{bot.user} is connected to the following guild: {guild.name}")
+
+    await bot.change_presence(activity=Game(name='Console Adventures'), status=state.Status.online)
 
 
 bot.run(settings.TOKEN)
