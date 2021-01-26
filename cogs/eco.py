@@ -19,21 +19,6 @@ from cogs.user import registered
 from main import Connection
 from utils import settings
 
-slot_item = {
-    'pickaxe': 0,
-    'drill': 0,
-    'jackhammer': 0,
-    'metal_detector': 0,
-    'gold_detector': 0,
-    'diamond_detector': 0,
-    'minecart': 0,
-    'minetransport': 0,
-    'transportplane': 0,
-    'metal': 0,
-    'gold': 0,
-    'diamond': 0,
-}
-
 
 def slot(itemname, price, userid, amount=1):
     query = f"""
@@ -447,6 +432,7 @@ class Economy(commands.Cog):
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
         userid = result[0]
+        print(userid)
 
         query = f"""
             SELECT
@@ -485,6 +471,21 @@ class Economy(commands.Cog):
             'gold': result[10],
             'diamond': result[11],
         }
+        slot_item = {
+            'pickaxe': 0,
+            'drill': 0,
+            'jackhammer': 0,
+            'metal_detector': 0,
+            'gold_detector': 0,
+            'diamond_detector': 0,
+            'minecart': 0,
+            'minetransport': 0,
+            'transportplane': 0,
+            'metal': 0,
+            'gold': 0,
+            'diamond': 0,
+        }
+
         slot_num = 0
         if item_name['pickaxe']:
             slot_num += 1
