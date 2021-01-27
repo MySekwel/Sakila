@@ -1,5 +1,5 @@
 """
-Module: ./utils/emoji_dictionary.py
+Module: ./utils/emojii.py
 Description: Emoji Dictionary module, a dictionary for unicode equivalent of discord emojis.
 Module Dependencies: Null
 """

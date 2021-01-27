@@ -10,7 +10,7 @@ import datetime
 from discord import Embed, Colour
 from discord.ext import commands
 
-from utils import emoji_dictionary
+from utils import emoji_dictionary as emojii
 
 
 class Message(commands.Cog):
@@ -31,13 +31,13 @@ class Message(commands.Cog):
             await asyncio.sleep(2)
             await message.reply("qiqil?")
         if message.content.casefold() == "hi":
-            await message.add_reaction(emoji_dictionary.hand["wave"])
+            await message.add_reaction(emojii.hand["wave"])
             await message.channel.trigger_typing()
             await asyncio.sleep(2)
             await message.reply(f"Hello there {message.author.mention}")
         elif message.content.casefold() == "hello":
             await message.channel.trigger_typing()
-            await message.add_reaction(emoji_dictionary.hand["wave"])
+            await message.add_reaction(emojii.hand["wave"])
             await asyncio.sleep(2)
             await message.reply(f"Hi there {message.author.mention}")
         elif message.content == "pls snipe":
