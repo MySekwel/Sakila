@@ -50,7 +50,6 @@ class Help(commands.Cog):
                 description=description,
                 colour=Colour.random()
             )
-            embed.set_thumbnail(url="https://i.imgur.com/bObV3r5.png")
 
             empty_field(embed)
             empty_field(embed)
@@ -64,54 +63,50 @@ class Help(commands.Cog):
             empty_field(embed)
             empty_field(embed)
             embed.add_field(
-                name="Category: General",
+                name="Category: [General]",
                 value="**Description:** Shows all available commands that are uncategorized.",
                 inline=True
             )
             embed.add_field(
-                name="Category: Casino",
+                name="Category: [Casino]",
                 value="**Description:** Casino System, all gambling related commands, for people who loves risks!",
                 inline=True
             )
             embed.add_field(
-                name="Category: Labor",
+                name="Category: [Labor]",
                 value="**Description:** Labor System, money-earning commands, for industrious people.",
                 inline=True
             )
             embed.add_field(
-                name="Category: Economy",
+                name="Category: [Economy]",
                 value="**Description:** Economy System, commands related to the economy like buying & selling of "
                       "stuffs.",
                 inline=True
             )
             embed.add_field(
-                name="Category: Reaction",
+                name="Category: [Reaction]",
                 value="**Description:** Reaction System, how to get reaction stats like reputation, love and more.",
                 inline=True
             )
             embed.add_field(
-                name="Category: Donation",
+                name="Category: [Donation]",
                 value="**Description:** Want to donate? Here's how.",
                 inline=True
             )
             empty_field(embed)
             empty_field(embed)
             empty_field(embed)
-            embed.add_field(
-                name="Commands:",
-                value=emoji_dictionary.special['empty'],
-                inline=True
-            )
             empty_field(embed)
             empty_field(embed)
-            embed.add_field(
-                name="Command: !help",
-                value="**Description:** Show the help menu.\n**Usage:** `!help [command/category]`",
-                inline=True
-            )
             time = datetime.datetime.now()
             embed.set_footer(text=time.strftime("Page 1 | %B %d, %Y | %I:%M %p"))
-            await ctx.send(embed=embed)
+            help = await ctx.send(embed=embed)
+            await help.add_reaction(emoji_dictionary.arrow["double_left"])
+            await help.add_reaction(emoji_dictionary.arrow["small_left"] + emoji_dictionary.special["variant"])
+            await help.add_reaction(emoji_dictionary.number["1234"])
+            await help.add_reaction(emoji_dictionary.arrow["small_right"] + emoji_dictionary.special["variant"])
+            await help.add_reaction(emoji_dictionary.arrow["double_right"])
+            await help.add_reaction(emoji_dictionary.buttons["stop"] + emoji_dictionary.special["variant"])
 
             return
         if category.casefold() == "general":

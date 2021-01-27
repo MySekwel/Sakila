@@ -10,6 +10,7 @@ Module Dependencies:
 import asyncio
 import datetime
 import os
+import unicodedata
 
 import mysql.connector
 from discord import state, Game, Intents, Embed, Color
@@ -144,6 +145,19 @@ async def on_command_error(ctx, error):
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
         await ctx.reply(embed=embed)
+
+
+@bot.command()
+async def charinfo(ctx, *, characters: str):
+    def to_string(c):
+        digit = f'{ord(c):x}'
+        name = unicodedata.name(c, 'Name not found.')
+        return f'`\\U{digit:>08}`: {name} - {c} \N{EM DASH} <http://www.fileformat.info/info/unicode/char/{digit}>'
+
+    msg = '\n'.join(map(to_string, characters))
+    if len(msg) > 2000:
+        return await ctx.send('Output too long to display.')
+    await ctx.send(msg)
 
 
 bot.run(settings.TOKEN)
