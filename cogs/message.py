@@ -52,6 +52,19 @@ class Message(commands.Cog):
             time = datetime.datetime.now()
             embed.set_footer(text=time.strftime("%B %d, %Y | %I:%M %p"))
             await message.channel.send(embed=embed)
+        elif message.content.startswith('$thumb'):
+            channel = message.channel
+            await channel.send('Send me that 👍 reaction, mate')
+
+            def check(_reaction, _user):
+                return _user == message.author and str(_reaction.emoji) == '👍'
+
+            try:
+                _reaction, _user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                await channel.send('👎')
+            else:
+                await channel.send('👍')
 
     @commands.command()
     async def snipe(self, ctx):

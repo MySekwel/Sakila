@@ -8,12 +8,12 @@ Module Dependencies:
     > utils.settings
 """
 import asyncio
-import datetime
 import os
+import random
 import unicodedata
 
 import mysql.connector
-from discord import state, Game, Intents, Embed, Color
+from discord import Intents, Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import CommandNotFound
 
@@ -119,28 +119,14 @@ async def debug(ctx):
 
 
 @bot.event
-async def on_connect():
-    for guild in bot.guilds:
-        print(f"{bot.user} is connected to the following guild: {guild.name}")
-
-    await bot.change_presence(
-        activity=Game(
-            name="Console Adventures",
-            start=datetime.datetime.now()
-        ),
-        status=state.Status.online
-    )
-
-
-@bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, CommandNotFound):
-        if ctx.channel.id == 768814110447108096:
+        if ctx.channel.id in (768814110447108096, 768801742992703498, 764843635610353700):
             return
         embed = Embed(
             title="Error",
             description="That command doesn't exist, type `!help` to see the list of available commands.",
-            colour=Color.red()
+            colour=Colour.red()
         )
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
@@ -158,6 +144,32 @@ async def charinfo(ctx, *, characters: str):
     if len(msg) > 2000:
         return await ctx.send('Output too long to display.')
     await ctx.send(msg)
+
+
+@bot.command()
+async def randomquote(ctx):
+    random_quote = [
+        "Love? What a destructive thing, yet we seek for it.",
+        "We are just living a dream, might wanna wake up some day in reality.",
+        "Are you sure you're contented? Why are you sad then?",
+        "What a waste, you pay to finish not to learn.",
+        "Coming up with ideas is fun, especially when you love what you're doing.",
+        "Love can be North Pole and South Pole, sometimes afar but still related.",
+        "Hungry? Grab a snicker.",
+        "They say laughter is the best medicine, I think they are wrong, you are my best medicine.",
+        "Love is blind? I ain't blind, you are beautiful.",
+        "It's not okay to not be okay, fucking move you lazy bastard.",
+        "Education is the key to success? Hell yeah, but remember, education is not just about schools.",
+        "Hey friend, why are you sad? She left you? Damn isn't that fun?",
+        "Don't forget your relationship to yourself. Learn to love it and forgive it.",
+    ]
+    quote = random.choice(random_quote)
+    embed = Embed(
+        title='Random Quote',
+        description=quote,
+        colour=Colour.random()
+    )
+    await ctx.send(embed=embed)
 
 
 bot.run(settings.TOKEN)

@@ -33,6 +33,8 @@ class Help(commands.Cog):
         self.bot = bot
         self.page = 1
         self.page_embed = None
+        self.page_id = 0
+        self.page_guild = None
 
     async def show_page(self, ctx, page):
         if page == 1:
@@ -259,6 +261,8 @@ class Help(commands.Cog):
             time = datetime.datetime.now()
             embed.set_footer(text=time.strftime(f"Page {self.page} | %B %d, %Y | %I:%M %p"))
             self.page_embed = await ctx.send(embed=embed)
+            self.page_guild = self.page_embed.guild
+            self.page_id = self.page_embed.id
 
             await self.page_embed.add_reaction(emojii.arrow["double_left"])
             await self.page_embed.add_reaction(emojii.arrow["small_left"] + emojii.special["variant"])
@@ -307,38 +311,53 @@ class Help(commands.Cog):
 
         if self.bot.user.id == user:
             return
+        print(self.page_guild)
+        if message.guild == self.page_guild:
+            if message.id == self.page_id:
+                if emoji.name == emojii.arrow["double_left"]:
+                    await message.remove_reaction(
+                        emoji=emojii.arrow["double_left"],
+                        member=self.bot.get_user(user)
+                    )
+                    self.page = 1
+                    await self.show_page(message, self.page)
 
-        if str(emoji) == emojii.arrow["double_left"]:
-            await message.remove_reaction(emoji=emojii.arrow["double_left"], member=self.bot.get_user(user))
-            self.page = 1
-            await self.show_page(message, self.page)
+                elif emoji.name == emojii.arrow["small_left"] + emojii.special["variant"]:
+                    await message.remove_reaction(
+                        emoji=emojii.arrow["small_left"] +
+                              emojii.special["variant"],
+                        member=self.bot.get_user(user)
+                    )
+                    self.page -= 1
+                    if self.page <= 1:
+                        self.page = 1
+                    await self.show_page(message, self.page)
 
-        elif str(emoji) == emojii.arrow["small_left"] + emojii.special["variant"]:
-            await message.remove_reaction(emoji=emojii.arrow["small_left"] + emojii.special["variant"],
-                                          member=self.bot.get_user(user))
-            self.page -= 1
-            if self.page <= 1:
-                self.page = 1
-            await self.show_page(message, self.page)
+                elif emoji.name == emojii.number["1234"]:
+                    pass
 
-        elif str(emoji) == emojii.number["1234"]:
-            pass
+                elif emoji.name == emojii.arrow["small_right"] + emojii.special["variant"]:
+                    await message.remove_reaction(
+                        emoji=emojii.arrow["small_right"] +
+                              emojii.special["variant"],
+                        member=self.bot.get_user(user)
+                    )
+                    self.page += 1
+                    if self.page >= 7:
+                        self.page = 7
+                    await self.show_page(message, self.page)
 
-        elif str(emoji) == emojii.arrow["small_right"] + emojii.special["variant"]:
-            await message.remove_reaction(emoji=emojii.arrow["small_right"] + emojii.special["variant"],
-                                          member=self.bot.get_user(user))
-            self.page += 1
-            if self.page >= 7:
-                self.page = 7
-            await self.show_page(message, self.page)
+                elif emoji.name == emojii.arrow["double_right"]:
+                    await message.remove_reaction(
+                        emoji=emojii.arrow["double_right"],
+                        member=self.bot.get_user(user)
+                    )
+                    self.page = 7
+                    await self.show_page(message, self.page)
 
-        elif str(emoji) == emojii.arrow["double_right"]:
-            await message.remove_reaction(emoji=emojii.arrow["double_right"], member=self.bot.get_user(user))
-            self.page = 7
-            await self.show_page(message, self.page)
-
-        elif str(emoji) == emojii.buttons["stop"] + emojii.special["variant"]:
-            pass
+                elif emoji.name == emojii.buttons["stop"] + emojii.special["variant"]:
+                    if message.author == self.bot.user:
+                        self.page_embed = await message.delete()
 
 
 def setup(bot):
