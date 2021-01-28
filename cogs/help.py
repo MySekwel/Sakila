@@ -32,10 +32,14 @@ guild_hashmap = {}
 
 
 async def show_page(ctx, page):
-    if page == 1:
+    if int(page) == 1:
+        description = \
+            "Use `!help [command]` for more info on a *command*.\n\
+            Use `!help [category]` for more info on a *category*.\n\
+            For more help, join the official bot support server: https://discord.gg/EpDbtGbDv6"
         embed = Embed(
             title="Help",
-            description=Help.description,
+            description=description,
             colour=Colour.random()
         )
 
@@ -79,12 +83,16 @@ async def show_page(ctx, page):
         )
         time = datetime.datetime.now()
         embed.set_footer(text=time.strftime(f"Page {page} | %B %d, %Y | %I:%M %p"))
-        await guild_hashmap[f"{ctx.guild}_message"].edit(embed=embed)
+        await ctx.edit(embed=embed)
 
-    elif page == 2:
+    elif int(page) == 2:
+        description = \
+            "Use `!help [command]` for more info on a *command*.\n\
+            Use `!help [category]` for more info on a *category*.\n\
+            For more help, join the official bot support server: https://discord.gg/EpDbtGbDv6"
         embed = Embed(
             title="Help",
-            description=Help.description,
+            description=description,
             colour=Colour.random()
         )
         embed.add_field(
@@ -94,11 +102,15 @@ async def show_page(ctx, page):
         )
         time = datetime.datetime.now()
         embed.set_footer(text=time.strftime(f"Page {page} | %B %d, %Y | %I:%M %p"))
-        await guild_hashmap[f"{ctx.guild}_message"].edit(embed=embed)
-    elif page == 3:
+        await ctx.edit(embed=embed)
+    elif int(page) == 3:
+        description = \
+            "Use `!help [command]` for more info on a *command*.\n\
+            Use `!help [category]` for more info on a *category*.\n\
+            For more help, join the official bot support server: https://discord.gg/EpDbtGbDv6"
         embed = Embed(
             title="Help",
-            description=Help.description,
+            description=description,
             colour=Colour.random()
         )
         embed.add_field(
@@ -108,11 +120,15 @@ async def show_page(ctx, page):
         )
         time = datetime.datetime.now()
         embed.set_footer(text=time.strftime(f"Page {page} | %B %d, %Y | %I:%M %p"))
-        await guild_hashmap[f"{ctx.guild}_message"].edit(embed=embed)
-    elif page == 4:
+        await ctx.edit(embed=embed)
+    elif int(page) == 4:
+        description = \
+            "Use `!help [command]` for more info on a *command*.\n\
+            Use `!help [category]` for more info on a *category*.\n\
+            For more help, join the official bot support server: https://discord.gg/EpDbtGbDv6"
         embed = Embed(
             title="Help",
-            description=Help.description,
+            description=description,
             colour=Colour.random()
         )
         embed.add_field(
@@ -122,11 +138,15 @@ async def show_page(ctx, page):
         )
         time = datetime.datetime.now()
         embed.set_footer(text=time.strftime(f"Page {page} | %B %d, %Y | %I:%M %p"))
-        await guild_hashmap[f"{ctx.guild}_message"].edit(embed=embed)
-    elif page == 5:
+        await ctx.edit(embed=embed)
+    elif int(page) == 5:
+        description = \
+            "Use `!help [command]` for more info on a *command*.\n\
+            Use `!help [category]` for more info on a *category*.\n\
+            For more help, join the official bot support server: https://discord.gg/EpDbtGbDv6"
         embed = Embed(
             title="Help",
-            description=Help.description,
+            description=description,
             colour=Colour.random()
         )
         embed.add_field(
@@ -137,11 +157,15 @@ async def show_page(ctx, page):
         )
         time = datetime.datetime.now()
         embed.set_footer(text=time.strftime(f"Page {page} | %B %d, %Y | %I:%M %p"))
-        await guild_hashmap[f"{ctx.guild}_message"].edit(embed=embed)
-    elif page == 6:
+        await ctx.edit(embed=embed)
+    elif int(page) == 6:
+        description = \
+            "Use `!help [command]` for more info on a *command*.\n\
+            Use `!help [category]` for more info on a *category*.\n\
+            For more help, join the official bot support server: https://discord.gg/EpDbtGbDv6"
         embed = Embed(
             title="Help",
-            description=Help.description,
+            description=description,
             colour=Colour.random()
         )
         embed.add_field(
@@ -151,11 +175,15 @@ async def show_page(ctx, page):
         )
         time = datetime.datetime.now()
         embed.set_footer(text=time.strftime(f"Page {page} | %B %d, %Y | %I:%M %p"))
-        await guild_hashmap[f"{ctx.guild}_message"].edit(embed=embed)
-    elif page == 7:
+        await ctx.edit(embed=embed)
+    elif int(page) == 7:
+        description = \
+            "Use `!help [command]` for more info on a *command*.\n\
+            Use `!help [category]` for more info on a *category*.\n\
+            For more help, join the official bot support server: https://discord.gg/EpDbtGbDv6"
         embed = Embed(
             title="Help",
-            description=Help.description,
+            description=description,
             colour=Colour.random()
         )
         embed.add_field(
@@ -165,16 +193,12 @@ async def show_page(ctx, page):
         )
         time = datetime.datetime.now()
         embed.set_footer(text=time.strftime(f"Page {page} | %B %d, %Y | %I:%M %p"))
-        await guild_hashmap[f"{ctx.guild}_message"].edit(embed=embed)
+        await ctx.edit(embed=embed)
 
 
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.description = \
-            "Use `!help [command]` for more info on a *command*.\n\
-            Use `!help [category]` for more info on a *category*.\n\
-            For more help, join the official bot support server: https://discord.gg/EpDbtGbDv6"
 
     # Command: Help
     # Description: Shows the list of available commands.
@@ -269,19 +293,16 @@ class Help(commands.Cog):
                                 member=self.bot.get_user(ctx.author.id)
                             )
                             guild_hashmap[f"{ctx.guild}_page"] = 1
-                            await show_page(ctx=guild_hashmap[f"{ctx.guild}_message"],
-                                            page=guild_hashmap[f"{ctx.guild}_page"])
+                            await show_page(guild_hashmap[f"{ctx.guild}_message"], guild_hashmap[f"{ctx.guild}_page"])
                         elif str(emoji) == emojii.arrow["small_left"] + emojii.special["variant"]:
                             await guild_hashmap[f"{ctx.guild}_message"].remove_reaction(
-                                emoji=emojii.arrow["small_left"] +
-                                      emojii.special["variant"],
+                                emoji=emojii.arrow["small_left"] + emojii.special["variant"],
                                 member=self.bot.get_user(ctx.author.id)
                             )
                             guild_hashmap[f"{ctx.guild}_page"] -= 1
                             if guild_hashmap[f"{ctx.guild}_page"] <= 1:
                                 guild_hashmap[f"{ctx.guild}_page"] = 1
-                            await show_page(ctx=guild_hashmap[f"{ctx.guild}_message"],
-                                            page=guild_hashmap[f"{ctx.guild}_page"])
+                            await show_page(guild_hashmap[f"{ctx.guild}_message"], guild_hashmap[f"{ctx.guild}_page"])
                         elif str(emoji) == emojii.number["1234"]:
                             await guild_hashmap[f"{ctx.guild}_message"].remove_reaction(
                                 emoji=emojii.number["1234"],
@@ -289,15 +310,13 @@ class Help(commands.Cog):
                             )
                         elif str(emoji) == emojii.arrow["small_right"] + emojii.special["variant"]:
                             await guild_hashmap[f"{ctx.guild}_message"].remove_reaction(
-                                emoji=emojii.arrow["small_right"] +
-                                      emojii.special["variant"],
+                                emoji=emojii.arrow["small_right"] + emojii.special["variant"],
                                 member=self.bot.get_user(ctx.author.id)
                             )
                             guild_hashmap[f"{ctx.guild}_page"] += 1
                             if guild_hashmap[f"{ctx.guild}_page"] >= 7:
                                 guild_hashmap[f"{ctx.guild}_page"] = 7
-                            await show_page(ctx=guild_hashmap[f"{ctx.guild}_message"],
-                                            page=guild_hashmap[f"{ctx.guild}_page"])
+                            await show_page(guild_hashmap[f"{ctx.guild}_message"], guild_hashmap[f"{ctx.guild}_page"])
                         elif str(emoji) == emojii.arrow["double_right"]:
                             await guild_hashmap[f"{ctx.guild}_message"].remove_reaction(
                                 emoji=emojii.arrow["double_right"],
@@ -308,8 +327,7 @@ class Help(commands.Cog):
                                             page=guild_hashmap[f"{ctx.guild}_page"])
                         elif str(emoji) == emojii.buttons["stop"] + emojii.special["variant"]:
                             await guild_hashmap[f"{ctx.guild}_message"].remove_reaction(
-                                emoji=emojii.buttons["stop"] +
-                                      emojii.special["variant"],
+                                emoji=emojii.buttons["stop"] + emojii.special["variant"],
                                 member=self.bot.get_user(ctx.author.id)
                             )
                             await guild_hashmap[f"{ctx.guild}_message"].delete()
