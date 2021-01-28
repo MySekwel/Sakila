@@ -12,14 +12,12 @@ from discord.ext import commands
 
 from utils import emoji_dictionary as emojii
 
+guild_hashmap = {}
+
 
 class Message(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.deleter_message = None
-        self.deleter_name = None
-        self.deleter_tag = None
-        self.deleter_avatar = None
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -40,52 +38,60 @@ class Message(commands.Cog):
             await message.add_reaction(emojii.hand["wave"])
             await asyncio.sleep(2)
             await message.reply(f"Hi there {message.author.mention}")
-        elif message.content == "pls snipe":
+        elif message.content.casefold() == "pls snipe":
+            if message.guild.id == guild_hashmap[f"{message.guild}_guild_id"]:
+                embed = Embed(
+                    title="Boom Headshot!",
+                    description=f"**Message:** `{guild_hashmap[f'{message.guild}_message']}`",
+                    colour=Colour.green()
+                )
+                embed.set_author(icon_url=guild_hashmap[f"{message.guild}_author_avatar"],
+                                 name=guild_hashmap[f"{message.guild}_author_name"] + "#" + guild_hashmap[
+                                     f"{message.guild}_author_tag"])
+                embed.set_thumbnail(
+                    url="https://cdn.discordapp.com/attachments/799655646722523166/803568246045147156/d9atvs2-6c8bcc70-1cf4-412f-9ac3-f9538e443c7a.png")
+                time = datetime.datetime.now()
+                embed.set_footer(text=time.strftime("%B %d, %Y | %I:%M %p"))
+                await message.channel.send(embed=embed)
+            else:
+                embed = Embed(
+                    title="You missed!",
+                    description=f"You failed to snipe the message, better luck next time!",
+                    colour=Colour.red()
+                )
+                await message.channel.send(embed=embed)
+
+    @commands.command()
+    async def snipe(self, ctx):
+        if ctx.guild.id == guild_hashmap[f"{ctx.guild}_guild_id"]:
             embed = Embed(
                 title="Boom Headshot!",
-                description=f"**Message:** `{self.deleter_message}`",
+                description=f"**Message:** `{guild_hashmap[f'{ctx.guild}_message']}`",
                 colour=Colour.green()
             )
-            embed.set_author(icon_url=self.deleter_avatar, name=self.deleter_name + "#" + str(self.deleter_tag))
+            embed.set_author(icon_url=guild_hashmap[f"{ctx.guild}_author_avatar"],
+                             name=guild_hashmap[f"{ctx.guild}_author_name"] + "#" + guild_hashmap[
+                                 f"{ctx.guild}_author_tag"])
             embed.set_thumbnail(
                 url="https://cdn.discordapp.com/attachments/799655646722523166/803568246045147156/d9atvs2-6c8bcc70-1cf4-412f-9ac3-f9538e443c7a.png")
             time = datetime.datetime.now()
             embed.set_footer(text=time.strftime("%B %d, %Y | %I:%M %p"))
-            await message.channel.send(embed=embed)
-        elif message.content.startswith('$thumb'):
-            channel = message.channel
-            await channel.send('Send me that 👍 reaction, mate')
-
-            def check(_reaction, _user):
-                return _user == message.author and str(_reaction.emoji) == '👍'
-
-            try:
-                _reaction, _user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
-            except asyncio.TimeoutError:
-                await channel.send('👎')
-            else:
-                await channel.send('👍')
-
-    @commands.command()
-    async def snipe(self, ctx):
-        embed = Embed(
-            title="Boom Headshot!",
-            description=f"**Message:** `{self.deleter_message}`",
-            colour=Colour.green()
-        )
-        embed.set_author(icon_url=self.deleter_avatar, name=self.deleter_name + "#" + str(self.deleter_tag))
-        embed.set_thumbnail(
-            url="https://cdn.discordapp.com/attachments/799655646722523166/803568246045147156/d9atvs2-6c8bcc70-1cf4-412f-9ac3-f9538e443c7a.png")
-        time = datetime.datetime.now()
-        embed.set_footer(text=time.strftime("%B %d, %Y | %I:%M %p"))
-        await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
+        else:
+            embed = Embed(
+                title="You missed!",
+                description=f"You failed to snipe the message, better luck next time!",
+                colour=Colour.red()
+            )
+            await ctx.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
-        self.deleter_message = message.content
-        self.deleter_name = message.author.name
-        self.deleter_tag = message.author.discriminator
-        self.deleter_avatar = message.author.avatar_url
+        guild_hashmap[f"{message.guild}_message"] = message.content
+        guild_hashmap[f"{message.guild}_author_name"] = message.author.name
+        guild_hashmap[f"{message.guild}_author_tag"] = message.author.discriminator
+        guild_hashmap[f"{message.guild}_author_avatar"] = message.author.avatar_url
+        guild_hashmap[f"{message.guild}_guild_id"] = message.guild.id
 
 
 def setup(bot):

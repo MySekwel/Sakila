@@ -15,6 +15,7 @@ flower = {
 
 hand = {
     "wave": "\U0001f44b",
+    "splayed": "\U0001f590",
 }
 
 number = {

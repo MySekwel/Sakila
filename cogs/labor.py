@@ -192,9 +192,7 @@ class Labor(commands.Cog):
                 **Diamond:** `{diamond}`",
             colour=Colour.green()
         )
-        await progress.edit(
-            embed=embed
-        )
+        await progress.edit(embed=embed)
         query = f"""
             UPDATE
             users
