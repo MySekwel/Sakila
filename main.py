@@ -22,8 +22,13 @@ from utils import settings
 intents = Intents.default()
 intents.members = True
 
+
 # Setting up the bot and it's prefix for commands
-bot = commands.Bot(command_prefix="!", help_command=None, case_insensitive=True, intents=intents)
+def get_pre():
+    return ["sakila.", "s."]  # or a list, ["pre1","pre2"]
+
+
+bot = commands.Bot(command_prefix=get_pre(), help_command=None, case_insensitive=True, intents=intents)
 
 
 class Connection:
@@ -62,7 +67,7 @@ class Connection:
             uid INT NOT NULL AUTO_INCREMENT,
             user_id varchar(20),
             user_name varchar(24),
-            user_tag INT(4),
+            user_tag varchar(4),
             user_cash INT,
             user_bank INT,
             user_exp INT,
@@ -93,6 +98,24 @@ class Connection:
             metal_metal INT(11),
             metal_gold INT(11),
             metal_diamond INT(11),
+            PRIMARY KEY (uid),
+            FOREIGN KEY (uid)
+            REFERENCES
+            users (uid)
+            ON DELETE CASCADE
+            ON UPDATE RESTRICT
+        )
+    """
+    SQL_Cursor.execute(SQL_Query)
+    SQL_Handle.commit()
+    SQL_Query = """
+        CREATE TABLE
+        IF NOT EXISTS
+        crypto(
+            uid INT NOT NULL,
+            crypto_rig INT(11),
+            crypto_currency INT(11),
+            crypto_wallet INT(11),
             PRIMARY KEY (uid),
             FOREIGN KEY (uid)
             REFERENCES
@@ -169,6 +192,12 @@ async def randomquote(ctx):
         description=quote,
         colour=Colour.random()
     )
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def sendembed(ctx, title, description, color=Colour.green()):
+    embed = Embed(title=title, description=description, color=color)
     await ctx.send(embed=embed)
 
 

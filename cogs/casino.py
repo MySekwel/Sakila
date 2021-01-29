@@ -3,8 +3,9 @@ import random
 
 from discord import Embed, Colour
 from discord.ext import commands
+from discord.ext.commands import cooldown, BucketType
 
-from cogs.user import registered
+from cogs import user
 from main import Connection
 
 
@@ -13,8 +14,9 @@ class Casino(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @cooldown(1, 5, BucketType.user)
     async def dice(self, ctx, bet, rolls=2):
-        if not registered(ctx.author.id):
+        if not user.registered(ctx.author.id):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",
@@ -30,7 +32,7 @@ class Casino(commands.Cog):
             FROM
             users
             WHERE
-            user_id={ctx.author.id}
+            uid={user.get_user_uid(ctx.author)}
         """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
@@ -54,7 +56,7 @@ class Casino(commands.Cog):
                     SET
                     user_cash=?
                     WHERE
-                    user_id={ctx.author.id}
+                    uid={user.get_user_uid(ctx.author)}
                 """
                 win = cash + int(bet)
                 Connection.SQL_Prepared_Cursor.execute(query, (win,))
@@ -62,7 +64,7 @@ class Casino(commands.Cog):
 
                 embed = Embed(
                     title="You won!",
-                    description=f"Congratulations, {ctx.author.name}! You've won ${bet}.\n**Summary**\nYour roll: {user_result}\nDealer's Roll: {dealer_result}",
+                    description=f"Congratulations, {ctx.author.name}! You've won ${bet}.\n\n**Summary:**\nYour roll: {user_result}\nDealer's Roll: {dealer_result}",
                     colour=Colour.green()
                 )
                 embed.set_thumbnail(url="https://media.tenor.com/images/99cff34bdcb675975b2b0cc661f2e4ce/tenor.gif")
@@ -70,7 +72,7 @@ class Casino(commands.Cog):
             elif user_result == dealer_result:
                 embed = Embed(
                     title="Draw!",
-                    description=f"It's a draw!\n**Summary**\nYour roll: {user_result}\nDealer's Roll: {dealer_result}",
+                    description=f"It's a draw!\n\n**Summary:**\nYour roll: {user_result}\nDealer's Roll: {dealer_result}",
                     colour=Colour.gold()
                 )
                 embed.set_thumbnail(url="https://media.tenor.com/images/99cff34bdcb675975b2b0cc661f2e4ce/tenor.gif")
@@ -82,14 +84,14 @@ class Casino(commands.Cog):
                     SET
                     user_cash=?
                     WHERE
-                    user_id={ctx.author.id}
+                    uid={user.get_user_uid(ctx.author)}
                 """
                 lost = cash - int(bet)
                 Connection.SQL_Prepared_Cursor.execute(query, (lost,))
                 Connection.SQL_Handle.commit()
                 embed = Embed(
                     title="You lost!",
-                    description=f"Better luck next Timer, {ctx.author.name}! You've lost ${bet}.\n**Summary**\nYour roll: {user_result}\nDealer's Roll: {dealer_result}",
+                    description=f"Better luck next Timer, {ctx.author.name}! You've lost ${bet}.\n\n**Summary:**\nYour roll: {user_result}\nDealer's Roll: {dealer_result}",
                     colour=Colour.orange()
                 )
                 embed.set_thumbnail(url="https://media.tenor.com/images/2b454269146fcddfdae60d3013484f0f/tenor.gif")

@@ -10,6 +10,7 @@ Module Dependencies:
     > discord.ext.commands.CommandOnCooldown
 """
 import asyncio
+import datetime
 
 from discord import Colour, Embed, utils
 from discord.ext import commands
@@ -18,19 +19,34 @@ from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 from main import Connection
 
 
-def registered(userid):
+def registered(user):
     query = f"""
         SELECT
         *
         FROM
         users
         WHERE
-        user_id={userid}
+        uid={user.get_user_uid(user)}
     """
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return result
+
+
+def get_user_uid(user):
+    query = f"""
+        SELECT
+        uid
+        FROM
+        users
+        WHERE
+        user_id={user.id}
+    """
+    Connection.SQL_Cursor.execute(query)
+    result = Connection.SQL_Cursor.fetchone()
+    Connection.SQL_Handle.commit()
+    return result[0]
 
 
 class User(commands.Cog):
@@ -64,7 +80,7 @@ class User(commands.Cog):
             FROM
             users
             WHERE
-            user_id={ctx.author.id}
+            uid={get_user_uid(ctx.author)}
         """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
@@ -118,6 +134,47 @@ class User(commands.Cog):
         )
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
+
+        time = datetime.datetime.now()
+        embed.set_footer(text=time.strftime(f"As of %B %d, %Y | %I:%M %p"))
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    @cooldown(1, 10, BucketType.user)
+    async def bal(self, ctx):
+        if not registered(ctx.author.id):
+            embed = Embed(
+                title="ERROR",
+                description="You are not registered to the database!\n**TIP:** `!register`",
+                colour=Colour.red()
+            )
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(2)
+            await ctx.send(embed=embed)
+            return
+        query = f"""
+            SELECT
+            user_cash,
+            user_bank
+            FROM
+            users
+            WHERE
+            uid={get_user_uid(ctx.author)}
+        """
+        Connection.SQL_Cursor.execute(query)
+        result = Connection.SQL_Cursor.fetchone()
+        Connection.SQL_Handle.commit()
+        embed = Embed(
+            title=f"{ctx.author}'s Balance:",
+            description=f"**Cash:** :moneybag:`${result[0]}`\n**Bank:** :bank:`${result[1]}`",
+            colour=Colour.gold()
+        )
+        embed.set_thumbnail(url=ctx.author.avatar_url)
+        await ctx.channel.trigger_typing()
+        await asyncio.sleep(2)
+
+        time = datetime.datetime.now()
+        embed.set_footer(text=time.strftime(f"As of %B %d, %Y | %I:%M %p"))
         await ctx.send(embed=embed)
 
     # Command: Inventory
@@ -139,19 +196,6 @@ class User(commands.Cog):
 
         query = f"""
             SELECT
-            uid
-            FROM
-            users
-            WHERE
-            user_id={ctx.author.id}
-        """
-        Connection.SQL_Cursor.execute(query)
-        result = Connection.SQL_Cursor.fetchone()
-        Connection.SQL_Handle.commit()
-        userid = result[0]
-
-        query = f"""
-            SELECT
             item_pickaxe,
             item_drill,
             item_jackhammer,
@@ -167,7 +211,7 @@ class User(commands.Cog):
             FROM
             inventory
             WHERE
-            uid={userid}
+            uid={get_user_uid(ctx.author)}
         """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
@@ -292,6 +336,9 @@ class User(commands.Cog):
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
         await ctx.send(f"**{ctx.author.name}'s inventory.**")
+
+        time = datetime.datetime.now()
+        embed.set_footer(text=time.strftime(f"As of %B %d, %Y | %I:%M %p"))
         await ctx.send(embed=embed)
 
     @stats.error
@@ -300,6 +347,14 @@ class User(commands.Cog):
             await ctx.reply(
                 f"Hey, you've already seen your stats, " +
                 f"why don't you wait for `{exc.retry_after:,.1f}` seconds?"
+            )
+
+    @bal.error
+    async def stats_error(self, ctx, exc):
+        if isinstance(exc, CommandOnCooldown):
+            await ctx.reply(
+                f"Hmm, your money is going nowhere you have to wait you paranoid human, " +
+                f"It's just `{exc.retry_after:,.1f}` seconds you know?"
             )
 
     @inventory.error

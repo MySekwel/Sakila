@@ -16,7 +16,7 @@ from discord import Embed, Colour, utils
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 
-from cogs.user import registered
+from cogs import user
 from main import Connection
 from utils import settings
 
@@ -54,7 +54,7 @@ class Economy(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def buy(self, ctx, item=0):
-        if not registered(ctx.author.id):
+        if not user.registered(ctx.author.id):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",
@@ -66,18 +66,16 @@ class Economy(commands.Cog):
             return
         query = f"""
             SELECT
-            uid,
             user_cash
             FROM
             users
             WHERE
-            user_id={ctx.author.id}
+            uid={user.get_user_uid(ctx.author)}
         """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
-        userid = result[0]
-        cash = result[1]
+        cash = result[0]
         query = f"""
             SELECT
             item_pickaxe,
@@ -92,7 +90,7 @@ class Economy(commands.Cog):
             FROM
             inventory
             WHERE
-            uid={str(userid)}
+            uid={user.get_user_uid(ctx.author)}
         """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
@@ -131,7 +129,7 @@ class Economy(commands.Cog):
                 SET
                 item_pickaxe=?
                 WHERE
-                uid={userid}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (1,))
             Connection.SQL_Handle.commit()
@@ -142,7 +140,7 @@ class Economy(commands.Cog):
                 SET
                 user_cash=user_cash-?
                 WHERE
-                user_id={ctx.author.id}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_PICKAXE,))
             Connection.SQL_Handle.commit()
@@ -169,7 +167,7 @@ class Economy(commands.Cog):
                 SET
                 item_drill=?
                 WHERE
-                uid={userid}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (1,))
             Connection.SQL_Handle.commit()
@@ -180,7 +178,7 @@ class Economy(commands.Cog):
                 SET
                 user_cash=user_cash-?
                 WHERE
-                user_id={ctx.author.id}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DRILL,))
             Connection.SQL_Handle.commit()
@@ -207,7 +205,7 @@ class Economy(commands.Cog):
                 SET
                 item_jackhammer=?
                 WHERE
-                uid={userid}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (1,))
             Connection.SQL_Handle.commit()
@@ -218,7 +216,7 @@ class Economy(commands.Cog):
                 SET
                 user_cash=user_cash-?
                 WHERE
-                user_id={ctx.author.id}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_JACKHAMMER,))
             Connection.SQL_Handle.commit()
@@ -245,7 +243,7 @@ class Economy(commands.Cog):
                 SET
                 item_metal_detector=?
                 WHERE
-                uid={userid}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (1,))
             Connection.SQL_Handle.commit()
@@ -256,7 +254,7 @@ class Economy(commands.Cog):
                 SET
                 user_cash=user_cash-?
                 WHERE
-                user_id={ctx.author.id}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_METALDETECTOR,))
             Connection.SQL_Handle.commit()
@@ -283,7 +281,7 @@ class Economy(commands.Cog):
                 SET
                 item_gold_detector=?
                 WHERE
-                uid={userid}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (1,))
             Connection.SQL_Handle.commit()
@@ -294,7 +292,7 @@ class Economy(commands.Cog):
                 SET
                 user_cash=user_cash-?
                 WHERE
-                user_id={ctx.author.id}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_GOLDDETECTOR,))
             Connection.SQL_Handle.commit()
@@ -321,7 +319,7 @@ class Economy(commands.Cog):
                 SET
                 item_diamond_detector=?
                 WHERE
-                uid={userid}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (1,))
             Connection.SQL_Handle.commit()
@@ -332,7 +330,7 @@ class Economy(commands.Cog):
                 SET
                 user_cash=user_cash-?
                 WHERE
-                user_id={ctx.author.id}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DIAMONDDETECTOR,))
             Connection.SQL_Handle.commit()
@@ -359,7 +357,7 @@ class Economy(commands.Cog):
                 SET
                 item_minecart=?
                 WHERE
-                uid={userid}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (1,))
             Connection.SQL_Handle.commit()
@@ -370,7 +368,7 @@ class Economy(commands.Cog):
                 SET
                 user_cash=user_cash-?
                 WHERE
-                user_id={ctx.author.id}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINECART,))
             Connection.SQL_Handle.commit()
@@ -397,7 +395,7 @@ class Economy(commands.Cog):
                 SET
                 item_minetransport=?
                 WHERE
-                uid={userid}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (1,))
             Connection.SQL_Handle.commit()
@@ -408,7 +406,7 @@ class Economy(commands.Cog):
                 SET
                 user_cash=user_cash-?
                 WHERE
-                user_id={ctx.author.id}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINETRANSPORT,))
             Connection.SQL_Handle.commit()
@@ -435,7 +433,7 @@ class Economy(commands.Cog):
                 SET
                 item_transportplane=?
                 WHERE
-                uid={userid}
+                uid={user.get_user_uid(ctx.author)}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (1,))
             Connection.SQL_Handle.commit()
@@ -446,7 +444,7 @@ class Economy(commands.Cog):
                 SET
                 user_cash=user_cash-?
                 WHERE
-                user_id={ctx.author.id}
+                u={ctx.author.id}
             """
             Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_TRANSPORTPLANE,))
             Connection.SQL_Handle.commit()
@@ -466,7 +464,7 @@ class Economy(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def sell(self, ctx, item=0, amount=0):
-        if not registered(ctx.author.id):
+        if not user.registered(ctx.author.id):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",
@@ -481,7 +479,7 @@ class Economy(commands.Cog):
             FROM
             users
             WHERE
-            user_id={ctx.author.id}
+            user_id={user.get_user_uid(ctx.author)}
         """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
@@ -505,7 +503,7 @@ class Economy(commands.Cog):
             FROM
             inventory
             WHERE
-            uid={userid}
+            uid={user.get_user_uid(ctx.author)}
         """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
@@ -796,7 +794,7 @@ class Economy(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def shop(self, ctx):
-        if not registered(ctx.author.id):
+        if not user.registered(ctx.author.id):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",

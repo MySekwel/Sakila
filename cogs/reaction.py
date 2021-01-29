@@ -19,49 +19,27 @@ class React(commands.Cog):
         if user in (self.bot.user.id, author_id) or self.bot.user.id == author_id:
             return
         if emoji.name == emojii.heart["red"] + emojii.special["variant"]:
-            query = f"""
-                SELECT
-                uid
-                FROM
-                users
-                WHERE
-                user_id={author_id}
-            """
-            Connection.SQL_Cursor.execute(query)
-            result = Connection.SQL_Cursor.fetchone()
-            Connection.SQL_Handle.commit()
-            if result:
+            if user.get_user_uid(user):
                 query = f"""
                     UPDATE
                     users
                     SET
                     user_love=user_love+?
                     WHERE
-                    user_id={author_id}
+                    uid={user.get_user_uid(user)}
                 """
                 Connection.SQL_Prepared_Cursor.execute(query, (1,))
                 Connection.SQL_Handle.commit()
 
         if emoji.name == emojii.flower["rosette"] + emojii.special["variant"]:
-            query = f"""
-                SELECT
-                uid
-                FROM
-                users
-                WHERE
-                user_id={author_id}
-            """
-            Connection.SQL_Cursor.execute(query)
-            result = Connection.SQL_Cursor.fetchone()
-            Connection.SQL_Handle.commit()
-            if result:
+            if user.get_user_uid(user):
                 query = f"""
                     UPDATE
                     users
                     SET
                     user_reputation=user_reputation+?
                     WHERE
-                    user_id={author_id}
+                    uid={user.get_user_uid(user)}
                 """
                 Connection.SQL_Prepared_Cursor.execute(query, (1,))
                 Connection.SQL_Handle.commit()

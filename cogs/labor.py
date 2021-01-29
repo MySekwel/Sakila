@@ -18,7 +18,7 @@ from discord import utils, Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, CommandOnCooldown
 
-from cogs.user import registered
+from cogs import user
 from main import Connection
 from utils import settings
 
@@ -33,7 +33,7 @@ class Labor(commands.Cog):
     @commands.command(aliases=["mine"])
     @cooldown(1, 15, BucketType.user)
     async def work(self, ctx):
-        if not registered(ctx.author.id):
+        if not user.registered(ctx.author.id):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",
@@ -43,19 +43,6 @@ class Labor(commands.Cog):
             await asyncio.sleep(2)
             await ctx.send(embed=embed)
             return
-
-        query = f"""
-            SELECT
-            uid
-            FROM
-            users
-            WHERE
-            user_id={ctx.author.id}
-        """
-        Connection.SQL_Cursor.execute(query)
-        result = Connection.SQL_Cursor.fetchone()
-        Connection.SQL_Handle.commit()
-        uid = result[0]
 
         query = f"""
             SELECT
@@ -71,7 +58,7 @@ class Labor(commands.Cog):
             FROM
             inventory
             WHERE
-            uid={uid}
+            uid={user.get_user_uid(ctx.author)}
         """
         Connection.SQL_Cursor.execute(query)
         result = Connection.SQL_Cursor.fetchone()
@@ -200,7 +187,7 @@ class Labor(commands.Cog):
             user_cash=user_cash+?,
             user_exp=user_exp+?
             WHERE
-            user_id={ctx.author.id}
+            uid={user.get_user_uid(ctx.author)}
         """
         values = (work_salary, settings.WORK_BONUS)
         Connection.SQL_Prepared_Cursor.execute(query, values)
@@ -214,7 +201,7 @@ class Labor(commands.Cog):
             metal_gold=metal_gold+?,
             metal_diamond=metal_diamond+?
             WHERE
-            uid={uid}
+            uid={user.get_user_uid(ctx.author)}
         """
         values = (metal, gold, diamond)
         Connection.SQL_Prepared_Cursor.execute(query, values)

@@ -11,6 +11,7 @@ import mysql.connector
 from discord import Embed, Colour
 from discord.ext import commands
 
+from cogs import user
 from main import Connection
 
 
@@ -74,18 +75,6 @@ class Authentication(commands.Cog):
             )
             Connection.SQL_Prepared_Cursor.execute(query, stats_values)
             Connection.SQL_Handle.commit()
-            query = f"""
-                SELECT
-                uid
-                FROM
-                users
-                WHERE
-                user_id={ctx.author.id}
-            """
-            Connection.SQL_Cursor.execute(query)
-            result = Connection.SQL_Cursor.fetchone()
-            Connection.SQL_Handle.commit()
-            uid = result[0]
             query = """
                 INSERT INTO
                 inventory(
@@ -105,7 +94,7 @@ class Authentication(commands.Cog):
                 )
                 VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
-            inventory_values = (uid, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            inventory_values = (user.get_user_uid(ctx.author), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
             Connection.SQL_Prepared_Cursor.execute(query, inventory_values)
             Connection.SQL_Handle.commit()
         except mysql.connector.Error as err:

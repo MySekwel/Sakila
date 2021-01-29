@@ -206,8 +206,6 @@ class Help(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def help(self, ctx, category=None):
-        guild_hashmap[f"{ctx.guild}_page"] = 1
-
         if category is None:
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
@@ -259,6 +257,8 @@ class Help(commands.Cog):
             time = datetime.datetime.now()
             embed.set_footer(text=time.strftime(f"Page 1 | %B %d, %Y | %I:%M %p"))
             guild_hashmap[f"{ctx.guild}_message"] = await ctx.send(embed=embed)
+            guild_hashmap[f"{ctx.guild}_id"] = guild_hashmap[f"{ctx.guild}_message"].guild.id
+            guild_hashmap[f"{ctx.guild}_page"] = 1
 
             await guild_hashmap[f"{ctx.guild}_message"].add_reaction(emojii.arrow["double_left"])
             await guild_hashmap[f"{ctx.guild}_message"].add_reaction(
@@ -286,18 +286,18 @@ class Help(commands.Cog):
                     await guild_hashmap[f"{ctx.guild}_message"].delete()
                     break
                 else:
-                    if member.guild.id == guild_hashmap[f"{ctx.guild}_message"].guild.id:
+                    if member.guild.id == guild_hashmap[f"{ctx.guild}_id"]:
                         if str(emoji) == emojii.arrow["double_left"]:
                             await guild_hashmap[f"{ctx.guild}_message"].remove_reaction(
                                 emoji=emojii.arrow["double_left"],
-                                member=self.bot.get_user(ctx.author.id)
+                                member=member
                             )
                             guild_hashmap[f"{ctx.guild}_page"] = 1
                             await show_page(guild_hashmap[f"{ctx.guild}_message"], guild_hashmap[f"{ctx.guild}_page"])
                         elif str(emoji) == emojii.arrow["small_left"] + emojii.special["variant"]:
                             await guild_hashmap[f"{ctx.guild}_message"].remove_reaction(
                                 emoji=emojii.arrow["small_left"] + emojii.special["variant"],
-                                member=self.bot.get_user(ctx.author.id)
+                                member=member
                             )
                             guild_hashmap[f"{ctx.guild}_page"] -= 1
                             if guild_hashmap[f"{ctx.guild}_page"] <= 1:
@@ -306,12 +306,12 @@ class Help(commands.Cog):
                         elif str(emoji) == emojii.number["1234"]:
                             await guild_hashmap[f"{ctx.guild}_message"].remove_reaction(
                                 emoji=emojii.number["1234"],
-                                member=self.bot.get_user(ctx.author.id)
+                                member=member
                             )
                         elif str(emoji) == emojii.arrow["small_right"] + emojii.special["variant"]:
                             await guild_hashmap[f"{ctx.guild}_message"].remove_reaction(
                                 emoji=emojii.arrow["small_right"] + emojii.special["variant"],
-                                member=self.bot.get_user(ctx.author.id)
+                                member=member
                             )
                             guild_hashmap[f"{ctx.guild}_page"] += 1
                             if guild_hashmap[f"{ctx.guild}_page"] >= 7:
@@ -320,15 +320,14 @@ class Help(commands.Cog):
                         elif str(emoji) == emojii.arrow["double_right"]:
                             await guild_hashmap[f"{ctx.guild}_message"].remove_reaction(
                                 emoji=emojii.arrow["double_right"],
-                                member=self.bot.get_user(ctx.author.id)
+                                member=member
                             )
                             guild_hashmap[f"{ctx.guild}_page"] = 7
-                            await show_page(ctx=guild_hashmap[f"{ctx.guild}_message"],
-                                            page=guild_hashmap[f"{ctx.guild}_page"])
+                            await show_page(guild_hashmap[f"{ctx.guild}_message"], guild_hashmap[f"{ctx.guild}_page"])
                         elif str(emoji) == emojii.buttons["stop"] + emojii.special["variant"]:
                             await guild_hashmap[f"{ctx.guild}_message"].remove_reaction(
                                 emoji=emojii.buttons["stop"] + emojii.special["variant"],
-                                member=self.bot.get_user(ctx.author.id)
+                                member=member
                             )
                             await guild_hashmap[f"{ctx.guild}_message"].delete()
                             break
