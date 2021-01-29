@@ -94,7 +94,7 @@ class Authentication(commands.Cog):
                 )
                 VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
-            inventory_values = (user.get_user_uid(ctx.author), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            inventory_values = (user.get_uid(ctx.author), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
             Connection.SQL_Prepared_Cursor.execute(query, inventory_values)
             Connection.SQL_Handle.commit()
         except mysql.connector.Error as err:

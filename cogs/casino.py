@@ -16,7 +16,7 @@ class Casino(commands.Cog):
     @commands.command()
     @cooldown(1, 5, BucketType.user)
     async def dice(self, ctx, bet, rolls=2):
-        if not user.registered(ctx.author.id):
+        if not user.registered(ctx.author):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",
@@ -26,19 +26,7 @@ class Casino(commands.Cog):
             await asyncio.sleep(2)
             await ctx.send(embed=embed)
             return
-        query = f"""
-            SELECT
-            user_cash
-            FROM
-            users
-            WHERE
-            uid={user.get_user_uid(ctx.author)}
-        """
-        Connection.SQL_Cursor.execute(query)
-        result = Connection.SQL_Cursor.fetchone()
-        Connection.SQL_Handle.commit()
-        cash = result[0]
-        if cash >= int(bet):
+        if user.get_cash(ctx.author) >= int(bet):
             embed = Embed(
                 title="Rolling Dice...",
                 description=f"${bet} bet has been placed, {rolls} dice will roll, goodluck!",
@@ -56,9 +44,9 @@ class Casino(commands.Cog):
                     SET
                     user_cash=?
                     WHERE
-                    uid={user.get_user_uid(ctx.author)}
+                    uid={user.get_uid(ctx.author)}
                 """
-                win = cash + int(bet)
+                win = user.get_cash(ctx.author) + int(bet)
                 Connection.SQL_Prepared_Cursor.execute(query, (win,))
                 Connection.SQL_Handle.commit()
 
@@ -84,9 +72,9 @@ class Casino(commands.Cog):
                     SET
                     user_cash=?
                     WHERE
-                    uid={user.get_user_uid(ctx.author)}
+                    uid={user.get_uid(ctx.author)}
                 """
-                lost = cash - int(bet)
+                lost = user.get_cash(ctx.author) - int(bet)
                 Connection.SQL_Prepared_Cursor.execute(query, (lost,))
                 Connection.SQL_Handle.commit()
                 embed = Embed(

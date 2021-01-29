@@ -33,7 +33,7 @@ class Labor(commands.Cog):
     @commands.command(aliases=["mine"])
     @cooldown(1, 15, BucketType.user)
     async def work(self, ctx):
-        if not user.registered(ctx.author.id):
+        if not user.registered(ctx.author):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",
@@ -44,44 +44,15 @@ class Labor(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        query = f"""
-            SELECT
-            item_pickaxe,
-            item_drill,
-            item_jackhammer,
-            item_metal_detector,
-            item_gold_detector,
-            item_diamond_detector,
-            item_minecart,
-            item_minetransport,
-            item_transportplane
-            FROM
-            inventory
-            WHERE
-            uid={user.get_user_uid(ctx.author)}
-        """
-        Connection.SQL_Cursor.execute(query)
-        result = Connection.SQL_Cursor.fetchone()
-        Connection.SQL_Handle.commit()
-
-        tool_name = {
-            "pickaxe": result[0],
-            "drill": result[1],
-            "jackhammer": result[2],
-            "metal_detector": result[3],
-            "gold_detector": result[4],
-            "diamond_detector": result[5]
-        }
-
         work_salary = 100
         default_salary = 100
         tool = "Shovel"
         metal, gold, diamond = 0, 0, 0
 
-        if tool_name["jackhammer"]:
+        if user.has_jackhammer(ctx.author):
             tool = "Jackhammer"
             work_salary = default_salary + settings.WORK_SALARY * 1.00
-            if tool_name["diamond_detector"]:
+            if user.has_diamonddetector(ctx.author):
                 tool += " & Diamond Detector"
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
@@ -89,20 +60,20 @@ class Labor(commands.Cog):
                     gold = random.randint(1, 3)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     diamond = random.randint(1, 2)
-            elif tool_name["gold_detector"]:
+            elif user.has_golddetector(ctx.author):
                 tool += " & Gold Detector"
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
-            elif tool_name["metal_detector"]:
+            elif user.has_metaldetector(ctx.author):
                 tool += " & Metal Detector"
                 if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
-        elif tool_name["drill"]:
+        elif user.has_drill(ctx.author):
             tool = "Drill"
             work_salary = default_salary + settings.WORK_SALARY * 0.75
-            if tool_name["diamond_detector"]:
+            if user.has_diamonddetector(ctx.author):
                 tool += " & Diamond Detector"
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
@@ -110,20 +81,20 @@ class Labor(commands.Cog):
                     gold = random.randint(1, 3)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     diamond = random.randint(1, 2)
-            elif tool_name["gold_detector"]:
+            elif user.has_golddetector(ctx.author):
                 tool += " & Gold Detector"
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
-            elif tool_name["metal_detector"]:
+            elif user.has_metaldetector(ctx.author):
                 tool += " & Metal Detector"
                 if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
-        elif tool_name["pickaxe"]:
+        elif user.has_pickaxe(ctx.author):
             tool = "Pickaxe"
             work_salary = default_salary + settings.WORK_SALARY * 0.50
-            if tool_name["diamond_detector"]:
+            if user.has_diamonddetector(ctx.author):
                 tool += " & Diamond Detector"
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
@@ -131,18 +102,18 @@ class Labor(commands.Cog):
                     gold = random.randint(1, 3)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     diamond = random.randint(1, 2)
-            elif tool_name["gold_detector"]:
+            elif user.has_golddetector(ctx.author):
                 tool += " & Gold Detector"
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
-            elif tool_name["metal_detector"]:
+            elif user.has_metaldetector(ctx.author):
                 tool += " & Metal Detector"
                 if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
         else:
-            if tool_name["diamond_detector"]:
+            if user.has_diamonddetector(ctx.author):
                 tool += " & Diamond Detector"
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
@@ -150,13 +121,13 @@ class Labor(commands.Cog):
                     gold = random.randint(1, 3)
                 if random.randint(0, 100) < settings.DD_VALUABLE_CHANCE:
                     diamond = random.randint(1, 2)
-            elif tool_name["gold_detector"]:
+            elif user.has_golddetector(ctx.author):
                 tool += " & Gold Detector"
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
                 if random.randint(0, 100) < settings.GD_VALUABLE_CHANCE:
                     gold = random.randint(1, 3)
-            elif tool_name["metal_detector"]:
+            elif user.has_metaldetector(ctx.author):
                 tool += " & Metal Detector"
                 if random.randint(0, 100) < settings.MD_VALUABLE_CHANCE:
                     metal = random.randint(1, 5)
@@ -187,7 +158,7 @@ class Labor(commands.Cog):
             user_cash=user_cash+?,
             user_exp=user_exp+?
             WHERE
-            uid={user.get_user_uid(ctx.author)}
+            uid={user.get_uid(ctx.author)}
         """
         values = (work_salary, settings.WORK_BONUS)
         Connection.SQL_Prepared_Cursor.execute(query, values)
@@ -201,7 +172,7 @@ class Labor(commands.Cog):
             metal_gold=metal_gold+?,
             metal_diamond=metal_diamond+?
             WHERE
-            uid={user.get_user_uid(ctx.author)}
+            uid={user.get_uid(ctx.author)}
         """
         values = (metal, gold, diamond)
         Connection.SQL_Prepared_Cursor.execute(query, values)
