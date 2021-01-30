@@ -74,7 +74,7 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
-            if int(user.get_cash(ctx.author)) < settings.PRICE_PICKAXE:
+            if user.get_cash(ctx.author) < settings.PRICE_PICKAXE:
                 await ctx.channel.trigger_typing()
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
@@ -112,7 +112,7 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
-            if int(user.get_cash(ctx.author)) < settings.PRICE_DRILL:
+            if user.get_cash(ctx.author) < settings.PRICE_DRILL:
                 await ctx.channel.trigger_typing()
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
@@ -150,7 +150,7 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
-            if int(user.get_cash(ctx.author)) < settings.PRICE_JACKHAMMER:
+            if user.get_cash(ctx.author) < settings.PRICE_JACKHAMMER:
                 await ctx.channel.trigger_typing()
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
@@ -188,7 +188,7 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
-            if int(user.get_cash(ctx.author)) < settings.PRICE_METALDETECTOR:
+            if user.get_cash(ctx.author) < settings.PRICE_METALDETECTOR:
                 await ctx.channel.trigger_typing()
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
@@ -226,7 +226,7 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
-            if int(user.get_cash(ctx.author)) < settings.PRICE_GOLDDETECTOR:
+            if user.get_cash(ctx.author) < settings.PRICE_GOLDDETECTOR:
                 await ctx.channel.trigger_typing()
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
@@ -264,7 +264,7 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
-            if int(user.get_cash(ctx.author)) < settings.PRICE_DIAMONDDETECTOR:
+            if user.get_cash(ctx.author) < settings.PRICE_DIAMONDDETECTOR:
                 await ctx.channel.trigger_typing()
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
@@ -302,7 +302,7 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
-            if int(user.get_cash(ctx.author)) < settings.PRICE_MINECART:
+            if user.get_cash(ctx.author) < settings.PRICE_MINECART:
                 await ctx.channel.trigger_typing()
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
@@ -340,7 +340,7 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
-            if int(user.get_cash(ctx.author)) < settings.PRICE_MINETRANSPORT:
+            if user.get_cash(ctx.author) < settings.PRICE_MINETRANSPORT:
                 await ctx.channel.trigger_typing()
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
@@ -378,7 +378,7 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You already have this item!")
                 return
-            if int(user.get_cash(ctx.author)) < settings.PRICE_TRANSPORTPLANE:
+            if user.get_cash(ctx.author) < settings.PRICE_TRANSPORTPLANE:
                 await ctx.channel.trigger_typing()
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")

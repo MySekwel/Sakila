@@ -101,7 +101,7 @@ class Authentication(commands.Cog):
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
             await ctx.send("**You are already registered to the database!**")
-            return
+            raise err
 
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)

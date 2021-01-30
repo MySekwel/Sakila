@@ -32,7 +32,7 @@ def get_uid(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def get_cash(user):
@@ -40,7 +40,7 @@ def get_cash(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def get_bank(user):
@@ -48,7 +48,7 @@ def get_bank(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def get_exp(user):
@@ -56,7 +56,7 @@ def get_exp(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def get_reputation(user):
@@ -64,7 +64,7 @@ def get_reputation(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def get_vip(user):
@@ -72,7 +72,7 @@ def get_vip(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def get_love(user):
@@ -80,7 +80,7 @@ def get_love(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def has_pickaxe(user):
@@ -88,7 +88,7 @@ def has_pickaxe(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def has_drill(user):
@@ -96,7 +96,7 @@ def has_drill(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def has_jackhammer(user):
@@ -104,7 +104,7 @@ def has_jackhammer(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def has_metaldetector(user):
@@ -112,7 +112,7 @@ def has_metaldetector(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def has_golddetector(user):
@@ -120,7 +120,7 @@ def has_golddetector(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def has_diamonddetector(user):
@@ -128,7 +128,7 @@ def has_diamonddetector(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def has_minecart(user):
@@ -136,7 +136,7 @@ def has_minecart(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def has_minetransport(user):
@@ -144,7 +144,7 @@ def has_minetransport(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def has_transportplane(user):
@@ -152,7 +152,7 @@ def has_transportplane(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def metal(user):
@@ -160,7 +160,7 @@ def metal(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def gold(user):
@@ -168,7 +168,7 @@ def gold(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 def diamond(user):
@@ -176,7 +176,7 @@ def diamond(user):
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
-    return result[0]
+    return int(result[0])
 
 
 class User(commands.Cog):
@@ -189,7 +189,6 @@ class User(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def stats(self, ctx):
-        print("Test")
         if not registered(ctx.author.id):
             embed = Embed(
                 title="ERROR",
@@ -200,7 +199,6 @@ class User(commands.Cog):
             await asyncio.sleep(2)
             await ctx.send(embed=embed)
             return
-        print("Test")
 
         embed = Embed(
             title="User Stats",
