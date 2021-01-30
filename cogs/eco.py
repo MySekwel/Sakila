@@ -21,14 +21,37 @@ from main import Connection
 from utils import settings
 
 
-def slot(itemname, price, userid, amount=1):
+def slot_equipment(itemname, price, _user):
     query = f"""
         UPDATE
         users
         SET
         user_cash=user_cash+?
         WHERE
-        uid={userid}
+        uid={user.get_uid(_user)}
+    """
+    Connection.SQL_Prepared_Cursor.execute(query, (price,))
+    Connection.SQL_Handle.commit()
+    query = f"""
+        UPDATE
+        equipment
+        SET
+        {itemname}=0
+        WHERE
+        uid={user.get_uid(_user)}
+    """
+    Connection.SQL_Cursor.execute(query)
+    Connection.SQL_Handle.commit()
+
+
+def slot_inventory(itemname, price, _user, amount=1):
+    query = f"""
+        UPDATE
+        users
+        SET
+        user_cash=user_cash+?
+        WHERE
+        uid={user.get_uid(_user)}
     """
     Connection.SQL_Prepared_Cursor.execute(query, (price,))
     Connection.SQL_Handle.commit()
@@ -38,7 +61,7 @@ def slot(itemname, price, userid, amount=1):
         SET
         {itemname}={itemname}-?
         WHERE
-        uid={userid}
+        uid={user.get_uid(_user)}
     """
     Connection.SQL_Prepared_Cursor.execute(query, (amount,))
     Connection.SQL_Handle.commit()
@@ -55,15 +78,7 @@ class Economy(commands.Cog):
     @cooldown(1, 10, BucketType.user)
     async def buy(self, ctx, item=0):
         if not user.registered(ctx.author.id):
-            embed = Embed(
-                title="ERROR",
-                description="You are not registered to the database!\n**TIP:** `!register`",
-                colour=Colour.red()
-            )
-            await ctx.channel.trigger_typing()
-            await asyncio.sleep(2)
-            await ctx.send(embed=embed)
-            return
+            await user.send_notregistered_msg(ctx)
 
         # Item: Pickaxe
         # Price: 2500
@@ -495,7 +510,11 @@ class Economy(commands.Cog):
 
         if int(item) == slot_item["pickaxe"]:
             if user.has_pickaxe(ctx.author):
-                slot("item_pickaxe", settings.PRICE_PICKAXE * 0.5, user.get_uid(ctx.author))
+                print("Pickaxe")
+                print(settings.PRICE_PICKAXE * 0.5)
+                print(ctx.author)
+                slot_equipment("equipment_pickaxe", settings.PRICE_PICKAXE * 0.5, ctx.author)
+                print("Pickaxe")
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold your pickaxe for `${settings.PRICE_PICKAXE * 0.5}`\
@@ -505,10 +524,11 @@ class Economy(commands.Cog):
                 await ctx.channel.trigger_typing()
                 await asyncio.sleep(2)
                 await ctx.send(embed=embed)
+                print("Pickaxe")
 
         elif int(item) == slot_item["drill"]:
             if user.has_drill(ctx.author):
-                slot("item_drill", settings.PRICE_DRILL * 0.5, user.get_uid(ctx.author))
+                slot_equipment("equipment_drill", settings.PRICE_DRILL * 0.5, ctx.author)
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold your drill for `${settings.PRICE_DRILL * 0.5}`\
@@ -521,7 +541,7 @@ class Economy(commands.Cog):
 
         elif int(item) == slot_item["jackhammer"]:
             if user.has_jackhammer(ctx.author):
-                slot("item_jackhammer", settings.PRICE_JACKHAMMER * 0.5, user.get_uid(ctx.author))
+                slot_equipment("equipment_jackhammer", settings.PRICE_JACKHAMMER * 0.5, ctx.author)
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold your jackhammer for `${settings.PRICE_JACKHAMMER * 0.5}`\
@@ -534,7 +554,7 @@ class Economy(commands.Cog):
 
         elif int(item) == slot_item["metal_detector"]:
             if user.has_metaldetector(ctx.author):
-                slot("item_metal_detector", settings.PRICE_METALDETECTOR * 0.5, user.get_uid(ctx.author))
+                slot_equipment("equipment_metal_detector", settings.PRICE_METALDETECTOR * 0.5, ctx.author)
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold your metal detector for `${settings.PRICE_METALDETECTOR * 0.5}`\
@@ -547,7 +567,7 @@ class Economy(commands.Cog):
 
         elif int(item) == slot_item["gold_detector"]:
             if user.has_golddetector(ctx.author):
-                slot("item_gold_detector", settings.PRICE_GOLDDETECTOR * 0.5, user.get_uid(ctx.author))
+                slot_equipment("equipment_gold_detector", settings.PRICE_GOLDDETECTOR * 0.5, ctx.author)
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold your gold detector for `${settings.PRICE_GOLDDETECTOR * 0.5}`\
@@ -560,7 +580,7 @@ class Economy(commands.Cog):
 
         elif int(item) == slot_item["diamond_detector"]:
             if user.has_diamonddetector(ctx.author):
-                slot("item_diamond_detector", settings.PRICE_DIAMONDDETECTOR * 0.5, user.get_uid(ctx.author))
+                slot_equipment("equipment_diamond_detector", settings.PRICE_DIAMONDDETECTOR * 0.5, ctx.author)
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold your diamond detector for `${settings.PRICE_DIAMONDDETECTOR * 0.5}`\
@@ -573,7 +593,7 @@ class Economy(commands.Cog):
 
         elif int(item) == slot_item["minecart"]:
             if user.has_minecart(ctx.author):
-                slot("item_minecart", settings.PRICE_MINECART * 0.5, user.get_uid(ctx.author))
+                slot_equipment("equipment_minecart", settings.PRICE_MINECART * 0.5, ctx.author)
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold your mine cart for `${settings.PRICE_MINECART * 0.5}`\
@@ -586,7 +606,7 @@ class Economy(commands.Cog):
 
         elif int(item) == slot_item["minetransport"]:
             if user.has_minetransport(ctx.author):
-                slot("item_minetransport", settings.PRICE_MINETRANSPORT * 0.5, user.get_uid(ctx.author))
+                slot_equipment("equipment_minetransport", settings.PRICE_MINETRANSPORT * 0.5, ctx.author)
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold your mine transport for `${settings.PRICE_MINETRANSPORT * 0.5}`\
@@ -599,7 +619,7 @@ class Economy(commands.Cog):
 
         elif int(item) == slot_item["transportplane"]:
             if user.has_transportplane(ctx.author):
-                slot("item_transportplane", settings.PRICE_TRANSPORTPLANE * 0.5, user.get_uid(ctx.author))
+                slot_equipment("equipment_transportplane", settings.PRICE_TRANSPORTPLANE * 0.5, ctx.author)
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold your transport plane for `${settings.PRICE_TRANSPORTPLANE * 0.5}`\
@@ -622,7 +642,7 @@ class Economy(commands.Cog):
                     await asyncio.sleep(2)
                     await ctx.send(embed=embed)
                     return
-                slot("metal_metal", (settings.PRICE_METAL * 0.5) * amount, user.get_uid(ctx.author), amount)
+                slot_inventory("metal_metal", (settings.PRICE_METAL * 0.5) * amount, ctx.author, amount)
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold {amount} metal/s for `${settings.PRICE_METAL * amount}`",
@@ -644,7 +664,7 @@ class Economy(commands.Cog):
                 await ctx.send(embed=embed)
                 return
             if user.gold(ctx.author):
-                slot("metal_gold", (settings.PRICE_GOLD * 0.5) * amount, user.get_uid(ctx.author), amount)
+                slot_inventory("metal_gold", (settings.PRICE_GOLD * 0.5) * amount, ctx.author, amount)
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold {amount} gold/s for `${settings.PRICE_GOLD * amount}`",
@@ -666,7 +686,7 @@ class Economy(commands.Cog):
                 await ctx.send(embed=embed)
                 return
             if user.diamond(ctx.author):
-                slot("metal_diamond", (settings.PRICE_DIAMOND * 0.5) * amount, user.get_uid(ctx.author), amount)
+                slot_inventory("metal_diamond", (settings.PRICE_DIAMOND * 0.5) * amount, ctx.author, amount)
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold {amount} diamond/s for `${settings.PRICE_DIAMOND * amount}`",
@@ -702,15 +722,7 @@ class Economy(commands.Cog):
     @cooldown(1, 10, BucketType.user)
     async def shop(self, ctx):
         if not user.registered(ctx.author.id):
-            embed = Embed(
-                title="ERROR",
-                description="You are not registered to the database!\n**TIP:** `!register`",
-                colour=Colour.red()
-            )
-            await ctx.channel.trigger_typing()
-            await asyncio.sleep(2)
-            await ctx.send(embed=embed)
-            return
+            await user.send_notregistered_msg(ctx)
 
         embed = Embed(
             title="User Shop",

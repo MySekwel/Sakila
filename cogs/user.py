@@ -27,6 +27,17 @@ def registered(userid):
     return result
 
 
+async def send_notregistered_msg(message):
+    embed = Embed(
+        title="ERROR",
+        description="You are not registered to the database!\n**TIP:** `!register`",
+        colour=Colour.red()
+    )
+    await message.channel.trigger_typing()
+    await asyncio.sleep(2)
+    await message.send(embed=embed)
+
+
 def get_uid(user):
     query = f"SELECT uid FROM users WHERE user_id={user.id}"
     Connection.SQL_Cursor.execute(query)
@@ -67,14 +78,6 @@ def get_reputation(user):
     return int(result[0])
 
 
-def get_vip(user):
-    query = f"SELECT user_vip FROM users WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
-    result = Connection.SQL_Cursor.fetchone()
-    Connection.SQL_Handle.commit()
-    return int(result[0])
-
-
 def get_love(user):
     query = f"SELECT user_love FROM users WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
@@ -83,8 +86,16 @@ def get_love(user):
     return int(result[0])
 
 
+def get_vip(user):
+    query = f"SELECT user_vip FROM users WHERE uid={get_uid(user)}"
+    Connection.SQL_Cursor.execute(query)
+    result = Connection.SQL_Cursor.fetchone()
+    Connection.SQL_Handle.commit()
+    return str(result[0])
+
+
 def has_pickaxe(user):
-    query = f"SELECT tool_pickaxe FROM equipment WHERE uid={get_uid(user)}"
+    query = f"SELECT equipment_pickaxe FROM equipment WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -92,7 +103,7 @@ def has_pickaxe(user):
 
 
 def has_drill(user):
-    query = f"SELECT tool_drill FROM equipment WHERE uid={get_uid(user)}"
+    query = f"SELECT equipment_drill FROM equipment WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -100,7 +111,7 @@ def has_drill(user):
 
 
 def has_jackhammer(user):
-    query = f"SELECT tool_jackhammer FROM equipment WHERE uid={get_uid(user)}"
+    query = f"SELECT equipment_jackhammer FROM equipment WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -108,7 +119,7 @@ def has_jackhammer(user):
 
 
 def has_metaldetector(user):
-    query = f"SELECT tool_metal_detector FROM equipment WHERE uid={get_uid(user)}"
+    query = f"SELECT equipment_metal_detector FROM equipment WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -116,7 +127,7 @@ def has_metaldetector(user):
 
 
 def has_golddetector(user):
-    query = f"SELECT tool_gold_detector FROM equipment WHERE uid={get_uid(user)}"
+    query = f"SELECT equipment_gold_detector FROM equipment WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -124,7 +135,7 @@ def has_golddetector(user):
 
 
 def has_diamonddetector(user):
-    query = f"SELECT tool_diamond_detector FROM equipment WHERE uid={get_uid(user)}"
+    query = f"SELECT equipment_diamond_detector FROM equipment WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -132,7 +143,7 @@ def has_diamonddetector(user):
 
 
 def has_minecart(user):
-    query = f"SELECT tool_minecart FROM equipment WHERE uid={get_uid(user)}"
+    query = f"SELECT equipment_minecart FROM equipment WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -140,7 +151,7 @@ def has_minecart(user):
 
 
 def has_minetransport(user):
-    query = f"SELECT tool_minetransport FROM equipment WHERE uid={get_uid(user)}"
+    query = f"SELECT equipment_minetransport FROM equipment WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -148,7 +159,7 @@ def has_minetransport(user):
 
 
 def has_transportplane(user):
-    query = f"SELECT tool_transportplane FROM equipment WHERE uid={get_uid(user)}"
+    query = f"SELECT equipment_transportplane FROM equipment WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -156,7 +167,7 @@ def has_transportplane(user):
 
 
 def metal(user):
-    query = f"SELECT item_metal FROM inventory WHERE uid={get_uid(user)}"
+    query = f"SELECT metal_metal FROM inventory WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -164,7 +175,7 @@ def metal(user):
 
 
 def gold(user):
-    query = f"SELECT item_gold FROM inventory WHERE uid={get_uid(user)}"
+    query = f"SELECT metal_gold FROM inventory WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -172,7 +183,7 @@ def gold(user):
 
 
 def diamond(user):
-    query = f"SELECT item_diamond FROM inventory WHERE uid={get_uid(user)}"
+    query = f"SELECT metal_diamond FROM inventory WHERE uid={get_uid(user)}"
     Connection.SQL_Cursor.execute(query)
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
@@ -190,16 +201,8 @@ class User(commands.Cog):
     @cooldown(1, 10, BucketType.user)
     async def stats(self, ctx):
         if not registered(ctx.author.id):
-            embed = Embed(
-                title="ERROR",
-                description="You are not registered to the database!\n**TIP:** `!register`",
-                colour=Colour.red()
-            )
-            await ctx.channel.trigger_typing()
-            await asyncio.sleep(2)
-            await ctx.send(embed=embed)
+            await send_notregistered_msg(ctx)
             return
-
         embed = Embed(
             title="User Stats",
             description=f"**{ctx.author.name}'s Stats**",
@@ -240,7 +243,6 @@ class User(commands.Cog):
         )
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
-
         time = datetime.datetime.now()
         embed.set_footer(text=time.strftime(f"As of %B %d, %Y | %I:%M %p"))
         await ctx.send(embed=embed)
@@ -249,15 +251,7 @@ class User(commands.Cog):
     @cooldown(1, 10, BucketType.user)
     async def bal(self, ctx):
         if not registered(ctx.author.id):
-            embed = Embed(
-                title="ERROR",
-                description="You are not registered to the database!\n**TIP:** `!register`",
-                colour=Colour.red()
-            )
-            await ctx.channel.trigger_typing()
-            await asyncio.sleep(2)
-            await ctx.send(embed=embed)
-            return
+            await send_notregistered_msg(ctx)
         embed = Embed(
             title=f"{ctx.author}'s Balance:",
             description=f"**Cash:** :moneybag:`${get_cash(ctx.author)}`\n**Bank:** :bank:`${get_bank(ctx.author)}`",
@@ -278,15 +272,7 @@ class User(commands.Cog):
     @cooldown(1, 10, BucketType.user)
     async def inventory(self, ctx):
         if not registered(ctx.author.id):
-            embed = Embed(
-                title="ERROR",
-                description="You are not registered to the database!\n**TIP:** `!register`",
-                colour=Colour.red()
-            )
-            await ctx.channel.trigger_typing()
-            await asyncio.sleep(2)
-            await ctx.send(embed=embed)
-            return
+            await send_notregistered_msg(ctx)
 
         embed = Embed(
             title="User Stats",
@@ -297,6 +283,7 @@ class User(commands.Cog):
             url="https://images.emojiterra.com/mozilla/512px/1f392.png"
         )
         slot = 1
+        print("Test")
         if has_pickaxe(ctx.author):
             embed.add_field(
                 name=f"{slot}. Pickaxe",
@@ -305,6 +292,7 @@ class User(commands.Cog):
             )
             slot += 1
         if has_drill(ctx.author):
+            print("Test")
             emoji_drill = utils.get(self.bot.emojis, name="drill")
             embed.add_field(
                 name=f"{slot}. Drill",
@@ -313,6 +301,7 @@ class User(commands.Cog):
             )
             slot += 1
         if has_jackhammer(ctx.author):
+            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="jackhammer")
             embed.add_field(
                 name=f"{slot}. Jackhammer",
@@ -321,6 +310,7 @@ class User(commands.Cog):
             )
             slot += 1
         if has_metaldetector(ctx.author):
+            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="metal_detector")
             embed.add_field(
                 name=f"{slot}. Metal Detector",
@@ -329,6 +319,7 @@ class User(commands.Cog):
             )
             slot += 1
         if has_golddetector(ctx.author):
+            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="metal_detector")
             embed.add_field(
                 name=f"{slot}. Gold Detector",
@@ -337,6 +328,7 @@ class User(commands.Cog):
             )
             slot += 1
         if has_diamonddetector(ctx.author):
+            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="metal_detector")
             embed.add_field(
                 name=f"{slot}. Diamond Detector",
@@ -345,6 +337,7 @@ class User(commands.Cog):
             )
             slot += 1
         if has_minecart(ctx.author):
+            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="minecart")
             embed.add_field(
                 name=f"{slot}. Mine Cart",
@@ -353,6 +346,7 @@ class User(commands.Cog):
             )
             slot += 1
         if has_minetransport(ctx.author):
+            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="minetransport")
             embed.add_field(
                 name=f"{slot}. Mine Transport",
@@ -361,6 +355,7 @@ class User(commands.Cog):
             )
             slot += 1
         if has_transportplane(ctx.author):
+            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="transportplane")
             embed.add_field(
                 name=f"{slot}. Transport Plane",
@@ -369,6 +364,7 @@ class User(commands.Cog):
             )
             slot += 1
         if metal(ctx.author):
+            print("Test")
             embed.add_field(
                 name=f"{slot}. Metal",
                 value=f":gear: `{metal(ctx.author)}`",
@@ -376,6 +372,7 @@ class User(commands.Cog):
             )
             slot += 1
         if gold(ctx.author):
+            print("Test")
             embed.add_field(
                 name=f"{slot}. Gold",
                 value=f":coin: `{gold(ctx.author)}`",
@@ -383,12 +380,14 @@ class User(commands.Cog):
             )
             slot += 1
         if diamond(ctx.author):
+            print("Test")
             embed.add_field(
                 name=f"{slot}. Diamond",
                 value=f":large_blue_diamond: `{diamond(ctx.author)}`",
                 inline=False
             )
             slot += 1
+        print("Test")
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
         await ctx.send(f"**{ctx.author.name}'s inventory.**")

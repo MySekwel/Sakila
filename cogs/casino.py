@@ -17,15 +17,7 @@ class Casino(commands.Cog):
     @cooldown(1, 5, BucketType.user)
     async def dice(self, ctx, bet, rolls=2):
         if not user.registered(ctx.author.id):
-            embed = Embed(
-                title="ERROR",
-                description="You are not registered to the database!\n**TIP:** `!register`",
-                colour=Colour.red()
-            )
-            await ctx.channel.trigger_typing()
-            await asyncio.sleep(2)
-            await ctx.send(embed=embed)
-            return
+            await user.send_notregistered_msg(ctx)
         if user.get_cash(ctx.author) >= int(bet):
             embed = Embed(
                 title="Rolling Dice...",

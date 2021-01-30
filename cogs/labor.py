@@ -33,17 +33,12 @@ class Labor(commands.Cog):
     @commands.command(aliases=["mine"])
     @cooldown(1, 15, BucketType.user)
     async def work(self, ctx):
+        if user.has_jackhammer(ctx.author):
+            print("Has Jackhammer")
+            print(user.has_jackhammer(ctx.author))
         if not user.registered(ctx.author.id):
-            embed = Embed(
-                title="ERROR",
-                description="You are not registered to the database!\n**TIP:** `!register`",
-                colour=Colour.red()
-            )
-            await ctx.channel.trigger_typing()
-            await asyncio.sleep(2)
-            await ctx.send(embed=embed)
+            await user.send_notregistered_msg(ctx)
             return
-
         work_salary = 100
         default_salary = 100
         tool = "Shovel"
