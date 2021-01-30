@@ -54,7 +54,7 @@ class Economy(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def buy(self, ctx, item=0):
-        if not user.registered(ctx.author):
+        if not user.registered(ctx.author.id):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",
@@ -420,7 +420,7 @@ class Economy(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def sell(self, ctx, item=0, amount=0):
-        if not user.registered(ctx.author):
+        if not user.registered(ctx.author.id):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",
@@ -701,7 +701,7 @@ class Economy(commands.Cog):
     @commands.command()
     @cooldown(1, 10, BucketType.user)
     async def shop(self, ctx):
-        if not user.registered(ctx.author):
+        if not user.registered(ctx.author.id):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",

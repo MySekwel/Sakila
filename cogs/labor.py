@@ -33,7 +33,7 @@ class Labor(commands.Cog):
     @commands.command(aliases=["mine"])
     @cooldown(1, 15, BucketType.user)
     async def work(self, ctx):
-        if not user.registered(ctx.author):
+        if not user.registered(ctx.author.id):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",

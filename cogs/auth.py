@@ -11,7 +11,6 @@ import mysql.connector
 from discord import Embed, Colour
 from discord.ext import commands
 
-from cogs import user
 from main import Connection
 
 
@@ -35,7 +34,6 @@ class Authentication(commands.Cog):
         lastid = result[0]
         if lastid:
             lastid = lastid + 1
-
         try:
             query = """
                 INSERT INTO
@@ -50,59 +48,61 @@ class Authentication(commands.Cog):
                     user_love,
                     user_vip
                 )
-                VALUES(
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?
-                )
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
-            stats_values = (
-                ctx.author.id,
-                ctx.author.name,
-                ctx.author.discriminator,
-                100,
-                0,
-                0,
-                0,
-                0,
-                "None"
-            )
+            stats_values = (ctx.author.id, ctx.author.name, ctx.author.discriminator, 100, 0, 0, 0, 0, "None")
             Connection.SQL_Prepared_Cursor.execute(query, stats_values)
+            Connection.SQL_Handle.commit()
+            query = f"""
+                SELECT
+                uid
+                FROM
+                users
+                WHERE
+                user_id={ctx.author.id}
+            """
+            Connection.SQL_Cursor.execute(query)
+            result = Connection.SQL_Cursor.fetchone()
+            Connection.SQL_Handle.commit()
+            uid = result[0]
+            query = """
+                INSERT INTO
+                equipment(
+                    uid,
+                    equipment_pickaxe,
+                    equipment_drill,
+                    equipment_jackhammer,
+                    equipment_metal_detector,
+                    equipment_gold_detector,
+                    equipment_diamond_detector,
+                    equipment_minecart,
+                    equipment_minetransport,
+                    equipment_transportplane
+                )
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """
+            inventory_values = (uid, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            Connection.SQL_Prepared_Cursor.execute(query, inventory_values)
             Connection.SQL_Handle.commit()
             query = """
                 INSERT INTO
                 inventory(
                     uid,
-                    item_pickaxe,
-                    item_drill,
-                    item_jackhammer,
-                    item_metal_detector,
-                    item_gold_detector,
-                    item_diamond_detector,
-                    item_minecart,
-                    item_minetransport,
-                    item_transportplane,
                     metal_metal,
                     metal_gold,
                     metal_diamond
                 )
-                VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES(?, ?, ?, ?)
             """
-            inventory_values = (user.get_uid(ctx.author), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            inventory_values = (uid, 0, 0, 0)
             Connection.SQL_Prepared_Cursor.execute(query, inventory_values)
             Connection.SQL_Handle.commit()
         except mysql.connector.Error as err:
-            print("Something went wrong: {}".format(err))
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
             await ctx.send("**You are already registered to the database!**")
             return
+
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
         embed = Embed(

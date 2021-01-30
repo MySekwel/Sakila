@@ -15,7 +15,7 @@ class Miner(commands.Cog):
     @commands.command()
     @cooldown(1, 5, BucketType.user)
     async def virtualmarket(self, ctx):
-        if not user.registered(ctx.author):
+        if not user.registered(ctx.author.id):
             embed = Embed(
                 title="ERROR",
                 description="You are not registered to the database!\n**TIP:** `!register`",

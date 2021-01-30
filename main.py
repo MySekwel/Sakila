@@ -9,7 +9,6 @@ Module Dependencies:
 """
 import asyncio
 import os
-import random
 import unicodedata
 
 import mysql.connector
@@ -80,21 +79,37 @@ class Connection:
     """
     SQL_Cursor.execute(SQL_Query)
     SQL_Handle.commit()
+    # Setup equipment table
+    SQL_Query = """
+        CREATE TABLE
+        IF NOT EXISTS
+        equipment(
+            uid INT NOT NULL,
+            equipment_pickaxe INT(1),
+            equipment_drill INT(1),
+            equipment_jackhammer INT(1),
+            equipment_metal_detector INT(1),
+            equipment_gold_detector INT(1),
+            equipment_diamond_detector INT(1),
+            equipment_minecart INT(1),
+            equipment_minetransport INT(1),
+            equipment_transportplane INT(1),
+            PRIMARY KEY (uid),
+            FOREIGN KEY (uid)
+            REFERENCES
+            users (uid)
+            ON DELETE CASCADE
+            ON UPDATE RESTRICT
+        )
+    """
+    SQL_Cursor.execute(SQL_Query)
+    SQL_Handle.commit()
     # Setup inventory table
     SQL_Query = """
         CREATE TABLE
         IF NOT EXISTS
         inventory(
             uid INT NOT NULL,
-            item_pickaxe INT(1),
-            item_drill INT(1),
-            item_jackhammer INT(1),
-            item_metal_detector INT(1),
-            item_gold_detector INT(1),
-            item_diamond_detector INT(1),
-            item_minecart INT(1),
-            item_minetransport INT(1),
-            item_transportplane INT(1),
             metal_metal INT(11),
             metal_gold INT(11),
             metal_diamond INT(11),
@@ -167,32 +182,6 @@ async def charinfo(ctx, *, characters: str):
     if len(msg) > 2000:
         return await ctx.send('Output too long to display.')
     await ctx.send(msg)
-
-
-@bot.command()
-async def randomquote(ctx):
-    random_quote = [
-        "Love? What a destructive thing, yet we seek for it.",
-        "We are just living a dream, might wanna wake up some day in reality.",
-        "Are you sure you're contented? Why are you sad then?",
-        "What a waste, you pay to finish not to learn.",
-        "Coming up with ideas is fun, especially when you love what you're doing.",
-        "Love can be North Pole and South Pole, sometimes afar but still related.",
-        "Hungry? Grab a snicker.",
-        "They say laughter is the best medicine, I think they are wrong, you are my best medicine.",
-        "Love is blind? I ain't blind, you are beautiful.",
-        "It's not okay to not be okay, fucking move you lazy bastard.",
-        "Education is the key to success? Hell yeah, but remember, education is not just about schools.",
-        "Hey friend, why are you sad? She left you? Damn isn't that fun?",
-        "Don't forget your relationship to yourself. Learn to love it and forgive it.",
-    ]
-    quote = random.choice(random_quote)
-    embed = Embed(
-        title='Random Quote',
-        description=quote,
-        colour=Colour.random()
-    )
-    await ctx.send(embed=embed)
 
 
 @bot.command()

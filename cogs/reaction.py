@@ -17,8 +17,6 @@ class React(commands.Cog):
         member = payload.user_id
         author_id = message.author.id
 
-        if not user.registered(message.author):
-            return
         if member in (self.bot.user.id, author_id) or self.bot.user.id == author_id:
             return
         if emoji.name == emojii.heart["red"] + emojii.special["variant"]:
