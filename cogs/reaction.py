@@ -14,33 +14,32 @@ class React(commands.Cog):
         emoji = payload.emoji
         channel = self.bot.get_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
-        member = payload.user_id
         author_id = message.author.id
 
-        if member in (self.bot.user.id, author_id) or self.bot.user.id == author_id:
+        if payload.user_id in (self.bot.user.id, author_id) or self.bot.user.id == author_id:
             return
         if emoji.name == emojii.heart["red"] + emojii.special["variant"]:
-            if user.get_uid(member):
+            if user.get_uid(message.author):
                 query = f"""
                     UPDATE
                     users
                     SET
                     user_love=user_love+?
                     WHERE
-                    uid={user.get_uid(member)}
+                    uid={user.get_uid(message.author)}
                 """
                 Connection.SQL_Prepared_Cursor.execute(query, (1,))
                 Connection.SQL_Handle.commit()
 
         if emoji.name == emojii.flower["rosette"] + emojii.special["variant"]:
-            if user.get_uid(member):
+            if user.get_uid(message.author):
                 query = f"""
                     UPDATE
                     users
                     SET
                     user_reputation=user_reputation+?
                     WHERE
-                    uid={user.get_uid(member)}
+                    uid={user.get_uid(message.author)}
                 """
                 Connection.SQL_Prepared_Cursor.execute(query, (1,))
                 Connection.SQL_Handle.commit()

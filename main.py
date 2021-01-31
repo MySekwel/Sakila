@@ -24,7 +24,7 @@ intents.members = True
 
 # Setting up the bot and it's prefix for commands
 def get_pre():
-    return ["sakila.", "s."]  # or a list, ["pre1","pre2"]
+    return ["sakila.", "s.", "arc."]  # or a list, ["pre1","pre2"]
 
 
 bot = commands.Bot(command_prefix=get_pre(), help_command=None, case_insensitive=True, intents=intents)
@@ -129,7 +129,7 @@ class Connection:
         crypto(
             uid INT NOT NULL,
             crypto_rig INT(11),
-            crypto_currency INT(11),
+            crypto_currency FLOAT(11),
             crypto_wallet INT(11),
             PRIMARY KEY (uid),
             FOREIGN KEY (uid)

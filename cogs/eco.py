@@ -510,11 +510,7 @@ class Economy(commands.Cog):
 
         if int(item) == slot_item["pickaxe"]:
             if user.has_pickaxe(ctx.author):
-                print("Pickaxe")
-                print(settings.PRICE_PICKAXE * 0.5)
-                print(ctx.author)
                 slot_equipment("equipment_pickaxe", settings.PRICE_PICKAXE * 0.5, ctx.author)
-                print("Pickaxe")
                 embed = Embed(
                     title="Item Sold!",
                     description=f"You have sold your pickaxe for `${settings.PRICE_PICKAXE * 0.5}`\
@@ -524,7 +520,6 @@ class Economy(commands.Cog):
                 await ctx.channel.trigger_typing()
                 await asyncio.sleep(2)
                 await ctx.send(embed=embed)
-                print("Pickaxe")
 
         elif int(item) == slot_item["drill"]:
             if user.has_drill(ctx.author):

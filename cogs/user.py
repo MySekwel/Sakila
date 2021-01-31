@@ -283,7 +283,6 @@ class User(commands.Cog):
             url="https://images.emojiterra.com/mozilla/512px/1f392.png"
         )
         slot = 1
-        print("Test")
         if has_pickaxe(ctx.author):
             embed.add_field(
                 name=f"{slot}. Pickaxe",
@@ -292,7 +291,6 @@ class User(commands.Cog):
             )
             slot += 1
         if has_drill(ctx.author):
-            print("Test")
             emoji_drill = utils.get(self.bot.emojis, name="drill")
             embed.add_field(
                 name=f"{slot}. Drill",
@@ -301,7 +299,6 @@ class User(commands.Cog):
             )
             slot += 1
         if has_jackhammer(ctx.author):
-            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="jackhammer")
             embed.add_field(
                 name=f"{slot}. Jackhammer",
@@ -310,7 +307,6 @@ class User(commands.Cog):
             )
             slot += 1
         if has_metaldetector(ctx.author):
-            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="metal_detector")
             embed.add_field(
                 name=f"{slot}. Metal Detector",
@@ -319,7 +315,6 @@ class User(commands.Cog):
             )
             slot += 1
         if has_golddetector(ctx.author):
-            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="metal_detector")
             embed.add_field(
                 name=f"{slot}. Gold Detector",
@@ -328,7 +323,6 @@ class User(commands.Cog):
             )
             slot += 1
         if has_diamonddetector(ctx.author):
-            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="metal_detector")
             embed.add_field(
                 name=f"{slot}. Diamond Detector",
@@ -337,7 +331,6 @@ class User(commands.Cog):
             )
             slot += 1
         if has_minecart(ctx.author):
-            print("Test")
             emoji_jackhammer = utils.get(self.bot.emojis, name="minecart")
             embed.add_field(
                 name=f"{slot}. Mine Cart",
@@ -346,7 +339,7 @@ class User(commands.Cog):
             )
             slot += 1
         if has_minetransport(ctx.author):
-            print("Test")
+
             emoji_jackhammer = utils.get(self.bot.emojis, name="minetransport")
             embed.add_field(
                 name=f"{slot}. Mine Transport",
@@ -355,7 +348,7 @@ class User(commands.Cog):
             )
             slot += 1
         if has_transportplane(ctx.author):
-            print("Test")
+
             emoji_jackhammer = utils.get(self.bot.emojis, name="transportplane")
             embed.add_field(
                 name=f"{slot}. Transport Plane",
@@ -364,7 +357,7 @@ class User(commands.Cog):
             )
             slot += 1
         if metal(ctx.author):
-            print("Test")
+
             embed.add_field(
                 name=f"{slot}. Metal",
                 value=f":gear: `{metal(ctx.author)}`",
@@ -372,7 +365,7 @@ class User(commands.Cog):
             )
             slot += 1
         if gold(ctx.author):
-            print("Test")
+
             embed.add_field(
                 name=f"{slot}. Gold",
                 value=f":coin: `{gold(ctx.author)}`",
@@ -380,14 +373,14 @@ class User(commands.Cog):
             )
             slot += 1
         if diamond(ctx.author):
-            print("Test")
+
             embed.add_field(
                 name=f"{slot}. Diamond",
                 value=f":large_blue_diamond: `{diamond(ctx.author)}`",
                 inline=False
             )
             slot += 1
-        print("Test")
+
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
         await ctx.send(f"**{ctx.author.name}'s inventory.**")

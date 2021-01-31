@@ -33,9 +33,6 @@ class Labor(commands.Cog):
     @commands.command(aliases=["mine"])
     @cooldown(1, 15, BucketType.user)
     async def work(self, ctx):
-        if user.has_jackhammer(ctx.author):
-            print("Has Jackhammer")
-            print(user.has_jackhammer(ctx.author))
         if not user.registered(ctx.author.id):
             await user.send_notregistered_msg(ctx)
             return
