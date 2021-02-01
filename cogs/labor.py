@@ -170,6 +170,33 @@ class Labor(commands.Cog):
         Connection.SQL_Prepared_Cursor.execute(query, values)
         Connection.SQL_Handle.commit()
 
+        query = f"""
+            SELECT
+            record_metal_mined,
+            record_gold_mined,
+            record_diamond_mined
+            FROM
+            record
+            WHERE
+            uid={user.get_uid(ctx.author)}
+        """
+        Connection.SQL_Cursor.execute(query)
+        result = Connection.SQL_Cursor.fetchone()
+        Connection.SQL_Handle.commit()
+        fetched_metal, fetched_gold, fetched_diamonds = int(result[0]), int(result[1]), int(result[2])
+        if fetched_metal < metal:
+            query = f"UPDATE record SET record_metal_mined={metal} WHERE uid={user.get_uid(ctx.author)}"
+            Connection.SQL_Cursor.execute(query)
+            Connection.SQL_Handle.commit()
+        if fetched_gold < gold:
+            query = f"UPDATE record SET record_gold_mined={gold} WHERE uid={user.get_uid(ctx.author)}"
+            Connection.SQL_Cursor.execute(query)
+            Connection.SQL_Handle.commit()
+        if fetched_diamonds < diamond:
+            query = f"UPDATE record SET record_diamond_mined={diamond} WHERE uid={user.get_uid(ctx.author)}"
+            Connection.SQL_Cursor.execute(query)
+            Connection.SQL_Handle.commit()
+
     @work.error
     async def work_error(self, ctx, exc):
         if isinstance(exc, CommandOnCooldown):

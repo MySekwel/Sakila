@@ -1,15 +1,19 @@
 import asyncio
 import datetime
+import os
 import random
 import string
 
-from discord import Embed, Colour, utils
+import numpy as np
+from discord import Embed, Colour, utils, File
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType, CommandOnCooldown
 from cogs import user
 from cogs.help import empty_field
 from main import Connection
 from utils import emoji_dictionary as emojii
+
+import matplotlib.pyplot as plt
 
 
 def miner(_user):
@@ -261,8 +265,17 @@ class Miner(commands.Cog):
             inline=True,
         )
         time = datetime.datetime.now()
+
+        xpoints = np.array([100, 200])
+        ypoints = np.array([10, 250])
+        plt.plot(xpoints, ypoints, marker='o')
+        plt.savefig(f"cache/{ctx.author.id}.png")
+        plt.close()
+        image = File(f"cache/{ctx.author.id}.png")
         embed.set_footer(text=time.strftime(f"Date: %B %d, %Y | %I:%M %p"))
-        await ctx.send(embed=embed)
+        embed.set_image(url=f"attachment://{ctx.author.id}.png")
+        await ctx.send(embed=embed, file=image)
+        os.remove(f"cache/{ctx.author.id}.png")
 
     @crypto.error
     async def crypto_error(self, ctx, exc):

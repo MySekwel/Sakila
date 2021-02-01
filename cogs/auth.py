@@ -97,6 +97,22 @@ class Authentication(commands.Cog):
             inventory_values = (uid, 0, 0, 0)
             Connection.SQL_Prepared_Cursor.execute(query, inventory_values)
             Connection.SQL_Handle.commit()
+            query = """
+                INSERT INTO
+                record(
+                    uid,
+                    record_metal_mined,
+                    record_gold_mined,
+                    record_diamond_mined,
+                    record_bets_won,
+                    record_highest_roll,
+                    record_bitcoin_mined
+                )
+                VALUES(?, ?, ?, ?, ?, ?, ?)
+            """
+            inventory_values = (uid, 0, 0, 0, 0, 0, 0)
+            Connection.SQL_Prepared_Cursor.execute(query, inventory_values)
+            Connection.SQL_Handle.commit()
         except mysql.connector.Error as err:
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
@@ -112,7 +128,7 @@ class Authentication(commands.Cog):
         )
         embed.add_field(
             name="User:",
-            value=f">`{lastid}`",
+            value=f"`{lastid}`",
             inline=True
         )
         embed.add_field(

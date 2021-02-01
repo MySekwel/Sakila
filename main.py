@@ -141,6 +141,27 @@ class Connection:
     """
     SQL_Cursor.execute(SQL_Query)
     SQL_Handle.commit()
+    SQL_Query = """
+        CREATE TABLE
+        IF NOT EXISTS
+        record(
+            uid INT NOT NULL,
+            record_metal_mined INT(11),
+            record_gold_mined INT(11),
+            record_diamond_mined INT(11),
+            record_bets_won INT(11),
+            record_highest_roll INT(11),
+            record_bitcoin_mined INT(11),
+            PRIMARY KEY (uid),
+            FOREIGN KEY (uid)
+            REFERENCES
+            users (uid)
+            ON DELETE CASCADE
+            ON UPDATE RESTRICT
+        )
+    """
+    SQL_Cursor.execute(SQL_Query)
+    SQL_Handle.commit()
 
 
 for file in os.listdir("cogs"):
