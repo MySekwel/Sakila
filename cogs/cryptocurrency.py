@@ -227,6 +227,23 @@ class Miner(commands.Cog):
         Connection.SQL_Prepared_Cursor.execute(query, (earnings,))
         Connection.SQL_Handle.commit()
 
+        print("Test")
+        query = f"""
+            SELECT
+            record_bitcoin_mined
+            FROM
+            record
+            WHERE
+            uid={user.get_uid(ctx.author)}
+        """
+        Connection.SQL_Cursor.execute(query)
+        result = Connection.SQL_Cursor.fetchone()
+        Connection.SQL_Handle.commit()
+        if float(result[0]) < float(earnings):
+            query = f"UPDATE record SET record_bitcoin_mined={earnings} WHERE uid={user.get_uid(ctx.author)}"
+            Connection.SQL_Cursor.execute(query)
+            Connection.SQL_Handle.commit()
+
     @crypto.command()
     async def stats(self, ctx):
         if not miner(ctx.author):

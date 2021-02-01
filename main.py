@@ -129,7 +129,7 @@ class Connection:
         crypto(
             uid INT NOT NULL,
             crypto_rig INT(11),
-            crypto_currency FLOAT(11),
+            crypto_currency FLOAT,
             crypto_wallet INT(11),
             PRIMARY KEY (uid),
             FOREIGN KEY (uid)
@@ -151,7 +151,7 @@ class Connection:
             record_diamond_mined INT(11),
             record_bets_won INT(11),
             record_highest_roll INT(11),
-            record_bitcoin_mined INT(11),
+            record_bitcoin_mined FLOAT,
             PRIMARY KEY (uid),
             FOREIGN KEY (uid)
             REFERENCES
