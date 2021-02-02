@@ -55,8 +55,8 @@ class Connection:
         user=settings.SQL_USER,
         password=settings.SQL_PASSWORD
     )
-    SQL_Cursor = SQL_Handle.cursor()
-    SQL_Prepared_Cursor = SQL_Handle.cursor(prepared=True)
+    SQL_Cursor = SQL_Handle.cursor(prepared=True)
+    SQL_Cur = SQL_Handle.cursor()
 
     # Setup users table
     SQL_Query = """
@@ -77,7 +77,7 @@ class Connection:
             UNIQUE KEY (user_id)
         )
     """
-    SQL_Cursor.execute(SQL_Query)
+    SQL_Cur.execute(SQL_Query)
     SQL_Handle.commit()
     # Setup equipment table
     SQL_Query = """
@@ -102,7 +102,7 @@ class Connection:
             ON UPDATE RESTRICT
         )
     """
-    SQL_Cursor.execute(SQL_Query)
+    SQL_Cur.execute(SQL_Query)
     SQL_Handle.commit()
     # Setup inventory table
     SQL_Query = """
@@ -121,7 +121,7 @@ class Connection:
             ON UPDATE RESTRICT
         )
     """
-    SQL_Cursor.execute(SQL_Query)
+    SQL_Cur.execute(SQL_Query)
     SQL_Handle.commit()
     SQL_Query = """
         CREATE TABLE
@@ -139,7 +139,7 @@ class Connection:
             ON UPDATE RESTRICT
         )
     """
-    SQL_Cursor.execute(SQL_Query)
+    SQL_Cur.execute(SQL_Query)
     SQL_Handle.commit()
     SQL_Query = """
         CREATE TABLE
@@ -160,7 +160,7 @@ class Connection:
             ON UPDATE RESTRICT
         )
     """
-    SQL_Cursor.execute(SQL_Query)
+    SQL_Cur.execute(SQL_Query)
     SQL_Handle.commit()
 
 

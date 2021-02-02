@@ -28,12 +28,13 @@ class Authentication(commands.Cog):
             FROM
             users
         """
-        Connection.SQL_Cursor.execute(query)
-        result = Connection.SQL_Cursor.fetchone()
+        Connection.SQL_Cur.execute(query)
+        result = Connection.SQL_Cur.fetchone()
         Connection.SQL_Handle.commit()
+
         lastid = result[0]
         if lastid:
-            lastid = lastid + 1
+            lastid += 1
         try:
             query = """
                 INSERT INTO
@@ -51,17 +52,17 @@ class Authentication(commands.Cog):
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
             stats_values = (ctx.author.id, ctx.author.name, ctx.author.discriminator, 100, 0, 0, 0, 0, "None")
-            Connection.SQL_Prepared_Cursor.execute(query, stats_values)
+            Connection.SQL_Cursor.execute(query, stats_values)
             Connection.SQL_Handle.commit()
-            query = f"""
+            query = """
                 SELECT
                 uid
                 FROM
                 users
                 WHERE
-                user_id={ctx.author.id}
+                user_id=?
             """
-            Connection.SQL_Cursor.execute(query)
+            Connection.SQL_Cursor.execute(query, (ctx.author.id,))
             result = Connection.SQL_Cursor.fetchone()
             Connection.SQL_Handle.commit()
             uid = result[0]
@@ -82,7 +83,7 @@ class Authentication(commands.Cog):
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
             inventory_values = (uid, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-            Connection.SQL_Prepared_Cursor.execute(query, inventory_values)
+            Connection.SQL_Cursor.execute(query, inventory_values)
             Connection.SQL_Handle.commit()
             query = """
                 INSERT INTO
@@ -95,7 +96,7 @@ class Authentication(commands.Cog):
                 VALUES(?, ?, ?, ?)
             """
             inventory_values = (uid, 0, 0, 0)
-            Connection.SQL_Prepared_Cursor.execute(query, inventory_values)
+            Connection.SQL_Cursor.execute(query, inventory_values)
             Connection.SQL_Handle.commit()
             query = """
                 INSERT INTO
@@ -111,7 +112,7 @@ class Authentication(commands.Cog):
                 VALUES(?, ?, ?, ?, ?, ?, ?)
             """
             inventory_values = (uid, 0, 0, 0, 0, 0, 0)
-            Connection.SQL_Prepared_Cursor.execute(query, inventory_values)
+            Connection.SQL_Cursor.execute(query, inventory_values)
             Connection.SQL_Handle.commit()
         except mysql.connector.Error as err:
             await ctx.channel.trigger_typing()

@@ -20,8 +20,8 @@ from main import Connection
 
 
 def registered(userid):
-    query = f"SELECT * FROM users WHERE user_id={userid}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT * FROM users WHERE user_id=?"
+    Connection.SQL_Cursor.execute(query, (userid,))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return result
@@ -39,155 +39,173 @@ async def send_notregistered_msg(message):
 
 
 def get_uid(user):
-    query = f"SELECT uid FROM users WHERE user_id={user.id}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT uid FROM users WHERE user_id=?"
+    Connection.SQL_Cursor.execute(query, (user.id,))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def get_cash(user):
-    query = f"SELECT user_cash FROM users WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT user_cash FROM users WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def get_bank(user):
-    query = f"SELECT user_bank FROM users WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT user_bank FROM users WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def get_exp(user):
-    query = f"SELECT user_exp FROM users WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT user_exp FROM users WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def get_reputation(user):
-    query = f"SELECT user_reputation FROM users WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT user_reputation FROM users WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def get_love(user):
-    query = f"SELECT user_love FROM users WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT user_love FROM users WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def get_vip(user):
-    query = f"SELECT user_vip FROM users WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT user_vip FROM users WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return str(result[0])
 
 
 def has_pickaxe(user):
-    query = f"SELECT equipment_pickaxe FROM equipment WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT equipment_pickaxe FROM equipment WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def has_drill(user):
-    query = f"SELECT equipment_drill FROM equipment WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT equipment_drill FROM equipment WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def has_jackhammer(user):
-    query = f"SELECT equipment_jackhammer FROM equipment WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT equipment_jackhammer FROM equipment WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def has_metaldetector(user):
-    query = f"SELECT equipment_metal_detector FROM equipment WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT equipment_metal_detector FROM equipment WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def has_golddetector(user):
-    query = f"SELECT equipment_gold_detector FROM equipment WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT equipment_gold_detector FROM equipment WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def has_diamonddetector(user):
-    query = f"SELECT equipment_diamond_detector FROM equipment WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT equipment_diamond_detector FROM equipment WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def has_minecart(user):
-    query = f"SELECT equipment_minecart FROM equipment WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT equipment_minecart FROM equipment WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def has_minetransport(user):
-    query = f"SELECT equipment_minetransport FROM equipment WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT equipment_minetransport FROM equipment WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def has_transportplane(user):
-    query = f"SELECT equipment_transportplane FROM equipment WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT equipment_transportplane FROM equipment WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def metal(user):
-    query = f"SELECT metal_metal FROM inventory WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT metal_metal FROM inventory WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def gold(user):
-    query = f"SELECT metal_gold FROM inventory WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT metal_gold FROM inventory WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def diamond(user):
-    query = f"SELECT metal_diamond FROM inventory WHERE uid={get_uid(user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT metal_diamond FROM inventory WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (get_uid(user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
+
+
+def update_cash(user, value):
+    query = "UPDATE users SET user_cash=user_cash+? WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (value, get_uid(user)))
+    Connection.SQL_Handle.commit()
+
+
+def update_bank(user, value):
+    query = "UPDATE users SET user_bank=user_bank+? WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (value, get_uid(user)))
+    Connection.SQL_Handle.commit()
+
+
+def update_exp(user, value):
+    query = "UPDATE users SET user_exp=user_exp+? WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (value, get_uid(user)))
+    Connection.SQL_Handle.commit()
 
 
 class User(commands.Cog):

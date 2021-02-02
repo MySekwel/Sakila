@@ -143,20 +143,11 @@ class Labor(commands.Cog):
             colour=Colour.green()
         )
         await progress.edit(embed=embed)
-        query = f"""
-            UPDATE
-            users
-            SET
-            user_cash=user_cash+?,
-            user_exp=user_exp+?
-            WHERE
-            uid={user.get_uid(ctx.author)}
-        """
-        values = (work_salary, settings.WORK_BONUS)
-        Connection.SQL_Prepared_Cursor.execute(query, values)
-        Connection.SQL_Handle.commit()
 
-        query = f"""
+        user.update_cash(ctx.author, work_salary)
+        user.update_exp(ctx.author, settings.WORK_BONUS)
+
+        query = """
             UPDATE
             inventory
             SET
@@ -164,13 +155,13 @@ class Labor(commands.Cog):
             metal_gold=metal_gold+?,
             metal_diamond=metal_diamond+?
             WHERE
-            uid={user.get_uid(ctx.author)}
+            uid=?
         """
-        values = (metal, gold, diamond)
-        Connection.SQL_Prepared_Cursor.execute(query, values)
+        values = (metal, gold, diamond, user.get_uid(ctx.author))
+        Connection.SQL_Cursor.execute(query, values)
         Connection.SQL_Handle.commit()
 
-        query = f"""
+        query = """
             SELECT
             record_metal_mined,
             record_gold_mined,
@@ -178,23 +169,23 @@ class Labor(commands.Cog):
             FROM
             record
             WHERE
-            uid={user.get_uid(ctx.author)}
+            uid=?
         """
-        Connection.SQL_Cursor.execute(query)
+        Connection.SQL_Cursor.execute(query, (user.get_uid(ctx.author),))
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
         fetched_metal, fetched_gold, fetched_diamonds = int(result[0]), int(result[1]), int(result[2])
         if fetched_metal < metal:
-            query = f"UPDATE record SET record_metal_mined={metal} WHERE uid={user.get_uid(ctx.author)}"
-            Connection.SQL_Cursor.execute(query)
+            query = f"UPDATE record SET record_metal_mined={metal} WHERE uid=?"
+            Connection.SQL_Cursor.execute(query, (user.get_uid(ctx.author),))
             Connection.SQL_Handle.commit()
         if fetched_gold < gold:
-            query = f"UPDATE record SET record_gold_mined={gold} WHERE uid={user.get_uid(ctx.author)}"
-            Connection.SQL_Cursor.execute(query)
+            query = f"UPDATE record SET record_gold_mined={gold} WHERE uid=?"
+            Connection.SQL_Cursor.execute(query, (user.get_uid(ctx.author),))
             Connection.SQL_Handle.commit()
         if fetched_diamonds < diamond:
-            query = f"UPDATE record SET record_diamond_mined={diamond} WHERE uid={user.get_uid(ctx.author)}"
-            Connection.SQL_Cursor.execute(query)
+            query = f"UPDATE record SET record_diamond_mined={diamond} WHERE uid=?"
+            Connection.SQL_Cursor.execute(query, (user.get_uid(ctx.author),))
             Connection.SQL_Handle.commit()
 
     @work.error

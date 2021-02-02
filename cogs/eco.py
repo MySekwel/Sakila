@@ -22,49 +22,34 @@ from utils import settings
 
 
 def slot_equipment(itemname, price, _user):
-    query = f"""
-        UPDATE
-        users
-        SET
-        user_cash=user_cash+?
-        WHERE
-        uid={user.get_uid(_user)}
-    """
-    Connection.SQL_Prepared_Cursor.execute(query, (price,))
-    Connection.SQL_Handle.commit()
+    user.update_cash(_user, price)
     query = f"""
         UPDATE
         equipment
         SET
-        {itemname}=0
+        {itemname}=?
         WHERE
-        uid={user.get_uid(_user)}
+        uid=?
     """
-    Connection.SQL_Cursor.execute(query)
+    Connection.SQL_Cursor.execute(query, (0, user.get_uid(_user),))
     Connection.SQL_Handle.commit()
 
 
 def slot_inventory(itemname, price, _user, amount=1):
-    query = f"""
-        UPDATE
-        users
-        SET
-        user_cash=user_cash+?
-        WHERE
-        uid={user.get_uid(_user)}
-    """
-    Connection.SQL_Prepared_Cursor.execute(query, (price,))
-    Connection.SQL_Handle.commit()
+
+    user.update_cash(_user, price)
+
     query = f"""
         UPDATE
         inventory
         SET
         {itemname}={itemname}-?
         WHERE
-        uid={user.get_uid(_user)}
+        uid=?
     """
-    Connection.SQL_Prepared_Cursor.execute(query, (amount,))
+    Connection.SQL_Cursor.execute(query, (amount, user.get_uid(_user)))
     Connection.SQL_Handle.commit()
+
 
 
 class Economy(commands.Cog):
@@ -94,27 +79,17 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
-            query = f"""
+            query = """
                 UPDATE
                 inventory
                 SET
                 item_pickaxe=?
                 WHERE
-                uid={user.get_uid(ctx.author)}
+                uid=?
             """
-            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Cursor.execute(query, (1, user.get_uid(ctx.author)))
             Connection.SQL_Handle.commit()
-
-            query = f"""
-                UPDATE
-                users
-                SET
-                user_cash=user_cash-?
-                WHERE
-                uid={user.get_uid(ctx.author)}
-            """
-            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_PICKAXE,))
-            Connection.SQL_Handle.commit()
+            user.update_cash(ctx.author, -settings.PRICE_PICKAXE)
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
             await ctx.send(f"You have bought a `pickaxe` for ${settings.PRICE_PICKAXE}!")
@@ -132,27 +107,18 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
-            query = f"""
+            query = """
                 UPDATE
                 inventory
                 SET
                 item_drill=?
                 WHERE
-                uid={user.get_uid(ctx.author)}
+                uid=?
             """
-            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Cursor.execute(query, (1, user.get_uid(ctx.author)))
             Connection.SQL_Handle.commit()
 
-            query = f"""
-                UPDATE
-                users
-                SET
-                user_cash=user_cash-?
-                WHERE
-                uid={user.get_uid(ctx.author)}
-            """
-            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DRILL,))
-            Connection.SQL_Handle.commit()
+            user.update_cash(ctx.author, -settings.PRICE_DRILL)
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
             await ctx.send(f"You have bought a `drill` for ${settings.PRICE_DRILL}!")
@@ -170,27 +136,18 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
-            query = f"""
+            query = """
                 UPDATE
                 inventory
                 SET
                 item_jackhammer=?
                 WHERE
-                uid={user.get_uid(ctx.author)}
+                uid=?
             """
-            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Cursor.execute(query, (1, user.get_uid(ctx.author)))
             Connection.SQL_Handle.commit()
 
-            query = f"""
-                UPDATE
-                users
-                SET
-                user_cash=user_cash-?
-                WHERE
-                uid={user.get_uid(ctx.author)}
-            """
-            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_JACKHAMMER,))
-            Connection.SQL_Handle.commit()
+            user.update_cash(ctx.author, -settings.PRICE_JACKHAMMER)
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
             await ctx.send(f"You have bought a `jackhammer` for ${settings.PRICE_JACKHAMMER}!")
@@ -208,27 +165,18 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
-            query = f"""
+            query = """
                 UPDATE
                 inventory
                 SET
                 item_metal_detector=?
                 WHERE
-                uid={user.get_uid(ctx.author)}
+                uid=?
             """
-            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Cursor.execute(query, (1, user.get_uid(ctx.author)))
             Connection.SQL_Handle.commit()
 
-            query = f"""
-                UPDATE
-                users
-                SET
-                user_cash=user_cash-?
-                WHERE
-                uid={user.get_uid(ctx.author)}
-            """
-            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_METALDETECTOR,))
-            Connection.SQL_Handle.commit()
+            user.update_cash(ctx.author, -settings.PRICE_METALDETECTOR)
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
             await ctx.send(f"You have bought a `metal detector` for ${settings.PRICE_METALDETECTOR}!")
@@ -246,27 +194,18 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
-            query = f"""
+            query = """
                 UPDATE
                 inventory
                 SET
                 item_gold_detector=?
                 WHERE
-                uid={user.get_uid(ctx.author)}
+                uid=?
             """
-            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Cursor.execute(query, (1, user.get_uid(ctx.author)))
             Connection.SQL_Handle.commit()
 
-            query = f"""
-                UPDATE
-                users
-                SET
-                user_cash=user_cash-?
-                WHERE
-                uid={user.get_uid(ctx.author)}
-            """
-            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_GOLDDETECTOR,))
-            Connection.SQL_Handle.commit()
+            user.update_cash(ctx.author, -settings.PRICE_GOLDDETECTOR)
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
             await ctx.send(f"You have bought a `gold detector` for ${settings.PRICE_GOLDDETECTOR}!")
@@ -284,27 +223,18 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
-            query = f"""
+            query = """
                 UPDATE
                 inventory
                 SET
                 item_diamond_detector=?
                 WHERE
-                uid={user.get_uid(ctx.author)}
+                uid=?
             """
-            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Cursor.execute(query, (1, user.get_uid(ctx.author)))
             Connection.SQL_Handle.commit()
 
-            query = f"""
-                UPDATE
-                users
-                SET
-                user_cash=user_cash-?
-                WHERE
-                uid={user.get_uid(ctx.author)}
-            """
-            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_DIAMONDDETECTOR,))
-            Connection.SQL_Handle.commit()
+            user.update_cash(ctx.author, -settings.PRICE_DIAMONDDETECTOR)
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
             await ctx.send(f"You have bought a `diamond detector` for ${settings.PRICE_DIAMONDDETECTOR}!")
@@ -322,27 +252,18 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
-            query = f"""
+            query = """
                 UPDATE
                 inventory
                 SET
                 item_minecart=?
                 WHERE
-                uid={user.get_uid(ctx.author)}
+                uid=?
             """
-            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Cursor.execute(query, (1, user.get_uid(ctx.author)))
             Connection.SQL_Handle.commit()
 
-            query = f"""
-                UPDATE
-                users
-                SET
-                user_cash=user_cash-?
-                WHERE
-                uid={user.get_uid(ctx.author)}
-            """
-            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINECART,))
-            Connection.SQL_Handle.commit()
+            user.update_cash(ctx.author, -settings.PRICE_MINECART)
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
             await ctx.send(f"You have bought a `minecart` for ${settings.PRICE_MINECART}!")
@@ -360,27 +281,18 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
-            query = f"""
+            query = """
                 UPDATE
                 inventory
                 SET
                 item_minetransport=?
                 WHERE
-                uid={user.get_uid(ctx.author)}
+                uid=?
             """
-            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Cursor.execute(query, (1, user.get_uid(ctx.author)))
             Connection.SQL_Handle.commit()
 
-            query = f"""
-                UPDATE
-                users
-                SET
-                user_cash=user_cash-?
-                WHERE
-                uid={user.get_uid(ctx.author)}
-            """
-            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_MINETRANSPORT,))
-            Connection.SQL_Handle.commit()
+            user.update_cash(ctx.author, -settings.PRICE_MINETRANSPORT)
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
             await ctx.send(f"You have bought a `mine transport` for ${settings.PRICE_MINETRANSPORT}!")
@@ -398,27 +310,19 @@ class Economy(commands.Cog):
                 await asyncio.sleep(2)
                 await ctx.send("ERROR: You don't have any money bud, try working in the mines [!work]")
                 return
-            query = f"""
+
+            query = """
                 UPDATE
                 inventory
                 SET
                 item_transportplane=?
                 WHERE
-                uid={user.get_uid(ctx.author)}
+                uid=?
             """
-            Connection.SQL_Prepared_Cursor.execute(query, (1,))
+            Connection.SQL_Cursor.execute(query, (1, user.get_uid(ctx.author)))
             Connection.SQL_Handle.commit()
 
-            query = f"""
-                UPDATE
-                users
-                SET
-                user_cash=user_cash-?
-                WHERE
-                u={ctx.author.id}
-            """
-            Connection.SQL_Prepared_Cursor.execute(query, (settings.PRICE_TRANSPORTPLANE,))
-            Connection.SQL_Handle.commit()
+            user.update_cash(ctx.author, -settings.PRICE_TRANSPORTPLANE)
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
             await ctx.send(f"You have bought a `transport plane` for ${settings.PRICE_TRANSPORTPLANE}!")

@@ -4,45 +4,44 @@ import os
 import random
 import string
 
-import numpy as np
 from discord import Embed, Colour, utils, File
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType, CommandOnCooldown
 from cogs import user
 from cogs.help import empty_field
 from main import Connection
-from utils import emoji_dictionary as emojii
+from utils import emoji_dictionary as emojii, settings
 
 import matplotlib.pyplot as plt
 
 
 def miner(_user):
-    query = f"SELECT * FROM crypto WHERE uid={user.get_uid(_user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT * FROM crypto WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (user.get_uid(_user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return result
 
 
 def has_rig(_user):
-    query = f"SELECT crypto_rig FROM crypto WHERE uid={user.get_uid(_user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT crypto_rig FROM crypto WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (user.get_uid(_user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
 
 
 def bitcoins(_user):
-    query = f"SELECT crypto_currency FROM crypto WHERE uid={user.get_uid(_user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT crypto_currency FROM crypto WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (user.get_uid(_user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return float(result[0])
 
 
 def has_wallet(_user):
-    query = f"SELECT crypto_wallet FROM crypto WHERE uid={user.get_uid(_user)}"
-    Connection.SQL_Cursor.execute(query)
+    query = "SELECT crypto_wallet FROM crypto WHERE uid=?"
+    Connection.SQL_Cursor.execute(query, (user.get_uid(_user),))
     result = Connection.SQL_Cursor.fetchone()
     Connection.SQL_Handle.commit()
     return int(result[0])
@@ -77,8 +76,16 @@ class Miner(commands.Cog):
     @market.command()
     async def buy(self, ctx, item):
         if item.casefold() == "rig":
+            if user.get_cash(ctx.author) < settings.RIG_PRICE:
+                embed = Embed(
+                    title="You don't have enough money to buy your first rig!",
+                    description="**TIP:** `!mine` to earn easy cash.",
+                    colour=Colour.red()
+                )
+                await ctx.send(embed=embed)
+                return
             uid = user.get_uid(ctx.author)
-            query = f"""
+            query = """
                 INSERT
                 INTO
                 crypto(
@@ -89,7 +96,7 @@ class Miner(commands.Cog):
                 )
                 VALUES(?, ?, ?, ?)
             """
-            Connection.SQL_Prepared_Cursor.execute(query, (uid, 1, 0, 0))
+            Connection.SQL_Cursor.execute(query, (uid, 1, 0, 0))
             Connection.SQL_Handle.commit()
             embed = Embed(
                 title="Success",
@@ -118,15 +125,15 @@ class Miner(commands.Cog):
             )
             await ctx.send(embed=embed)
             return
-        query = f"""
-                UPDATE
-                crypto
-                SET
-                crypto_wallet=1
-                WHERE
-                uid={user.get_uid(ctx.author)}
-            """
-        Connection.SQL_Cursor.execute(query)
+        query = """
+            UPDATE
+            crypto
+            SET
+            crypto_wallet=?
+            WHERE
+            uid=?
+        """
+        Connection.SQL_Cursor.execute(query, (1, user.get_uid(ctx.author)))
         Connection.SQL_Handle.commit()
         await ctx.channel.trigger_typing()
         await asyncio.sleep(2)
@@ -162,9 +169,11 @@ class Miner(commands.Cog):
 
     @crypto.command()
     async def mine(self, ctx):
+
         if not miner(ctx.author):
             await send_notminer_msg(ctx)
             return
+
         if not has_wallet(ctx.author):
             embed = Embed(
                 title="ERROR",
@@ -173,6 +182,7 @@ class Miner(commands.Cog):
             )
             await ctx.send(embed=embed)
             return
+
         alphabet = string.ascii_letters
         rand_letter_1 = random.choices(population=alphabet, k=10)
         rand_letter_2 = random.choices(population=alphabet, k=5)
@@ -216,32 +226,35 @@ class Miner(commands.Cog):
         embed.set_footer(text=time.strftime(f"Date: %B %d, %Y | %I:%M %p"))
         embed.set_thumbnail(url="https://cdn.pixabay.com/photo/2015/08/27/11/20/bitcoin-910307_960_720.png")
         await progress.edit(embed=embed)
-        query = f"""
+        query = """
             UPDATE
             crypto
             SET
             crypto_currency=crypto_currency+?
             WHERE
-            uid={user.get_uid(ctx.author)}
+            uid=?
         """
-        Connection.SQL_Prepared_Cursor.execute(query, (earnings,))
+        Connection.SQL_Cursor.execute(query, (earnings, user.get_uid(ctx.author)))
         Connection.SQL_Handle.commit()
 
-        print("Test")
-        query = f"""
+        file = open(f"cache/{ctx.author.id}_bitcoin.history", "a")
+        file.write(f"{earnings}\n")
+        file.close()
+
+        query = """
             SELECT
             record_bitcoin_mined
             FROM
             record
             WHERE
-            uid={user.get_uid(ctx.author)}
+            uid=?
         """
-        Connection.SQL_Cursor.execute(query)
+        Connection.SQL_Cursor.execute(query, (user.get_uid(ctx.author),))
         result = Connection.SQL_Cursor.fetchone()
         Connection.SQL_Handle.commit()
         if float(result[0]) < float(earnings):
-            query = f"UPDATE record SET record_bitcoin_mined={earnings} WHERE uid={user.get_uid(ctx.author)}"
-            Connection.SQL_Cursor.execute(query)
+            query = f"UPDATE record SET record_bitcoin_mined={earnings} WHERE uid=?"
+            Connection.SQL_Cursor.execute(query, (user.get_uid(ctx.author),))
             Connection.SQL_Handle.commit()
 
     @crypto.command()
@@ -283,9 +296,25 @@ class Miner(commands.Cog):
         )
         time = datetime.datetime.now()
 
-        xpoints = np.array([100, 200])
-        ypoints = np.array([10, 250])
-        plt.plot(xpoints, ypoints, marker='o')
+        xpoints = []
+        ypoints = []
+        with open(f"cache/{ctx.author.id}_bitcoin.history") as file:
+            line = file.readlines()
+            for line in file:
+                pass
+        lines = list(map(str.strip, line))
+        for i in line:
+            xpoints.append(float(i))
+        for i in range(len(lines)):
+            ypoints.append(i)
+
+        plt.bar(ypoints, xpoints)
+        plt.grid()
+        plt.title("[ Bitcoin Earnings ]")
+        plt.legend(["Bitcoins Earned"])
+        plt.xlabel("Block")
+        plt.ylabel("Bitcoin")
+
         plt.savefig(f"cache/{ctx.author.id}.png")
         plt.close()
         image = File(f"cache/{ctx.author.id}.png")

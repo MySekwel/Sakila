@@ -20,28 +20,28 @@ class React(commands.Cog):
             return
         if emoji.name == emojii.heart["red"] + emojii.special["variant"]:
             if user.get_uid(message.author):
-                query = f"""
+                query = """
                     UPDATE
                     users
                     SET
                     user_love=user_love+?
                     WHERE
-                    uid={user.get_uid(message.author)}
+                    uid=?
                 """
-                Connection.SQL_Prepared_Cursor.execute(query, (1,))
+                Connection.SQL_Cursor.execute(query, (1, user.get_uid(message.author)))
                 Connection.SQL_Handle.commit()
 
         if emoji.name == emojii.flower["rosette"] + emojii.special["variant"]:
             if user.get_uid(message.author):
-                query = f"""
+                query = """
                     UPDATE
                     users
                     SET
                     user_reputation=user_reputation+?
                     WHERE
-                    uid={user.get_uid(message.author)}
+                    uid=?
                 """
-                Connection.SQL_Prepared_Cursor.execute(query, (1,))
+                Connection.SQL_Cursor.execute(query, (1, user.get_uid(message.author)))
                 Connection.SQL_Handle.commit()
 
     async def on_raw_reaction_remove(self, payload):

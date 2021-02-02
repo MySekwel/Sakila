@@ -30,16 +30,16 @@ class Casino(commands.Cog):
             user_result = random.randint(1, 6 * int(rolls))
             dealer_result = random.randint(1, 6 * int(rolls))
             if user_result > dealer_result:
-                query = f"""
+                query = """
                     UPDATE
                     users
                     SET
                     user_cash=?
                     WHERE
-                    uid={user.get_uid(ctx.author)}
+                    uid=?
                 """
                 win = user.get_cash(ctx.author) + int(bet)
-                Connection.SQL_Prepared_Cursor.execute(query, (win,))
+                Connection.SQL_Cursor.execute(query, (win, user.get_uid(ctx.author)))
                 Connection.SQL_Handle.commit()
 
                 embed = Embed(
@@ -58,16 +58,16 @@ class Casino(commands.Cog):
                 embed.set_thumbnail(url="https://media.tenor.com/images/99cff34bdcb675975b2b0cc661f2e4ce/tenor.gif")
                 await message.edit(embed=embed)
             else:
-                query = f"""
+                query = """
                     UPDATE
                     users
                     SET
                     user_cash=?
                     WHERE
-                    uid={user.get_uid(ctx.author)}
+                    uid=?
                 """
                 lost = user.get_cash(ctx.author) - int(bet)
-                Connection.SQL_Prepared_Cursor.execute(query, (lost,))
+                Connection.SQL_Cursor.execute(query, (lost, user.get_uid(ctx.author)))
                 Connection.SQL_Handle.commit()
                 embed = Embed(
                     title="You lost!",
