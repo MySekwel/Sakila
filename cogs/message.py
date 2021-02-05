@@ -45,11 +45,12 @@ class Message(commands.Cog):
                     description=f"**Message:** `{guild_hashmap[f'{message.guild}_message']}`",
                     colour=Colour.green()
                 )
-                embed.set_author(icon_url=guild_hashmap[f"{message.guild}_author_avatar"],
-                                 name=guild_hashmap[f"{message.guild}_author_name"] + "#" + guild_hashmap[
-                                     f"{message.guild}_author_tag"])
+                embed.set_author(
+                    icon_url=guild_hashmap[f"{message.guild}_author_avatar"],
+                    name=guild_hashmap[f"{message.guild}_author_name"] + "#" + guild_hashmap[f"{message.guild}_author_tag"]
+                )
                 embed.set_thumbnail(
-                    url="https://cdn.discordapp.com/attachments/799655646722523166/803568246045147156/d9atvs2-6c8bcc70-1cf4-412f-9ac3-f9538e443c7a.png")
+                    url="https://cdn.discordapp.com/attachments/799655646722523166.png")
                 time = datetime.datetime.now()
                 embed.set_footer(text=time.strftime("%B %d, %Y | %I:%M %p"))
                 await message.channel.send(embed=embed)

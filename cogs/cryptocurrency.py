@@ -169,7 +169,6 @@ class Miner(commands.Cog):
 
     @crypto.command()
     async def mine(self, ctx):
-
         if not miner(ctx.author):
             await send_notminer_msg(ctx)
             return

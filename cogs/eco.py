@@ -36,9 +36,7 @@ def slot_equipment(itemname, price, _user):
 
 
 def slot_inventory(itemname, price, _user, amount=1):
-
     user.update_cash(_user, price)
-
     query = f"""
         UPDATE
         inventory
@@ -49,7 +47,6 @@ def slot_inventory(itemname, price, _user, amount=1):
     """
     Connection.SQL_Cursor.execute(query, (amount, user.get_uid(_user)))
     Connection.SQL_Handle.commit()
-
 
 
 class Economy(commands.Cog):
@@ -64,7 +61,6 @@ class Economy(commands.Cog):
     async def buy(self, ctx, item=0):
         if not user.registered(ctx.author.id):
             await user.send_notregistered_msg(ctx)
-
         # Item: Pickaxe
         # Price: 2500
         # Description: %50 Work Salary Bonus
@@ -81,14 +77,15 @@ class Economy(commands.Cog):
                 return
             query = """
                 UPDATE
-                inventory
+                equipment
                 SET
-                item_pickaxe=?
+                equipment_pickaxe=?
                 WHERE
                 uid=?
             """
             Connection.SQL_Cursor.execute(query, (1, user.get_uid(ctx.author)))
             Connection.SQL_Handle.commit()
+
             user.update_cash(ctx.author, -settings.PRICE_PICKAXE)
             await ctx.channel.trigger_typing()
             await asyncio.sleep(2)
@@ -109,9 +106,9 @@ class Economy(commands.Cog):
                 return
             query = """
                 UPDATE
-                inventory
+                equipment
                 SET
-                item_drill=?
+                equipment_drill=?
                 WHERE
                 uid=?
             """
@@ -138,9 +135,9 @@ class Economy(commands.Cog):
                 return
             query = """
                 UPDATE
-                inventory
+                equipment
                 SET
-                item_jackhammer=?
+                equipment_jackhammer=?
                 WHERE
                 uid=?
             """
@@ -167,9 +164,9 @@ class Economy(commands.Cog):
                 return
             query = """
                 UPDATE
-                inventory
+                equipment
                 SET
-                item_metal_detector=?
+                equipment_metal_detector=?
                 WHERE
                 uid=?
             """
@@ -196,9 +193,9 @@ class Economy(commands.Cog):
                 return
             query = """
                 UPDATE
-                inventory
+                equipment
                 SET
-                item_gold_detector=?
+                equipment_gold_detector=?
                 WHERE
                 uid=?
             """
@@ -225,9 +222,9 @@ class Economy(commands.Cog):
                 return
             query = """
                 UPDATE
-                inventory
+                equipment
                 SET
-                item_diamond_detector=?
+                equipment_diamond_detector=?
                 WHERE
                 uid=?
             """
@@ -254,9 +251,9 @@ class Economy(commands.Cog):
                 return
             query = """
                 UPDATE
-                inventory
+                equipment
                 SET
-                item_minecart=?
+                equipment_minecart=?
                 WHERE
                 uid=?
             """
@@ -283,9 +280,9 @@ class Economy(commands.Cog):
                 return
             query = """
                 UPDATE
-                inventory
+                equipment
                 SET
-                item_minetransport=?
+                equipment_minetransport=?
                 WHERE
                 uid=?
             """
@@ -313,9 +310,9 @@ class Economy(commands.Cog):
 
             query = """
                 UPDATE
-                inventory
+                equipment
                 SET
-                item_transportplane=?
+                equipment_transportplane=?
                 WHERE
                 uid=?
             """

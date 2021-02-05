@@ -15,7 +15,6 @@ class React(commands.Cog):
         channel = self.bot.get_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
         author_id = message.author.id
-
         if payload.user_id in (self.bot.user.id, author_id) or self.bot.user.id == author_id:
             return
         if emoji.name == emojii.heart["red"] + emojii.special["variant"]:
